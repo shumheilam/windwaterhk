@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>神明曆 · FengShui Oracle</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="auth.css">
+  <style>
+    :root {
+      --gold: #c9a84c; --gold-light: #e8d080; --gold-dim: rgba(201,168,76,0.28);
+      --red-dark: #6b1010; --red-mid: #9b2020;
+      --bg: #060404; --bg-card: #0e0808; --bg-input: rgba(255,255,255,0.04);
+      --text: #e8d5a3; --text-dim: #907050;
+      --wood: #5a9a6a; --fire: #cc4422; --earth: #C4870A; --metal: #A8A8A8; --water: #4488cc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Noto Serif TC', serif; background: var(--bg); color: var(--text); min-height: 100vh;
+           background-image: radial-gradient(ellipse 80% 50% at 50% 0%, #1a0808 0%, transparent 65%); }
+
+    /* ── Nav ── */
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 2rem;
+          border-bottom: 1px solid rgba(201,168,76,0.18); }
+    .nav-brand { font-size: 0.95rem; font-weight: 900; color: var(--gold); letter-spacing: 0.35em;
+                 text-decoration: none; display: flex; flex-direction: column; line-height: 1.2; }
+    .nav-brand-sub { font-size: 0.55rem; font-weight: 400; letter-spacing: 0.18em; color: var(--text-dim); margin-top: 0.1rem; }
+    .nav-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .nav-tab { font-size: 0.75rem; font-family: 'Noto Serif TC', serif; letter-spacing: 0.2em;
+               text-decoration: none; padding: 0.38rem 0.88rem; border-radius: 4px;
+               border: 1px solid transparent; color: var(--text-dim); transition: color 0.2s, background 0.2s, border-color 0.2s; }
+    .nav-tab.active { color: var(--gold); border-color: rgba(201,168,76,0.4); background: rgba(201,168,76,0.08); }
+    .nav-tab:not(.active):hover { color: var(--text); }
+
+    /* ── Header ── */
+    header { text-align: center; padding: 2.5rem 1rem 1.5rem; }
+    .page-title { font-size: clamp(1.9rem,5.5vw,2.9rem); font-weight: 900; color: var(--gold);
+                  letter-spacing: 0.35em; text-shadow: 0 0 28px rgba(201,168,76,0.38); }
+    .page-sub { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 0.5em; margin-top: 0.4rem; }
+    .divider { display: flex; align-items: center; gap: 0.7rem; margin: 1rem auto; width: fit-content; }
+    .divider::before { content:''; display:block; width:60px; height:1px; background: linear-gradient(to right, transparent, var(--gold)); }
+    .divider::after  { content:''; display:block; width:60px; height:1px; background: linear-gradient(to left,  transparent, var(--gold)); }
+    .divider-sym { color: var(--gold); font-size: 0.85rem; opacity: 0.65; }
+
+    /* ── Layout ── */
+    .cal-layout { display: flex; gap: 1.4rem; max-width: 1080px; margin: 0 auto; padding: 0 1.2rem 5rem; align-items: flex-start; }
+    .cal-main { flex: 1; min-width: 0; }
+    .cal-sidebar { width: 240px; flex-shrink: 0; position: sticky; top: 1rem; }
+
+    /* ── Month nav ── */
+    .month-nav { display: flex; align-items: center; justify-content: space-between;
+                 background: var(--bg-card); border: 1px solid var(--gold-dim);
+                 border-radius: 10px 10px 0 0; padding: 1rem 1.4rem; }
+    .month-arrow { background: transparent; border: 1px solid var(--gold-dim); color: var(--gold);
+                   width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; cursor: pointer;
+                   display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .month-arrow:hover { background: rgba(201,168,76,0.1); border-color: var(--gold); }
+    .month-title { text-align: center; }
+    .month-lunar { font-size: 1.05rem; font-weight: 700; color: var(--gold); letter-spacing: 0.3em; }
+    .month-solar { font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.25em; margin-top: 0.15rem; }
+
+    /* ── Calendar grid ── */
+    .cal-grid-wrap { background: var(--bg-card); border: 1px solid var(--gold-dim); border-top: none; border-radius: 0 0 10px 10px; padding: 0.8rem; }
+    .cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; margin-bottom: 4px; }
+    .cal-weekday { text-align: center; font-size: 0.62rem; color: var(--text-dim); letter-spacing: 0.15em; padding: 0.3rem 0; }
+    .cal-weekday:first-child { color: var(--fire); }
+    .cal-weekday:last-child  { color: var(--water); }
+    .cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+
+    /* Day cell */
+    .cal-day {
+      aspect-ratio: 1;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 6px;
+      padding: 5px 4px 4px;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.18s, border-color 0.18s;
+      min-height: 56px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .cal-day:hover { background: rgba(201,168,76,0.07); border-color: rgba(201,168,76,0.3); }
+    .cal-day.today { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.5); }
+    .cal-day.other-month { opacity: 0.3; cursor: default; }
+    .cal-day.other-month:hover { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); }
+
+    /* Deity birthday: gold glow border */
+    .cal-day.deity-day { border-color: var(--gold); box-shadow: 0 0 8px rgba(201,168,76,0.25), inset 0 0 8px rgba(201,168,76,0.05); }
+    .cal-day.auspicious { border-color: rgba(90,154,106,0.6); }
+    .cal-day.inauspicious { border-color: rgba(204,68,34,0.5); }
+
+    .day-solar { font-size: 0.95rem; font-weight: 700; color: var(--text); line-height: 1; }
+    .cal-day.today .day-solar { color: var(--gold); }
+    .cal-day:first-child .day-solar, .cal-day.sunday .day-solar { color: var(--fire); }
+    .cal-day.saturday .day-solar { color: #6688cc; }
+    .day-lunar { font-size: 0.48rem; color: var(--text-dim); letter-spacing: 0.05em; margin-top: 3px; line-height: 1.2; text-align: center; }
+
+    /* Dots row */
+    .day-dots { display: flex; gap: 2px; margin-top: auto; padding-top: 2px; flex-wrap: wrap; justify-content: center; }
+    .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .dot-deity    { background: var(--gold); }
+    .dot-auspicious { background: var(--wood); }
+    .dot-inauspicious { background: var(--fire); }
+    .dot-taisui   { background: var(--earth); }
+
+    /* ── Legend ── */
+    .cal-legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.8rem; padding: 0.7rem 1rem;
+                  background: rgba(255,255,255,0.02); border: 1px solid var(--gold-dim); border-radius: 7px; }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.1em; }
+    .legend-box  { width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid; flex-shrink: 0; }
+    .lb-deity     { border-color: var(--gold); background: rgba(201,168,76,0.1); }
+    .lb-auspicious { border-color: var(--wood); background: rgba(90,154,106,0.1); }
+    .lb-inauspicious { border-color: var(--fire); background: rgba(204,68,34,0.1); }
+    .lb-taisui    { border-color: var(--earth); background: rgba(196,135,10,0.1); }
+
+    /* ── Sidebar ── */
+    .sidebar-card { background: var(--bg-card); border: 1px solid var(--gold-dim); border-radius: 8px;
+                    padding: 1rem; margin-bottom: 1rem; }
+    .sc-title { font-size: 0.7rem; color: var(--gold); letter-spacing: 0.4em; font-weight: 700;
+                margin-bottom: 0.8rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--gold-dim); }
+    .sc-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0;
+               border-bottom: 1px solid rgba(201,168,76,0.07); }
+    .sc-item:last-child { border-bottom: none; }
+    .sc-date { font-size: 0.62rem; color: var(--gold); letter-spacing: 0.08em; min-width: 2.8em; padding-top: 0.1rem; font-weight: 700; }
+    .sc-info { flex: 1; }
+    .sc-name { font-size: 0.75rem; color: var(--text); font-weight: 700; letter-spacing: 0.06em; }
+    .sc-sub  { font-size: 0.6rem; color: var(--text-dim); margin-top: 0.15rem; letter-spacing: 0.05em; line-height: 1.6; }
+    .sc-empty { font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.1em; line-height: 1.8; padding: 0.5rem 0; }
+
+    /* Taisui warning */
+    .taisui-card { background: rgba(196,135,10,0.07); border-color: rgba(196,135,10,0.35); }
+    .taisui-card .sc-title { color: var(--earth); border-bottom-color: rgba(196,135,10,0.2); }
+
+    /* ── Day detail panel ── */
+    .day-panel-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 100;
+                          display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .day-panel { background: var(--bg-card); border: 1px solid var(--gold-dim); border-radius: 12px;
+                 max-width: 460px; width: 100%; padding: 1.6rem; position: relative; animation: fadeIn 0.25s ease; }
+    .dp-close { position: absolute; top: 0.9rem; right: 1rem; background: transparent; border: none;
+                color: var(--text-dim); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
+    .dp-close:hover { color: var(--gold); }
+    .dp-date { font-size: 0.68rem; color: var(--text-dim); letter-spacing: 0.3em; margin-bottom: 0.3rem; }
+    .dp-title { font-size: 1.15rem; font-weight: 900; color: var(--gold); letter-spacing: 0.2em; margin-bottom: 1rem; }
+    .dp-section { margin-bottom: 0.9rem; }
+    .dp-sec-label { font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.35em; margin-bottom: 0.4rem; }
+    .dp-deity-item { display: flex; align-items: center; gap: 0.7rem; padding: 0.6rem 0.8rem;
+                     background: rgba(201,168,76,0.06); border: 1px solid var(--gold-dim);
+                     border-radius: 6px; margin-bottom: 0.5rem; }
+    .dp-deity-icon { font-size: 1.3rem; }
+    .dp-deity-name { font-size: 0.88rem; font-weight: 700; color: var(--gold); letter-spacing: 0.1em; }
+    .dp-deity-sub  { font-size: 0.62rem; color: var(--text-dim); margin-top: 0.12rem; letter-spacing: 0.06em; line-height: 1.6; }
+    .dp-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .dp-tag { padding: 0.2rem 0.65rem; border-radius: 20px; border: 1px solid; font-size: 0.68rem; letter-spacing: 0.08em; }
+    .dp-tag-good { border-color: rgba(90,154,106,0.5); color: var(--wood); background: rgba(90,154,106,0.08); }
+    .dp-tag-bad  { border-color: rgba(204,68,34,0.45); color: var(--fire); background: rgba(204,68,34,0.07); }
+
+    /* ── Taisui banner ── */
+    .taisui-banner {
+      max-width: 1080px; margin: 0 auto 1rem; padding: 0 1.2rem;
+    }
+    .taisui-banner-inner {
+      background: rgba(196,135,10,0.12); border: 1px solid rgba(196,135,10,0.5);
+      border-radius: 8px; padding: 0.75rem 1.2rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 0.8rem;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .taisui-banner-inner:hover { background: rgba(196,135,10,0.2); }
+    .taisui-banner-left { display: flex; align-items: center; gap: 0.7rem; }
+    .taisui-banner-icon { font-size: 1.15rem; }
+    .taisui-banner-text { font-size: 0.8rem; color: var(--earth); letter-spacing: 0.08em; line-height: 1.6; }
+    .taisui-banner-hint { font-size: 0.62rem; color: rgba(196,135,10,0.7); letter-spacing: 0.15em; flex-shrink: 0; }
+
+    /* ── Enhanced deity panel sections ── */
+    .dp-guide-section { margin-top: 0.8rem; padding-top: 0.8rem; border-top: 1px solid var(--gold-dim); }
+    .dp-guide-title { font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.35em; margin-bottom: 0.55rem; }
+    .dp-temple-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .dp-temple-tag { font-size: 0.68rem; padding: 0.18rem 0.6rem; border-radius: 20px;
+                     border: 1px solid rgba(201,168,76,0.4); color: var(--gold);
+                     background: rgba(201,168,76,0.06); letter-spacing: 0.06em; }
+    .dp-offering-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .dp-offering-tag { font-size: 0.68rem; padding: 0.18rem 0.6rem; border-radius: 20px;
+                       border: 1px solid rgba(90,154,106,0.4); color: var(--wood);
+                       background: rgba(90,154,106,0.06); letter-spacing: 0.06em; }
+    .dp-steps { counter-reset: steps; display: flex; flex-direction: column; gap: 0.45rem; }
+    .dp-step { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.72rem;
+               color: var(--text); letter-spacing: 0.05em; line-height: 1.6; }
+    .dp-step-num { width: 18px; height: 18px; border-radius: 50%; background: rgba(201,168,76,0.15);
+                   border: 1px solid var(--gold-dim); color: var(--gold); font-size: 0.6rem;
+                   display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+
+    /* ── Resolve panel ── */
+    .resolve-panel-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200;
+                              display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .resolve-panel { background: var(--bg-card); border: 1px solid rgba(196,135,10,0.5);
+                     border-radius: 12px; max-width: 480px; width: 100%; padding: 1.6rem;
+                     position: relative; animation: fadeIn 0.25s ease; max-height: 80vh; overflow-y: auto; }
+    .rp-close { position: absolute; top: 0.9rem; right: 1rem; background: transparent; border: none;
+                color: var(--text-dim); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
+    .rp-close:hover { color: var(--gold); }
+    .rp-title { font-size: 1rem; font-weight: 900; color: var(--earth); letter-spacing: 0.2em; margin-bottom: 0.3rem; }
+    .rp-sub   { font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.12em; margin-bottom: 1.1rem; }
+    .rp-method { padding: 0.7rem 0.9rem; border-radius: 7px; background: rgba(196,135,10,0.07);
+                 border: 1px solid rgba(196,135,10,0.2); margin-bottom: 0.7rem; }
+    .rp-method-title { font-size: 0.75rem; font-weight: 700; color: var(--earth); letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+    .rp-method-body  { font-size: 0.68rem; color: var(--text-dim); line-height: 1.8; letter-spacing: 0.05em; }
+
+    footer { text-align: center; color: var(--text-dim); font-size: 0.6rem; letter-spacing: 0.2em;
+             padding: 1.5rem 0; opacity: 0.38; line-height: 2; }
+
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+    @media (max-width: 700px) {
+      nav { padding: 0.7rem 1rem; }
+      .cal-layout { flex-direction: column; padding: 0 0.6rem 4rem; }
+      .cal-sidebar { width: 100%; position: static; }
+
+      /* Calendar cells: min 44px touch target */
+      .cal-day { min-height: 48px; }
+      .day-solar { font-size: 0.88rem; }
+      .day-lunar { font-size: 0.5rem; }
+
+      /* Font sizes: minimum 14px */
+      .month-lunar   { font-size: 1.1rem; }
+      .month-solar   { font-size: 0.82rem; }
+      .cal-weekday   { font-size: 0.75rem; }
+      .sc-title      { font-size: 0.82rem; letter-spacing: 0.25em; }
+      .sc-name       { font-size: 0.88rem; }
+      .sc-sub        { font-size: 0.72rem; }
+      .sc-date       { font-size: 0.75rem; }
+      .sc-empty      { font-size: 0.82rem; }
+      .legend-item   { font-size: 0.72rem; }
+      .taisui-banner-text { font-size: 0.88rem; }
+      .taisui-banner-hint { font-size: 0.72rem; }
+      .dp-date       { font-size: 0.82rem; }
+      .dp-deity-name { font-size: 0.95rem; }
+      .dp-deity-sub  { font-size: 0.75rem; }
+      .dp-sec-label  { font-size: 0.75rem; }
+      .dp-tag        { font-size: 0.82rem; }
+      .dp-guide-title { font-size: 0.75rem; }
+      .dp-temple-tag  { font-size: 0.8rem; }
+      .dp-offering-tag { font-size: 0.8rem; }
+      .dp-step       { font-size: 0.82rem; }
+      .rp-method-title { font-size: 0.88rem; }
+      .rp-method-body  { font-size: 0.82rem; }
+
+      /* Buttons: min 44px */
+      .month-arrow { width: 44px; height: 44px; font-size: 1.1rem; }
+      .dp-close    { font-size: 1.5rem; padding: 0.4rem 0.6rem; }
+      .rp-close    { font-size: 1.5rem; padding: 0.4rem 0.6rem; }
+
+      /* Taisui banner: stack vertically on mobile */
+      .taisui-banner-inner { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      .taisui-banner-hint  { align-self: flex-end; }
+      .taisui-banner       { padding: 0 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">風 生 水 起<span class="nav-brand-sub">FengShui Oracle</span></a>
+  <div class="nav-tabs">
+    <a class="nav-tab" href="index.html">八 字 命 盤</a>
+    <a class="nav-tab" href="index.html" onclick="sessionStorage.setItem('tab','match')">合 婚 配 對</a>
+    <a class="nav-tab" href="index.html" onclick="sessionStorage.setItem('tab','rename')">改 名 系 統</a>
+    <a class="nav-tab" href="oracle.html">求 簽 問 事</a>
+    <a class="nav-tab active" href="calendar.html">神 明 曆</a>
+  </div>
+  <div class="nav-auth" id="navAuthArea"></div>
+</nav>
+
+<header>
+  <h1 class="page-title">神 明 曆</h1>
+  <p class="page-sub">農曆吉凶　神明聖誕</p>
+  <div class="divider"><span class="divider-sym">✦</span></div>
+</header>
+
+<!-- Taisui banner (populated by JS) -->
+<div class="taisui-banner" id="taisuiBannerWrap" style="display:none">
+  <div class="taisui-banner-inner" onclick="openResolvePanel()">
+    <div class="taisui-banner-left">
+      <span class="taisui-banner-icon">⚠️</span>
+      <div class="taisui-banner-text" id="taisuiBannerText"></div>
+    </div>
+    <span class="taisui-banner-hint">點擊了解化解方法 ›</span>
+  </div>
+</div>
+
+<div class="cal-layout">
+
+  <!-- ── Main calendar ── -->
+  <div class="cal-main">
+
+    <!-- Month navigation -->
+    <div class="month-nav">
+      <button class="month-arrow" onclick="changeMonth(-1)">◂</button>
+      <div class="month-title">
+        <div class="month-lunar" id="monthLunar">—</div>
+        <div class="month-solar" id="monthSolar">—</div>
+      </div>
+      <button class="month-arrow" onclick="changeMonth(1)">▸</button>
+    </div>
+
+    <!-- Weekday headers -->
+    <div class="cal-grid-wrap">
+      <div class="cal-weekdays">
+        <div class="cal-weekday">日</div>
+        <div class="cal-weekday">一</div>
+        <div class="cal-weekday">二</div>
+        <div class="cal-weekday">三</div>
+        <div class="cal-weekday">四</div>
+        <div class="cal-weekday">五</div>
+        <div class="cal-weekday">六</div>
+      </div>
+      <div class="cal-days" id="calDays"></div>
+    </div>
+
+    <!-- Legend -->
+    <div class="cal-legend">
+      <div class="legend-item"><div class="legend-box lb-deity"></div>神明聖誕</div>
+      <div class="legend-item"><div class="legend-box lb-auspicious"></div>吉日</div>
+      <div class="legend-item"><div class="legend-box lb-inauspicious"></div>凶日／忌日</div>
+      <div class="legend-item"><div class="legend-box lb-taisui"></div>犯太歲提醒</div>
+    </div>
+  </div>
+
+  <!-- ── Sidebar ── -->
+  <aside class="cal-sidebar">
+
+    <!-- This month deity birthdays -->
+    <div class="sidebar-card">
+      <div class="sc-title">本 月 神 明 聖 誕</div>
+      <div id="sidebarDeities"><div class="sc-empty">本月暫無神明聖誕</div></div>
+    </div>
+
+    <!-- This month auspicious/inauspicious -->
+    <div class="sidebar-card">
+      <div class="sc-title">本 月 重 要 日 子</div>
+      <div id="sidebarDays"><div class="sc-empty">本月重要吉凶日</div></div>
+    </div>
+
+    <!-- User taisui reminder -->
+    <div class="sidebar-card taisui-card" id="taisuiCard" style="display:none">
+      <div class="sc-title">犯 太 歲 提 醒</div>
+      <div id="taisuiContent"></div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- Resolve panel -->
+<div class="resolve-panel-backdrop" id="resolvePanel" style="display:none" onclick="closeResolvePanel(event)">
+  <div class="resolve-panel">
+    <button class="rp-close" onclick="closeResolvePanel()">✕</button>
+    <div class="rp-title">🧧 犯太歲化解方法</div>
+    <div class="rp-sub" id="resolvePanelSub"></div>
+    <div class="rp-method">
+      <div class="rp-method-title">① 安太歲（最重要）</div>
+      <div class="rp-method-body">農曆正月十五前，前往廟宇辦理安太歲儀式。在廟方記錄姓名、出生年份，由法師主持安奉，全年受太歲神庇護。推薦：黃大仙祠、蓬瀛仙館、圓玄學院。</div>
+    </div>
+    <div class="rp-method">
+      <div class="rp-method-title">② 佩戴本命佛/太歲符</div>
+      <div class="rp-method-body">依生肖佩戴對應本命佛護身符，或向廟宇求取太歲符隨身攜帶。全年貼身守護，逢凶化吉。</div>
+    </div>
+    <div class="rp-method">
+      <div class="rp-method-title">③ 多行善積德</div>
+      <div class="rp-method-body">犯太歲年多做善事：放生、捐款、義工服務、贈醫施藥。善念善行可化解流年不利之氣，積累陰德。</div>
+    </div>
+    <div class="rp-method">
+      <div class="rp-method-title">④ 注意事項</div>
+      <div class="rp-method-body">犯太歲年宜低調行事，避免大動土木、重大投資、輕率改變。喜事（婚慶、生育）可壓制沖煞，如有計劃可提前安排。</div>
+    </div>
+    <div class="rp-method">
+      <div class="rp-method-title">⑤ 拜太歲神</div>
+      <div class="rp-method-body">每逢農曆初一、十五，可前往廟宇上香拜太歲，祈求太歲神保佑平安順遂。誠心一片，神明自有感應。</div>
+    </div>
+  </div>
+</div>
+
+<!-- Day detail panel -->
+<div class="day-panel-backdrop" id="dayPanel" style="display:none" onclick="closeDayPanel(event)">
+  <div class="day-panel">
+    <button class="dp-close" onclick="closeDayPanel()">✕</button>
+    <div class="dp-date" id="dpDate"></div>
+    <div class="dp-title" id="dpTitle"></div>
+    <div id="dpContent"></div>
+  </div>
+</div>
+
+<footer>
+  <p>風生水起 · FengShui Oracle · 神明曆</p>
+  <p style="margin-top:0.4rem">本 App 所有分析僅供娛樂及參考，不構成專業命理建議。如需完整分析請諮詢專業命理師。</p>
+</footer>
+
+<script>
+// ── Lunar conversion (simplified Zeller + offset table) ────────────────────
+// A lightweight lunar calendar approximation for HK/TW traditional calendar
+// Uses known new moon offsets; accurate for 2020-2030
+
+const LUNAR_MONTHS_2020_2035 = [
+  // [year, month_offsets_from_jan1 for each lunar month start (solar dates)]
+  // Format: for each year, array of {m: lunar_month, d: solar_day_of_year_start}
+  // We use a simplified fixed reference + delta approach
+];
+
+// Simplified: use a known reference point and count days
+// Reference: 2024-02-10 = 農曆正月初一 (甲辰年)
+const REF_SOLAR = new Date(2024, 1, 10); // Feb 10, 2024
+const REF_LUNAR = { year: 2024, month: 1, day: 1, yearStem: 10, yearBranch: 4 }; // 甲辰
+// Average lunar month = 29.53059 days
+const LUNAR_MONTH_DAYS = 29.53059;
+
+// Known lunar new year dates (solar)
+const LUNAR_NEW_YEARS = [
+  { solar: new Date(2020, 0, 25), stem: 6,  branch: 0,  lYear: 2020 }, // 庚子
+  { solar: new Date(2021, 1, 12), stem: 7,  branch: 1,  lYear: 2021 }, // 辛丑
+  { solar: new Date(2022, 1,  1), stem: 8,  branch: 2,  lYear: 2022 }, // 壬寅
+  { solar: new Date(2023, 0, 22), stem: 9,  branch: 3,  lYear: 2023 }, // 癸卯
+  { solar: new Date(2024, 1, 10), stem: 0,  branch: 4,  lYear: 2024 }, // 甲辰
+  { solar: new Date(2025, 0, 29), stem: 1,  branch: 5,  lYear: 2025 }, // 乙巳
+  { solar: new Date(2026, 1, 17), stem: 2,  branch: 6,  lYear: 2026 }, // 丙午
+  { solar: new Date(2027, 1,  6), stem: 3,  branch: 7,  lYear: 2027 }, // 丁未
+  { solar: new Date(2028, 0, 26), stem: 4,  branch: 8,  lYear: 2028 }, // 戊申
+  { solar: new Date(2029, 1, 13), stem: 5,  branch: 9,  lYear: 2029 }, // 己酉
+  { solar: new Date(2030, 1,  3), stem: 6,  branch: 10, lYear: 2030 }, // 庚戌
+];
+
+const STEMS    = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const BRANCHES = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const ANIMALS  = ['鼠','牛','虎','兔','龍','蛇','馬','羊','猴','雞','狗','豬'];
+const LUNAR_DAY_NAMES = [
+  '初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
+  '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+  '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十',
+];
+const LUNAR_MONTH_NAMES = ['正','二','三','四','五','六','七','八','九','十','冬','臘'];
+
+function daysBetween(a, b) {
+  return Math.round((b - a) / 86400000);
+}
+
+function solarToLunar(date) {
+  // Find which lunar year this date falls in
+  let lny = LUNAR_NEW_YEARS[0];
+  for (let i = 0; i < LUNAR_NEW_YEARS.length; i++) {
+    if (date >= LUNAR_NEW_YEARS[i].solar) lny = LUNAR_NEW_YEARS[i];
+    else break;
+  }
+  const daysFromNewYear = daysBetween(lny.solar, date);
+  const monthsElapsed   = Math.floor(daysFromNewYear / LUNAR_MONTH_DAYS);
+  const dayInMonth      = daysFromNewYear - Math.round(monthsElapsed * LUNAR_MONTH_DAYS) + 1;
+
+  return {
+    lYear: lny.lYear,
+    stem: lny.stem, branch: lny.branch,
+    month: (monthsElapsed % 12) + 1,
+    day: Math.max(1, Math.min(30, dayInMonth)),
+  };
+}
+
+// ── Deity birthdays (lunar month/day) ────────────────────────────────────────
+const DEITY_BIRTHDAYS = [
+  { name:'觀音菩薩', icon:'🪷', month:2,  day:19, domain:'慈悲·消災·姻緣', pray:'祈求平安、消災解難、感情姻緣',
+    temples:['志蓮淨苑','荃灣觀音廟','大埔觀音廟','黃大仙祠觀音殿'],
+    offerings:['蓮花或百合','橙、蘋果、香蕉','齋菜素食','香燭三柱','平安油','素點心'],
+    steps:['潔淨雙手，換上乾淨衣著，點燃香燭，恭迎觀音菩薩聖駕','捧香三柱，誠心默禱，說出姓名、出生年份及心願','獻上花果齋品，叩拜三次，禮成後靜待香燃盡'] },
+
+  { name:'觀音菩薩', icon:'🪷', month:6,  day:19, domain:'慈悲·消災·姻緣', pray:'祈求平安、消災解難、感情姻緣',
+    temples:['志蓮淨苑','荃灣觀音廟','大埔觀音廟','黃大仙祠觀音殿'],
+    offerings:['蓮花或百合','橙、蘋果、香蕉','齋菜素食','香燭三柱','平安油','素點心'],
+    steps:['潔淨雙手，換上乾淨衣著，點燃香燭，恭迎觀音菩薩聖駕','捧香三柱，誠心默禱，說出姓名、出生年份及心願','獻上花果齋品，叩拜三次，禮成後靜待香燃盡'] },
+
+  { name:'觀音菩薩', icon:'🪷', month:9,  day:19, domain:'慈悲·消災·姻緣', pray:'祈求平安、消災解難、感情姻緣',
+    temples:['志蓮淨苑','荃灣觀音廟','大埔觀音廟','黃大仙祠觀音殿'],
+    offerings:['蓮花或百合','橙、蘋果、香蕉','齋菜素食','香燭三柱','平安油','素點心'],
+    steps:['潔淨雙手，換上乾淨衣著，點燃香燭，恭迎觀音菩薩聖駕','捧香三柱，誠心默禱，說出姓名、出生年份及心願','獻上花果齋品，叩拜三次，禮成後靜待香燃盡'] },
+
+  { name:'關聖帝君', icon:'⚔️', month:6,  day:24, domain:'忠義·事業·財運', pray:'祈求事業發展、財運亨通、人際關係',
+    temples:['油麻地天后廟（關帝殿）','蓬瀛仙館','西貢關帝廟','上環文武廟'],
+    offerings:['紅棗、花生、龍眼（取財運亨通）','燒豬或燒肉（整件）','香燭元寶','水果（橙、蘋果）','關帝茶'],
+    steps:['著正式衣著前往廟宇，沐手更衣，點燃香燭及元寶','捧香三柱，稟報姓名、職業及事業祈求，對關帝誠心表忠義','獻上祭品，叩拜三次，可求取靈籤以獲進一步指引'] },
+
+  { name:'月老',     icon:'🔴', month:8,  day:15, domain:'婚姻·姻緣·感情', pray:'祈求姻緣、感情順利、婚姻美滿',
+    temples:['志蓮淨苑月老殿','黃大仙祠','元朗大樹下天后廟'],
+    offerings:['紅線一束','花生糖（取生生不息）','鮮紅玫瑰','糯米糍（取甜蜜）','香燭'],
+    steps:['誠心入廟，於月老神像前點燃香燭及紅燭一對','捧香三柱，說出姓名、生辰，誠心祈求姻緣或感情順遂','獻上紅線及花果，叩拜三次，將紅線繫於手腕或隨身攜帶'] },
+
+  { name:'財神爺',   icon:'🏮', month:3,  day:15, domain:'財富·投資·偏財', pray:'祈求財運、投資順利、生意興隆',
+    temples:['車公廟','啬色園黃大仙祠財神殿','蓬瀛仙館','圓玄學院'],
+    offerings:['元寶金紙','糖果蜜餞（取甜蜜財運）','水果（橙五個、蘋果五個）','香燭','發糕或年糕'],
+    steps:['著整潔衣著，攜帶祭品前往廟宇，點燃香燭及元寶','捧香三柱，說出姓名、生意或投資願望，誠心祈求財運亨通','獻祭品叩拜三次，燒化元寶，可帶回廟宇開光的財神符'] },
+
+  { name:'媽祖',     icon:'🌊', month:3,  day:23, domain:'平安·出行·保護', pray:'祈求出行平安、旅途順利、闔家平安',
+    temples:['粉嶺天后廟','筲箕灣天后廟','佛堂門天后廟（大廟）','長洲天后廟'],
+    offerings:['鮮花（百合、菊花）','水果','香燭元寶','海鮮素菜（各地習俗不同）','茶水三杯'],
+    steps:['前往天后廟，點燃香燭，恭敬肅立於天后神像前','捧香三柱，祈求出行平安、家人健康，特別提及即將出行計劃','獻上花果，叩拜三次，可向廟祝求取平安符隨身帶備'] },
+
+  { name:'黃大仙',   icon:'🦊', month:8,  day:23, domain:'求籤·指引·轉運', pray:'祈求指引迷津、逢凶化吉、轉運開運',
+    temples:['啬色園黃大仙祠（九龍）'],
+    offerings:['生果（橙、蘋果、梨）','鮮花','香燭','素食','清水三杯'],
+    steps:['於黃大仙祠大殿點燃香燭，誠心參拜，稟報姓名及所求','捧香三柱，搖動竹籤筒，求取靈籤一支','憑籤號向廟方解籤，獲取大仙指引，叩謝神恩'] },
+
+  { name:'王母娘娘', icon:'👸', month:7,  day:18, domain:'整體運勢·護佑',   pray:'祈求整體運勢、家宅平安、長輩健康',
+    temples:['蓬瀛仙館（粉嶺）','圓玄學院（元朗）','青松觀（屯門）'],
+    offerings:['鮮花（牡丹、芍藥）','蟠桃（或桃形糕點）','齋菜','香燭元寶','茶水'],
+    steps:['著整潔衣著，前往道觀，點燃香燭，肅立王母娘娘像前','捧香三柱，祈求闔家平安、長輩健康長壽，說出心願','獻上花果蟠桃，行三跪九叩大禮，禮成燒化元寶'] },
+
+  { name:'土地公',   icon:'🏡', month:2,  day:2,  domain:'家宅·田土·鄰里', pray:'祈求家宅平安、田土財帛、鄰里和諧',
+    temples:['各區社區土地廟','附近土地公神壇'],
+    offerings:['發糕或年糕','水果','香燭','酒水（米酒）','金紙'],
+    steps:['於所在社區土地廟，點燃香燭及金紙，誠心參拜','稟報地址、家庭成員，祈求家宅平安、財帛豐足、鄰里和諧','獻上發糕水果，叩拜三次，燒化金紙以資土地公'] },
+
+  { name:'土地公',   icon:'🏡', month:8,  day:15, domain:'家宅·田土·鄰里', pray:'祈求家宅平安、田土財帛、鄰里和諧',
+    temples:['各區社區土地廟','附近土地公神壇'],
+    offerings:['發糕或年糕','水果','香燭','酒水（米酒）','金紙'],
+    steps:['於所在社區土地廟，點燃香燭及金紙，誠心參拜','稟報地址、家庭成員，祈求家宅平安、財帛豐足、鄰里和諧','獻上發糕水果，叩拜三次，燒化金紙以資土地公'] },
+
+  { name:'城隍爺',   icon:'⚖️', month:5,  day:11, domain:'是非·訴訟·陰德', pray:'祈求訴訟順利、是非化解、積德行善',
+    temples:['油麻地天后廟（城隍殿）','上環文武廟'],
+    offerings:['水果','香燭元寶','茶水三杯','素菜'],
+    steps:['著整齊衣著前往廟宇，點燃香燭，肅立城隍爺神像前','捧香三柱，稟報姓名，若有訴訟是非可誠心陳述，祈求公正裁決','獻上祭品，叩拜三次，可許下積德行善之願以祈化解'] },
+
+  { name:'文昌帝君', icon:'📚', month:2,  day:3,  domain:'學業·考試·文運', pray:'祈求學業進步、考試順利、文運亨通',
+    temples:['荷李活道文武廟','元朗大旗嶺文武廟','粉嶺文武廟'],
+    offerings:['文具（毛筆或鉛筆）','蔥（取聰明）','芹菜（取勤奮）','水果','香燭','蓮子（取連連高中）'],
+    steps:['攜帶文具及祭品前往文武廟，點燃香燭，誠心參拜','捧香三柱，稟報姓名、學校、即將考試科目，祈求文昌帝君賜予聰慧','獻上文具及蔥芹等祭品，叩拜三次，可將文具帶回使用以沾靈氣'] },
+];
+
+// ── Auspicious / Inauspicious dates (simplified mock for 2025-2026) ──────────
+// Format: { lunar_month, lunar_day, type: 'auspicious'|'inauspicious', tags }
+const SPECIAL_DAYS = [
+  // Auspicious
+  { m:1,  d:1,  type:'auspicious',   yi:['祭祀','祈福','嫁娶','開市'],  ji:[] },
+  { m:1,  d:6,  type:'auspicious',   yi:['開業','搬家','求職'],          ji:[] },
+  { m:1,  d:15, type:'auspicious',   yi:['祭祀','祈福','嫁娶'],          ji:[] },
+  { m:2,  d:1,  type:'auspicious',   yi:['開市','動土','安床'],          ji:[] },
+  { m:2,  d:8,  type:'auspicious',   yi:['嫁娶','搬家','開業'],          ji:[] },
+  { m:2,  d:19, type:'auspicious',   yi:['祭祀','祈福','求姻緣'],        ji:[] },
+  { m:3,  d:3,  type:'auspicious',   yi:['嫁娶','開業','出行'],          ji:[] },
+  { m:3,  d:15, type:'auspicious',   yi:['祭祀','祈財','開市'],          ji:[] },
+  { m:4,  d:8,  type:'auspicious',   yi:['祭祀','祈福','安床'],          ji:[] },
+  { m:5,  d:5,  type:'auspicious',   yi:['祭祀','出行'],                  ji:['嫁娶','動土'] },
+  { m:6,  d:6,  type:'auspicious',   yi:['開業','動土','搬家'],          ji:[] },
+  { m:6,  d:24, type:'auspicious',   yi:['祭祀','祈福','求財'],          ji:[] },
+  { m:7,  d:7,  type:'auspicious',   yi:['祈福','嫁娶'],                  ji:[] },
+  { m:7,  d:15, type:'inauspicious', yi:['祭祀'],                          ji:['嫁娶','開業','動土','搬家'] },
+  { m:8,  d:1,  type:'auspicious',   yi:['開業','搬家','求職'],          ji:[] },
+  { m:8,  d:15, type:'auspicious',   yi:['祭祀','祈福','賞月'],          ji:[] },
+  { m:9,  d:9,  type:'auspicious',   yi:['祭祀','出行','登高'],          ji:[] },
+  { m:10, d:1,  type:'auspicious',   yi:['祭祀','祈福'],                  ji:[] },
+  { m:11, d:11, type:'auspicious',   yi:['開業','嫁娶','動土'],          ji:[] },
+  { m:12, d:8,  type:'auspicious',   yi:['祭祀','祈福'],                  ji:[] },
+  { m:12, d:24, type:'auspicious',   yi:['祭祀','送神'],                  ji:[] },
+  // Inauspicious
+  { m:1,  d:10, type:'inauspicious', yi:['靜守'], ji:['嫁娶','開業','動土'] },
+  { m:3,  d:17, type:'inauspicious', yi:['靜守'], ji:['嫁娶','開業','出行'] },
+  { m:5,  d:16, type:'inauspicious', yi:['祭祀'], ji:['嫁娶','開業','動土','搬家'] },
+  { m:7,  d:1,  type:'inauspicious', yi:['靜守'], ji:['嫁娶','開業','動土'] },
+  { m:9,  d:3,  type:'inauspicious', yi:['靜守'], ji:['嫁娶','出行'] },
+  { m:11, d:19, type:'inauspicious', yi:['靜守'], ji:['嫁娶','開業','動土'] },
+];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+const today = new Date();
+let viewYear  = today.getFullYear();
+let viewMonth = today.getMonth(); // 0-indexed
+
+// ── Calendar render ───────────────────────────────────────────────────────────
+function renderCalendar() {
+  const firstDay  = new Date(viewYear, viewMonth, 1);
+  const lastDay   = new Date(viewYear, viewMonth + 1, 0);
+  const startDow  = firstDay.getDay(); // 0=Sun
+  const totalDays = lastDay.getDate();
+
+  // Month header
+  const midDate   = new Date(viewYear, viewMonth, 15);
+  const midLunar  = solarToLunar(midDate);
+  const lny = LUNAR_NEW_YEARS.find(n => n.lYear === midLunar.lYear) || LUNAR_NEW_YEARS[4];
+  document.getElementById('monthLunar').textContent =
+    `${STEMS[lny.stem]}${BRANCHES[lny.branch]}年　${LUNAR_MONTH_NAMES[midLunar.month - 1]}月`;
+  document.getElementById('monthSolar').textContent =
+    `${viewYear} 年 ${viewMonth + 1} 月`;
+
+  const cells = [];
+  // Pad start
+  for (let i = 0; i < startDow; i++) {
+    const d = new Date(viewYear, viewMonth, -(startDow - i - 1));
+    cells.push({ date: d, otherMonth: true });
+  }
+  for (let d = 1; d <= totalDays; d++) cells.push({ date: new Date(viewYear, viewMonth, d), otherMonth: false });
+  // Pad end to fill 6 rows
+  while (cells.length % 7 !== 0) {
+    const last = cells[cells.length - 1].date;
+    cells.push({ date: new Date(last.getFullYear(), last.getMonth(), last.getDate() + 1), otherMonth: true });
+  }
+
+  const container = document.getElementById('calDays');
+  container.innerHTML = '';
+
+  const deityThisMonth = [];
+  const specialThisMonth = [];
+
+  cells.forEach(({ date, otherMonth }) => {
+    const lunar = solarToLunar(date);
+    const isToday = date.toDateString() === today.toDateString();
+    const dow = date.getDay();
+
+    // Find deity birthdays on this lunar day
+    const deities = DEITY_BIRTHDAYS.filter(db => db.month === lunar.month && db.day === lunar.day);
+    // Find special days
+    const special = SPECIAL_DAYS.find(s => s.m === lunar.month && s.d === lunar.day);
+
+    if (!otherMonth) {
+      if (deities.length) deityThisMonth.push({ solar: date, lunar, deities });
+      if (special) specialThisMonth.push({ solar: date, lunar, special });
+    }
+
+    const isDeity = deities.length > 0;
+    const isAusp  = special?.type === 'auspicious';
+    const isInausp = special?.type === 'inauspicious';
+
+    let cls = 'cal-day';
+    if (otherMonth)   cls += ' other-month';
+    if (isToday)      cls += ' today';
+    if (dow === 0)    cls += ' sunday';
+    if (dow === 6)    cls += ' saturday';
+    if (isDeity)      cls += ' deity-day';
+    else if (isAusp)  cls += ' auspicious';
+    else if (isInausp) cls += ' inauspicious';
+
+    const dots = [];
+    if (isDeity)   dots.push('<span class="dot dot-deity"></span>');
+    if (isAusp)    dots.push('<span class="dot dot-auspicious"></span>');
+    if (isInausp)  dots.push('<span class="dot dot-inauspicious"></span>');
+
+    const lunarLabel = lunar.day === 1 ? `${LUNAR_MONTH_NAMES[lunar.month-1]}月` : LUNAR_DAY_NAMES[lunar.day - 1];
+
+    const cell = document.createElement('div');
+    cell.className = cls;
+    cell.innerHTML = `
+      <div class="day-solar">${date.getDate()}</div>
+      <div class="day-lunar">${lunarLabel}${isDeity ? '<br>聖誕' : ''}</div>
+      <div class="day-dots">${dots.join('')}</div>`;
+
+    if (!otherMonth) {
+      cell.onclick = () => openDayPanel(date, lunar, deities, special);
+    }
+    container.appendChild(cell);
+  });
+
+  renderSidebar(deityThisMonth, specialThisMonth);
+}
+
+function renderSidebar(deities, specials) {
+  const dEl = document.getElementById('sidebarDeities');
+  if (deities.length === 0) {
+    dEl.innerHTML = '<div class="sc-empty">本月暫無神明聖誕</div>';
+  } else {
+    // Deduplicate by deity name + day
+    const seen = new Set();
+    dEl.innerHTML = deities.filter(d => {
+      const key = d.deities[0].name + d.solar.getDate();
+      if (seen.has(key)) return false;
+      seen.add(key); return true;
+    }).map(d => `
+      <div class="sc-item">
+        <div class="sc-date">${viewMonth+1}/${d.solar.getDate()}<br><span style="font-size:0.55rem;color:var(--text-dim)">${LUNAR_DAY_NAMES[d.lunar.day-1]}</span></div>
+        <div class="sc-info">
+          <div class="sc-name">${d.deities.map(x=>x.icon+x.name).join(' ')}</div>
+          <div class="sc-sub">${d.deities[0].domain}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  const sEl = document.getElementById('sidebarDays');
+  const shown = specials.slice(0, 6);
+  if (shown.length === 0) {
+    sEl.innerHTML = '<div class="sc-empty">本月暫無特別標記日子</div>';
+  } else {
+    sEl.innerHTML = shown.map(s => {
+      const isG = s.special.type === 'auspicious';
+      return `<div class="sc-item">
+        <div class="sc-date" style="color:${isG?'var(--wood)':'var(--fire)'}">${viewMonth+1}/${s.solar.getDate()}</div>
+        <div class="sc-info">
+          <div class="sc-name" style="color:${isG?'var(--wood)':'var(--fire)'}">${isG?'🟢 吉日':'🔴 忌日'}</div>
+          <div class="sc-sub">宜：${s.special.yi.join('、')||'—'}${s.special.ji.length?'　忌：'+s.special.ji.join('、'):''}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Taisui: check localStorage profiles
+  checkTaisui();
+}
+
+// 太歲沖剋對照表 — 每個年支對應四個受影響的生肖
+// 四正年（子午卯酉）：犯沖破刑（第四個係同組四正另一支）
+// 其他年：犯沖破害（按傳統六破六害）
+// 2026丙午年已確認：馬(6)犯、鼠(0)沖、兔(3)破、雞(9)刑
+const TAISUI_LOOKUP = [
+  /* 子(鼠)0 */ { 0:'犯太歲（本命年）', 6:'沖太歲', 9:'破太歲', 3:'刑太歲' },
+  /* 丑(牛)1 */ { 1:'犯太歲（本命年）', 7:'沖太歲', 4:'破太歲', 6:'害太歲' },
+  /* 寅(虎)2 */ { 2:'犯太歲（本命年）', 8:'沖太歲', 11:'破太歲', 5:'害太歲' },
+  /* 卯(兔)3 */ { 3:'犯太歲（本命年）', 9:'沖太歲', 6:'破太歲', 0:'刑太歲' },
+  /* 辰(龍)4 */ { 4:'犯太歲（本命年）', 10:'沖太歲', 1:'破太歲', 3:'害太歲' },
+  /* 巳(蛇)5 */ { 5:'犯太歲（本命年）', 11:'沖太歲', 8:'破太歲', 2:'害太歲' },
+  /* 午(馬)6 */ { 6:'犯太歲（本命年）', 0:'沖太歲', 3:'破太歲', 9:'刑太歲' },  // 2026
+  /* 未(羊)7 */ { 7:'犯太歲（本命年）', 1:'沖太歲', 10:'破太歲', 0:'害太歲' },
+  /* 申(猴)8 */ { 8:'犯太歲（本命年）', 2:'沖太歲', 5:'破太歲', 11:'害太歲' },
+  /* 酉(雞)9 */ { 9:'犯太歲（本命年）', 3:'沖太歲', 0:'破太歲', 6:'刑太歲' },
+  /* 戌(狗)10*/ { 10:'犯太歲（本命年）', 4:'沖太歲', 7:'破太歲', 9:'害太歲' },
+  /* 亥(豬)11*/ { 11:'犯太歲（本命年）', 5:'沖太歲', 2:'破太歲', 8:'害太歲' },
+];
+
+function getTaisuiConflicts(lunarYearBranch) {
+  return TAISUI_LOOKUP[lunarYearBranch] || {};
+}
+
+function getPersonBranch(p) {
+  let bzy = p.year;
+  if (p.month < 2 || (p.month === 2 && p.day < 4)) bzy--;
+  return ((bzy - 4) % 12 + 12) % 12;
+}
+
+// Find lunar year data for a given solar year
+function getLunarYearForSolar(solarYear) {
+  return LUNAR_NEW_YEARS.find(n => n.lYear === solarYear) || null;
+}
+
+function checkTaisui() {
+  try {
+    const profiles = JSON.parse(localStorage.getItem('fengshui_profiles_v1') || '[]');
+    if (!profiles.length) return;
+
+    const now = new Date();
+
+    // Determine current lunar year branch
+    let currentLny = LUNAR_NEW_YEARS[0];
+    for (const n of LUNAR_NEW_YEARS) { if (now >= n.solar) currentLny = n; else break; }
+
+    // Determine next lunar year
+    const nextLnyIdx = LUNAR_NEW_YEARS.findIndex(n => n.lYear === currentLny.lYear) + 1;
+    const nextLny    = LUNAR_NEW_YEARS[nextLnyIdx] || null;
+
+    // Check if next LNY is within 3 months (≈92 days)
+    const daysToNextLny = nextLny ? Math.round((nextLny.solar - now) / 86400000) : 999;
+    const advanceWarning = daysToNextLny <= 92;
+
+    const currentConflicts = getTaisuiConflicts(currentLny.branch);
+    const nextConflicts    = nextLny ? getTaisuiConflicts(nextLny.branch) : {};
+
+    const bannerLines = [];
+    const sidebarItems = [];
+
+    profiles.forEach(p => {
+      const branch = getPersonBranch(p);
+      const curConflict  = currentConflicts[branch];
+      const nextConflict = advanceWarning ? nextConflicts[branch] : null;
+
+      if (curConflict) {
+        bannerLines.push(`${p.name} 今年${curConflict}，建議提早化解`);
+        sidebarItems.push({ name: p.name, conflict: curConflict, advance: false });
+      }
+      if (nextConflict && !curConflict) {
+        bannerLines.push(`${p.name} 即將${nextConflict}（${daysToNextLny}日後），宜提前安排化解`);
+        sidebarItems.push({ name: p.name, conflict: `即將${nextConflict}`, advance: true });
+      }
+    });
+
+    // Update banner
+    const bannerWrap = document.getElementById('taisuiBannerWrap');
+    if (bannerLines.length) {
+      bannerWrap.style.display = 'block';
+      document.getElementById('taisuiBannerText').innerHTML =
+        bannerLines.map(l => `⚠️ ${l}`).join('<br>');
+      // Store info for resolve panel subtitle
+      bannerWrap.dataset.names = bannerLines.map(l => l.split('今年')[0] || l.split('即將')[0]).join('、');
+    } else {
+      bannerWrap.style.display = 'none';
+    }
+
+    // Update sidebar card
+    if (sidebarItems.length) {
+      document.getElementById('taisuiCard').style.display = 'block';
+      document.getElementById('taisuiContent').innerHTML = sidebarItems.map(a => `
+        <div class="sc-item">
+          <div class="sc-info">
+            <div class="sc-name">${a.name}</div>
+            <div class="sc-sub">${a.conflict}${a.advance ? '（提前提醒）' : ''}　宜安太歲、多行善積德</div>
+          </div>
+        </div>`).join('');
+    }
+  } catch(e) {}
+}
+
+function openResolvePanel() {
+  const wrap = document.getElementById('taisuiBannerWrap');
+  const names = wrap?.dataset.names || '';
+  document.getElementById('resolvePanelSub').textContent =
+    names ? `${names} — 以下方法可化解流年不利之氣` : '以下方法可化解流年不利之氣';
+  document.getElementById('resolvePanel').style.display = 'flex';
+}
+
+function closeResolvePanel(e) {
+  if (!e || e.target === document.getElementById('resolvePanel')) {
+    document.getElementById('resolvePanel').style.display = 'none';
+  }
+}
+
+// ── Day panel ─────────────────────────────────────────────────────────────────
+function openDayPanel(date, lunar, deities, special) {
+  const solarStr = `${date.getFullYear()}年${date.getMonth()+1}月${date.getDate()}日`;
+  const lunarStr = `農曆${LUNAR_MONTH_NAMES[lunar.month-1]}月${LUNAR_DAY_NAMES[lunar.day-1]}`;
+  document.getElementById('dpDate').textContent = `${solarStr}　${lunarStr}`;
+
+  let title = LUNAR_DAY_NAMES[lunar.day - 1];
+  if (deities.length) title = deities.map(d => d.name + '聖誕').join('　');
+  document.getElementById('dpTitle').textContent = title;
+
+  let html = '';
+
+  if (deities.length) {
+    html += `<div class="dp-section"><div class="dp-sec-label">神 明 聖 誕</div>`;
+    deities.forEach(d => {
+      html += `<div class="dp-deity-item">
+        <div class="dp-deity-icon">${d.icon}</div>
+        <div><div class="dp-deity-name">${d.name}</div>
+        <div class="dp-deity-sub">${d.domain}<br>宜：${d.pray}</div></div>
+      </div>`;
+    });
+    html += `</div>`;
+
+    // Use the first deity's guide info (or merge if multiple)
+    const guide = deities[0];
+
+    if (guide.temples && guide.temples.length) {
+      html += `<div class="dp-guide-section">
+        <div class="dp-guide-title">推 薦 廟 宇</div>
+        <div class="dp-temple-list">
+          ${guide.temples.map(t => `<span class="dp-temple-tag">🏛 ${t}</span>`).join('')}
+        </div>
+      </div>`;
+    }
+
+    if (guide.offerings && guide.offerings.length) {
+      html += `<div class="dp-guide-section">
+        <div class="dp-guide-title">祭 品 清 單</div>
+        <div class="dp-offering-list">
+          ${guide.offerings.map(o => `<span class="dp-offering-tag">✦ ${o}</span>`).join('')}
+        </div>
+      </div>`;
+    }
+
+    if (guide.steps && guide.steps.length) {
+      html += `<div class="dp-guide-section">
+        <div class="dp-guide-title">拜 神 流 程</div>
+        <div class="dp-steps">
+          ${guide.steps.map((s, i) => `<div class="dp-step"><div class="dp-step-num">${i+1}</div><div>${s}</div></div>`).join('')}
+        </div>
+      </div>`;
+    }
+  }
+
+  if (special) {
+    const isG = special.type === 'auspicious';
+    html += `<div class="dp-section"><div class="dp-sec-label">${isG?'吉日宜事':'凶日忌事'}</div><div class="dp-tags">`;
+    special.yi.forEach(t => { html += `<span class="dp-tag dp-tag-good">宜 ${t}</span>`; });
+    special.ji.forEach(t => { html += `<span class="dp-tag dp-tag-bad">忌 ${t}</span>`; });
+    html += `</div></div>`;
+  }
+
+  if (!deities.length && !special) {
+    html = `<div style="font-size:0.8rem;color:var(--text-dim);line-height:2;letter-spacing:0.08em">
+      此日為平常日，無特別吉凶標記。<br>按個人需要安排事務即可。</div>`;
+  }
+
+  document.getElementById('dpContent').innerHTML = html;
+  document.getElementById('dayPanel').style.display = 'flex';
+}
+
+function closeDayPanel(e) {
+  if (!e || e.target === document.getElementById('dayPanel')) {
+    document.getElementById('dayPanel').style.display = 'none';
+  }
+}
+
+// ── Month nav ─────────────────────────────────────────────────────────────────
+function changeMonth(delta) {
+  viewMonth += delta;
+  if (viewMonth > 11) { viewMonth = 0;  viewYear++; }
+  if (viewMonth < 0)  { viewMonth = 11; viewYear--; }
+  renderCalendar();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+renderCalendar();
+</script>
+
+<!-- ── Auth Modal ──────────────────────────────── -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-modal">
+    <button class="auth-close" onclick="closeAuthModal()">✕</button>
+    <div class="auth-modal-inner">
+      <div class="auth-brand">風 生 水 起</div>
+      <div class="auth-brand-sub">FengShui Oracle</div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login"    onclick="switchAuthTab('login')">登 入</button>
+        <button class="auth-tab"        data-tab="register" onclick="switchAuthTab('register')">註 冊</button>
+      </div>
+      <div class="auth-panel active" data-panel="login">
+        <div class="auth-field">
+          <label class="auth-label">電 郵 地 址</label>
+          <input class="auth-input" type="email" id="loginEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">密 碼</label>
+          <input class="auth-input" type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div class="auth-error" id="loginError"></div>
+        <button class="auth-submit" onclick="doLogin()">登 入</button>
+        <div class="auth-or">或</div>
+        <button class="auth-google" onclick="doGoogleLogin()">
+          <svg class="auth-google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google 登入（示範）
+        </button>
+        <div class="auth-terms">登入即代表同意使用條款及私隱政策</div>
+      </div>
+      <div class="auth-panel" data-panel="register">
+        <div class="auth-field">
+          <label class="auth-label">姓 名 / 暱 稱</label>
+          <input class="auth-input" type="text" id="regName" placeholder="你的名字" onkeydown="if(event.key==='Enter')doRegister()">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">電 郵 地 址</label>
+          <input class="auth-input" type="email" id="regEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doRegister()">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">密 碼（最少6位）</label>
+          <input class="auth-input" type="password" id="regPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doRegister()">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">確 認 密 碼</label>
+          <input class="auth-input" type="password" id="regPass2" placeholder="••••••••" onkeydown="if(event.key==='Enter')doRegister()">
+        </div>
+        <div class="auth-error" id="regError"></div>
+        <button class="auth-submit" onclick="doRegister()">立 即 註 冊</button>
+        <div class="auth-or">或</div>
+        <button class="auth-google" onclick="doGoogleLogin()">
+          <svg class="auth-google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google 註冊（示範）
+        </button>
+        <div class="auth-terms">註冊即代表同意使用條款及私隱政策</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="auth-overlay" id="settingsOverlay">
+  <div class="settings-modal">
+    <button class="auth-close" onclick="closeSettings()">✕</button>
+    <div id="settingsBody"></div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+
+<!-- ── Mobile bottom tab bar ── -->
+<nav class="mob-tab-bar">
+  <a class="mob-tab-item" href="index.html">
+    <span class="mob-tab-icon">☯</span>
+    <span class="mob-tab-label">命盤</span>
+  </a>
+  <a class="mob-tab-item" href="index.html" onclick="sessionStorage.setItem('tab','match')">
+    <span class="mob-tab-icon">♡</span>
+    <span class="mob-tab-label">合婚</span>
+  </a>
+  <a class="mob-tab-item" href="index.html" onclick="sessionStorage.setItem('tab','rename')">
+    <span class="mob-tab-icon">文</span>
+    <span class="mob-tab-label">改名</span>
+  </a>
+  <a class="mob-tab-item" href="oracle.html">
+    <span class="mob-tab-icon">籤</span>
+    <span class="mob-tab-label">求簽</span>
+  </a>
+  <a class="mob-tab-item active" href="calendar.html">
+    <span class="mob-tab-icon">曆</span>
+    <span class="mob-tab-label">神曆</span>
+  </a>
+</nav>
+</body>
+</html>

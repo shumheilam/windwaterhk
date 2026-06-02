@@ -1,0 +1,3287 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>風水羅盤 · FengShui Oracle</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="auth.css">
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8d080;
+      --gold-dim: rgba(201,168,76,0.28);
+      --red-dark: #6b1010;
+      --red-mid: #9b2020;
+      --bg: #060404;
+      --bg-card: #0e0808;
+      --bg-sidebar: #0a0606;
+      --bg-input: rgba(255,255,255,0.04);
+      --text: #e8d5a3;
+      --text-dim: #907050;
+      --wood: #5a9a6a;
+      --fire: #cc4422;
+      --earth: #C4870A;
+      --metal: #A8A8A8;
+      --water: #0047AB;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Serif TC', serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image: radial-gradient(ellipse 80% 50% at 50% 0%, #1a0808 0%, transparent 65%);
+    }
+
+    /* ── Unified nav (shared with oracle.html) ──── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 2rem;
+      border-bottom: 1px solid rgba(201,168,76,0.18);
+    }
+    .nav-brand {
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 0.35em;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+    .nav-brand-sub {
+      font-size: 0.55rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      color: var(--text-dim);
+      margin-top: 0.1rem;
+    }
+    .nav-tabs { display: flex; gap: 0.5rem; }
+    .nav-tab {
+      font-size: 0.75rem;
+      font-family: 'Noto Serif TC', serif;
+      letter-spacing: 0.2em;
+      text-decoration: none;
+      padding: 0.38rem 0.88rem;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      color: var(--text-dim);
+      transition: color 0.2s, background 0.2s, border-color 0.2s;
+    }
+    .nav-tab.active {
+      color: var(--gold);
+      border-color: rgba(201,168,76,0.4);
+      background: rgba(201,168,76,0.08);
+    }
+    .nav-tab:not(.active):hover { color: var(--text); }
+
+    /* ── Header ─────────────────────────────────── */
+    header {
+      text-align: center;
+      padding: 2.8rem 1rem 1.5rem;
+    }
+
+    .site-title {
+      font-size: clamp(1.9rem, 5.5vw, 2.9rem);
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 0.35em;
+      text-shadow: 0 0 28px rgba(201,168,76,0.38), 0 0 56px rgba(201,168,76,0.12);
+    }
+
+    .site-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      letter-spacing: 0.6em;
+      margin-top: 0.35rem;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin: 1.1rem auto;
+      width: fit-content;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      display: block;
+      width: 72px;
+      height: 1px;
+    }
+    .divider::before { background: linear-gradient(to right, transparent, var(--gold)); }
+    .divider::after  { background: linear-gradient(to left,  transparent, var(--gold)); }
+    .divider-sym { color: var(--gold); font-size: 0.85rem; opacity: 0.65; }
+
+    /* ── Layout ──────────────────────────────────── */
+    .layout {
+      display: flex;
+      gap: 1.4rem;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 1.2rem 5rem;
+      align-items: flex-start;
+    }
+
+    /* ── Sidebar ─────────────────────────────────── */
+    .sidebar { width: 218px; flex-shrink: 0; position: sticky; top: 1rem; }
+
+    .sidebar-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--gold-dim);
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .sidebar-head-title {
+      font-size: 0.78rem;
+      color: var(--gold);
+      letter-spacing: 0.38em;
+      font-weight: 700;
+    }
+
+    .sb-icon {
+      color: var(--gold);
+      font-size: 0.75rem;
+      transition: transform 0.3s;
+      display: inline-block;
+    }
+    .sb-icon.up { transform: rotate(180deg); }
+
+    .sidebar-body {
+      background: var(--bg-sidebar);
+      border: 1px solid var(--gold-dim);
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      max-height: 560px;
+      transition: max-height 0.35s ease, opacity 0.3s;
+    }
+    .sidebar-body.collapsed { max-height: 0; overflow: hidden; }
+
+    .sidebar-body::-webkit-scrollbar { width: 3px; }
+    .sidebar-body::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+    .profile-empty {
+      padding: 1.4rem 1rem;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      line-height: 2;
+    }
+
+    /* Profile card */
+    .p-card {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid rgba(201,168,76,0.09);
+      cursor: pointer;
+      transition: background 0.18s;
+      position: relative;
+    }
+    .p-card:hover   { background: rgba(201,168,76,0.055); }
+    .p-card.active  { background: rgba(201,168,76,0.1); border-left: 2px solid var(--gold); }
+
+    .p-card-name {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.22rem;
+    }
+
+    .p-card-info {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      line-height: 1.7;
+    }
+
+    .p-card-actions {
+      display: flex;
+      gap: 0.35rem;
+      margin-top: 0.45rem;
+    }
+
+    .p-btn {
+      font-size: 0.62rem;
+      padding: 0.18rem 0.5rem;
+      border-radius: 3px;
+      border: 1px solid;
+      cursor: pointer;
+      font-family: 'Noto Serif TC', serif;
+      letter-spacing: 0.08em;
+      background: transparent;
+      transition: background 0.18s;
+    }
+    .p-btn-edit   { border-color: rgba(201,168,76,0.35); color: var(--gold); }
+    .p-btn-edit:hover   { background: rgba(201,168,76,0.12); }
+    .p-btn-delete { border-color: rgba(180,50,50,0.38); color: #cc6666; }
+    .p-btn-delete:hover { background: rgba(180,50,50,0.12); }
+
+    /* Mobile sidebar toggle */
+    .mob-sidebar-toggle {
+      display: none;
+      width: 100%;
+      padding: 0.65rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--gold-dim);
+      border-radius: 7px;
+      color: var(--gold);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.35em;
+      cursor: pointer;
+      text-align: left;
+      margin-bottom: 0.9rem;
+    }
+    .mob-sidebar-toggle .mob-icon {
+      float: right;
+      transition: transform 0.3s;
+    }
+    .mob-sidebar-toggle.open .mob-icon { transform: rotate(180deg); }
+
+    /* ── Main content ────────────────────────────── */
+    .main-content { flex: 1; min-width: 0; }
+
+    /* ── Card ────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--gold-dim);
+      border-radius: 10px;
+      padding: 1.8rem 2rem;
+      position: relative;
+      margin-bottom: 1.4rem;
+    }
+
+    .cc { position:absolute; width:13px; height:13px; border-color:var(--gold); border-style:solid; opacity:0.38; }
+    .cc.tl { top:7px;    left:7px;  border-width:1px 0 0 1px; border-radius:2px 0 0 0; }
+    .cc.tr { top:7px;    right:7px; border-width:1px 1px 0 0; border-radius:0 2px 0 0; }
+    .cc.bl { bottom:7px; left:7px;  border-width:0 0 1px 1px; border-radius:0 0 0 2px; }
+    .cc.br { bottom:7px; right:7px; border-width:0 1px 1px 0; border-radius:0 0 2px 0; }
+
+    .card-title {
+      text-align: center;
+      color: var(--gold);
+      font-size: 0.85rem;
+      letter-spacing: 0.55em;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+
+    /* ── Edit mode bar ───────────────────────────── */
+    .edit-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(201,168,76,0.07);
+      border: 1px solid rgba(201,168,76,0.28);
+      border-radius: 5px;
+      padding: 0.55rem 0.9rem;
+      margin-bottom: 1.1rem;
+      font-size: 0.75rem;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+    }
+    .edit-bar.hidden { display: none; }
+
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.28);
+      color: var(--text-dim);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.68rem;
+      padding: 0.22rem 0.65rem;
+      border-radius: 3px;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      transition: all 0.2s;
+    }
+    .btn-cancel:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── Form ────────────────────────────────────── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+      gap: 0.95rem 1.1rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .fg-full { grid-column: 1 / -1; }
+
+    .form-group label {
+      display: block;
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      letter-spacing: 0.25em;
+      margin-bottom: 0.38rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid rgba(201,168,76,0.22);
+      color: var(--text);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.88rem;
+      padding: 0.58rem 0.72rem;
+      border-radius: 5px;
+      outline: none;
+      transition: border-color 0.22s, box-shadow 0.22s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .form-group select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23907050'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.65rem center;
+      padding-right: 1.9rem;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(201,168,76,0.09);
+    }
+    .form-group select option { background: #160e0a; color: var(--text); }
+
+    .shichen-note {
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      margin-top: 0.35rem;
+      line-height: 1.5;
+    }
+
+    /* ── Sidebar new-user button ─────────────────── */
+    .btn-new-user {
+      display: block;
+      width: calc(100% - 1.6rem);
+      margin: 0.8rem 0.8rem 0.9rem;
+      padding: 0.6rem 0.5rem;
+      background: rgba(201,168,76,0.06);
+      border: 1px dashed rgba(201,168,76,0.4);
+      color: var(--gold);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.22s;
+      text-align: center;
+    }
+    .btn-new-user:hover {
+      background: rgba(201,168,76,0.12);
+      border-color: var(--gold);
+      border-style: solid;
+    }
+
+    /* ── Button row ──────────────────────────────── */
+    .btn-row { display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .btn-calc-only {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      text-align: center;
+      padding: 0.2rem;
+      transition: color 0.2s;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .btn-calc-only:hover { color: var(--gold); }
+
+    .btn-primary {
+      padding: 0.78rem 0.5rem;
+      background: linear-gradient(135deg, var(--red-dark), var(--red-mid) 50%, var(--red-dark));
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.45em;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.28s;
+      overflow: hidden;
+      position: relative;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(201,168,76,0.08) 50%, transparent 60%);
+      transform: translateX(-100%);
+      transition: transform 0.5s;
+    }
+    .btn-primary:hover { border-color: var(--gold-light); color: var(--gold-light); box-shadow: 0 0 16px rgba(201,168,76,0.14); }
+    .btn-primary:hover::before { transform: translateX(100%); }
+
+    .btn-secondary {
+      padding: 0.78rem 0.5rem;
+      background: rgba(201,168,76,0.055);
+      border: 1px solid rgba(201,168,76,0.32);
+      color: var(--gold);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.38em;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.28s;
+    }
+    .btn-secondary:hover { background: rgba(201,168,76,0.11); border-color: var(--gold); }
+
+    /* ── Result ──────────────────────────────────── */
+    #resultSection { display: none; animation: fadeIn 0.55s ease; }
+    #resultSection.visible { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-name {
+      text-align: center;
+      color: var(--gold-light);
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      margin-bottom: 0.18rem;
+    }
+
+    .result-title {
+      text-align: center;
+      color: var(--gold);
+      font-size: 1.05rem;
+      letter-spacing: 0.5em;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .result-meta {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      margin-bottom: 1.7rem;
+    }
+
+    /* ── Four pillars ────────────────────────────── */
+    .pillars-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.6rem;
+    }
+
+    .pillar {
+      flex: 1;
+      max-width: 155px;
+      padding: 1.4rem 0.45rem 1.1rem;
+      background: rgba(255,255,255,0.018);
+      border: 1px solid var(--gold-dim);
+      text-align: center;
+      position: relative;
+      transition: transform 0.2s;
+    }
+    .pillar + .pillar { border-left: none; }
+    .pillar:first-child { border-radius: 8px 0 0 8px; }
+    .pillar:last-child  { border-radius: 0 8px 8px 0; }
+    .pillar:hover { transform: translateY(-3px); z-index: 1; }
+    .pillar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+    }
+
+    .pillar-label {
+      font-size: 0.63rem;
+      color: var(--text-dim);
+      letter-spacing: 0.3em;
+      margin-bottom: 0.95rem;
+    }
+
+    .pillar-stem, .pillar-branch {
+      font-size: clamp(2.1rem, 5vw, 3.1rem);
+      font-weight: 900;
+      line-height: 1.1;
+      display: block;
+      text-shadow: 0 0 12px currentColor;
+    }
+
+    .pillar-sep {
+      width: 22px; height: 1px;
+      background: var(--gold-dim);
+      margin: 0.45rem auto;
+    }
+
+    .pillar-el-row {
+      font-size: 0.66rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      margin-top: 0.38rem;
+      line-height: 1.9;
+    }
+
+    .pillar-animal {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 0.12rem;
+    }
+
+    .el-wood  { color: var(--wood);  }
+    .el-fire  { color: var(--fire);  }
+    .el-earth { color: var(--earth); }
+    .el-metal { color: var(--metal); }
+    .el-water { color: var(--water); }
+
+    /* ── Info cards ──────────────────────────────── */
+    .info-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 0.85rem;
+      margin-top: 1.2rem;
+    }
+
+    .info-card {
+      background: rgba(255,255,255,0.018);
+      border: 1px solid var(--gold-dim);
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+    }
+
+    .ic-label {
+      font-size: 0.63rem;
+      color: var(--text-dim);
+      letter-spacing: 0.3em;
+      margin-bottom: 0.28rem;
+    }
+
+    .ic-value {
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+
+    /* ── Element bars ────────────────────────────── */
+    .el-summary {
+      background: rgba(255,255,255,0.018);
+      border: 1px solid var(--gold-dim);
+      border-radius: 6px;
+      padding: 1rem 1.3rem;
+      margin-top: 0.85rem;
+    }
+
+    .el-summary-title {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.35em;
+      margin-bottom: 0.85rem;
+      text-align: center;
+    }
+
+    .el-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .el-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .el-bar-lbl {
+      font-size: 0.75rem;
+      font-weight: 700;
+      width: 1.2em;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .el-bar-track {
+      flex: 1;
+      height: 12px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .el-bar {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+    }
+
+    .el-bar-cnt { font-size: 0.68rem; color: var(--text-dim); width: 1em; text-align: right; flex-shrink: 0; }
+
+    /* ── Mobile ──────────────────────────────────── */
+    @media (max-width: 700px) {
+      .layout { flex-direction: column; padding: 0 0.75rem 4rem; }
+      .sidebar { width: 100%; position: static; }
+      .sidebar-head { display: none; }
+      .sidebar-body {
+        border: 1px solid var(--gold-dim);
+        border-radius: 8px;
+        max-height: 0;
+        overflow: hidden;
+      }
+      .sidebar-body.mob-open { max-height: 380px; overflow-y: auto; }
+      .mob-sidebar-toggle { display: block; }
+      .card { padding: 1.3rem 0.9rem; }
+
+      /* ── Font size: ensure minimum 14px for readable text ── */
+      .p-card-name   { font-size: 1rem; }
+      .p-card-info   { font-size: 0.82rem; }     /* was 0.65rem (~10px) */
+      .form-group label { font-size: 0.82rem; }  /* was 0.68rem */
+      .shichen-note  { font-size: 0.78rem; }     /* was 0.62rem */
+      .card-title    { font-size: 0.92rem; }     /* was 0.85rem */
+      .ic-label      { font-size: 0.78rem; }     /* was 0.63rem */
+      .ic-value      { font-size: 1rem; }
+      .el-summary-title { font-size: 0.8rem; }
+      .el-bar-lbl    { font-size: 0.88rem; }
+      .pillar-label  { font-size: 0.75rem; }
+      .pillar-el-row { font-size: 0.78rem; }
+      .result-meta   { font-size: 0.82rem; }
+      .da-card-label { font-size: 0.78rem; }
+      .da-card-sub   { font-size: 0.82rem; }
+      .rn-card-label { font-size: 0.75rem; }
+      .scene-desc    { font-size: 0.72rem; }
+      .scene-name    { font-size: 0.88rem; }
+
+      /* ── Buttons: ensure min 44px touch target ── */
+      .p-btn {
+        font-size: 0.82rem;
+        padding: 0.6rem 0.9rem;  /* was 0.18rem — now ≥ 44px */
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+      .p-card-actions { gap: 0.5rem; flex-wrap: wrap; }
+      .btn-new-user  { min-height: 44px; font-size: 0.88rem; }
+      .btn-primary   { min-height: 48px; font-size: 1rem; }
+      .btn-secondary { min-height: 48px; font-size: 0.95rem; }
+      .mob-sidebar-toggle { min-height: 44px; font-size: 0.88rem; }
+
+      /* ── Match section: stack on mobile ── */
+      .match-heart-col { padding: 0.5rem 0; }
+    }
+
+    @media (max-width: 480px) {
+      .scene-grid { grid-template-columns: repeat(3,1fr); gap: 0.4rem; }
+      .match-dim-grid { grid-template-columns: repeat(3,1fr); gap: 0.4rem; }
+      .da-free-grid { grid-template-columns: 1fr; }
+      .rn-free-grid { grid-template-columns: 1fr; }
+    }
+
+    footer {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      padding: 1.5rem 0;
+      opacity: 0.38;
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%,60% { transform: translateX(-5px); }
+      40%,80% { transform: translateX(5px); }
+    }
+
+
+    /* Oracle section removed — see oracle.html */
+
+
+    /* ── Rename Section ─────────────────────────────── */
+    #renameSection { display: none; animation: fadeIn 0.45s ease; }
+    #renameSection.active { display: block; }
+
+    .rename-container { max-width: 860px; margin: 0 auto; padding: 0 1.2rem 5rem; }
+
+    /* Scene selector */
+    .scene-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .scene-card {
+      padding: 1.2rem 0.6rem 1rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--gold-dim);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.22s;
+    }
+    .scene-card:hover  { background: rgba(201,168,76,0.06); border-color: rgba(201,168,76,0.5); transform: translateY(-2px); }
+    .scene-card.active { background: rgba(201,168,76,0.1);  border-color: var(--gold); box-shadow: 0 0 14px rgba(201,168,76,0.1); }
+    .scene-icon  { font-size: 1.8rem; margin-bottom: 0.4rem; line-height: 1; }
+    .scene-name  { font-size: 0.82rem; font-weight: 700; color: var(--gold); letter-spacing: 0.12em; }
+    .scene-desc  { font-size: 0.58rem; color: var(--text-dim); margin-top: 0.2rem; letter-spacing: 0.06em; line-height: 1.5; }
+
+    /* Scene forms */
+    .scene-form  { display: none; }
+    .scene-form.active { display: block; animation: fadeIn 0.35s ease; }
+
+    .rename-form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 0.9rem 1rem;
+      margin-bottom: 1.1rem;
+    }
+    .rename-input, .rename-select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid rgba(201,168,76,0.22);
+      color: var(--text);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.88rem;
+      padding: 0.58rem 0.72rem;
+      border-radius: 5px;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none; -webkit-appearance: none;
+    }
+    .rename-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23907050'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.65rem center; padding-right: 1.9rem;
+    }
+    .rename-select option { background: #160e0a; }
+    .rename-input:focus, .rename-select:focus { border-color: var(--gold); }
+    .rename-form-label {
+      font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.25em; display: block; margin-bottom: 0.35rem;
+    }
+    .rename-fg-full { grid-column: 1 / -1; }
+
+    /* Result */
+    #renameResult { display: none; animation: fadeIn 0.55s ease; }
+    #renameResult.visible { display: block; }
+
+    /* Free result cards */
+    .rn-free-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .rn-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--gold-dim);
+      border-left: 3px solid var(--gold);
+      border-radius: 7px;
+      padding: 0.95rem 1.1rem;
+    }
+    .rn-card-icon  { font-size: 1.2rem; margin-bottom: 0.3rem; }
+    .rn-card-label { font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.3em; margin-bottom: 0.25rem; }
+    .rn-card-val   { font-size: 0.88rem; font-weight: 700; color: var(--text); letter-spacing: 0.04em; line-height: 1.7; }
+    .rn-card-sub   { font-size: 0.65rem; color: var(--text-dim); margin-top: 0.25rem; line-height: 1.7; }
+
+    /* Radical recommendation chips */
+    .rn-radical-list {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem;
+    }
+    .rn-radical-chip {
+      padding: 0.25rem 0.7rem;
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 20px;
+      font-size: 0.78rem;
+      color: var(--gold);
+      background: rgba(201,168,76,0.06);
+      letter-spacing: 0.1em;
+    }
+
+    /* Score bar */
+    .rn-score-wrap { display: flex; align-items: center; gap: 0.8rem; margin: 0.5rem 0; }
+    .rn-score-bar-track { flex: 1; height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden; }
+    .rn-score-bar { height: 100%; border-radius: 5px; transition: width 0.6s ease; }
+    .rn-score-num { font-size: 0.82rem; font-weight: 700; color: var(--gold); min-width: 2.8em; text-align: right; }
+
+    /* Paid locked section */
+    .rn-paid-section {
+      background: linear-gradient(135deg, #130a22, #1e0e38);
+      border: 1px solid rgba(175,130,255,0.28);
+      border-radius: 8px;
+      padding: 1.3rem 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .rn-paid-title { font-size: 0.78rem; color: rgba(200,168,255,0.82); letter-spacing: 0.42em; font-weight: 700; margin-bottom: 0.55rem; }
+    .rn-paid-preview {
+      font-size: 0.77rem; color: rgba(200,168,255,0.3); line-height: 1.9;
+      -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+      max-height: 52px; overflow: hidden; margin-bottom: 0.8rem;
+      filter: blur(1.5px); user-select: none;
+    }
+    .rn-unlock-btn {
+      display: block; width: 100%; padding: 0.78rem;
+      background: linear-gradient(135deg, #130a22, #251045 50%, #130a22);
+      border: 1px solid rgba(175,130,255,0.38);
+      color: rgba(200,168,255,0.82);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.88rem; font-weight: 700; letter-spacing: 0.35em;
+      cursor: pointer; border-radius: 5px; transition: all 0.28s;
+    }
+    .rn-unlock-btn:hover { border-color: rgba(200,168,255,0.62); }
+
+    .rn-disclaimer {
+      font-size: 0.62rem; color: var(--text-dim); text-align: center;
+      letter-spacing: 0.07em; line-height: 1.9; opacity: 0.55;
+    }
+
+    @media (max-width: 600px) {
+      .scene-grid { grid-template-columns: repeat(3,1fr); gap: 0.5rem; }
+      .scene-name { font-size: 0.7rem; }
+    }
+
+    /* ── Match Section ──────────────────────────────── */
+    #matchSection { display: none; animation: fadeIn 0.45s ease; }
+    #matchSection.active { display: block; }
+
+    .match-container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 1.2rem 5rem;
+    }
+
+    .match-form-row {
+      display: grid;
+      grid-template-columns: 1fr 56px 1fr;
+      gap: 0.8rem;
+      align-items: start;
+      margin-bottom: 1.4rem;
+    }
+
+    .match-person-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.45em;
+      text-align: center;
+      padding-bottom: 0.75rem;
+      margin-bottom: 0.9rem;
+      border-bottom: 1px solid var(--gold-dim);
+    }
+    .match-person-badge.b { color: #cc7777; border-bottom-color: rgba(204,100,100,0.28); }
+
+    .match-heart-col {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 3.5rem;
+    }
+    .match-heart {
+      font-size: 1.6rem;
+      animation: mHeartBeat 1.6s ease-in-out infinite;
+    }
+    @keyframes mHeartBeat {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.18); }
+    }
+
+    .match-form-inputs { display: flex; flex-direction: column; gap: 0.65rem; }
+    .match-form-inputs .form-group label { margin-bottom: 0.3rem; }
+
+    .match-form-select,
+    .match-form-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid rgba(201,168,76,0.22);
+      color: var(--text);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.85rem;
+      padding: 0.55rem 0.72rem;
+      border-radius: 5px;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .match-form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23907050'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.65rem center;
+      padding-right: 1.9rem;
+    }
+    .match-form-select option { background: #160e0a; }
+    .match-form-select:focus,
+    .match-form-input:focus  { border-color: var(--gold); }
+
+    /* B person input highlights red tint */
+    .match-person-b .match-form-input,
+    .match-person-b .match-form-select {
+      border-color: rgba(204,100,100,0.2);
+    }
+    .match-person-b .match-form-input:focus,
+    .match-person-b .match-form-select:focus { border-color: #cc7777; }
+
+    /* Result */
+    #matchResult { display: none; animation: fadeIn 0.55s ease; }
+    #matchResult.visible { display: block; }
+
+    .match-result-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-bottom: 1.2rem;
+      align-items: center;
+    }
+
+    /* Radar */
+    .match-radar-wrap { text-align: center; }
+    #matchRadar { max-width: 100%; display: block; margin: 0 auto; }
+
+    /* Score ring */
+    .match-score-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .match-score-ring-wrap { position: relative; width: 130px; height: 130px; }
+    #matchScoreRing { position: absolute; top:0; left:0; }
+    .match-score-num {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .match-score-label {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      letter-spacing: 0.35em;
+      text-align: center;
+    }
+    .match-score-tag {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.2em;
+    }
+
+    /* Interaction analysis */
+    .match-interactions { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.2rem; }
+    .match-int-item {
+      font-size: 0.78rem;
+      color: var(--text);
+      line-height: 1.7;
+      padding: 0.55rem 0.9rem;
+      border-radius: 0 5px 5px 0;
+      border-left: 3px solid;
+      background: rgba(255,255,255,0.02);
+    }
+    .match-int-item.pos { border-left-color: var(--wood); }
+    .match-int-item.neg { border-left-color: var(--fire); }
+    .match-int-item.neu { border-left-color: var(--gold-dim); }
+
+    /* 3 dimension scores */
+    .match-dim-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .match-dim-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--gold-dim);
+      border-radius: 7px;
+      padding: 0.9rem 0.5rem;
+      text-align: center;
+    }
+    .match-dim-icon  { font-size: 1.2rem; margin-bottom: 0.25rem; }
+    .match-dim-name  { font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.2em; margin-bottom: 0.3rem; }
+    .match-dim-score { font-size: 1.6rem; font-weight: 900; color: var(--gold); }
+    .match-dim-desc  { font-size: 0.6rem; color: var(--text-dim); margin-top: 0.2rem; letter-spacing: 0.05em; }
+
+    /* Locked paid section */
+    .match-paid-section {
+      background: linear-gradient(135deg, #130a22, #1e0e38);
+      border: 1px solid rgba(175,130,255,0.28);
+      border-radius: 8px;
+      padding: 1.3rem 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .match-paid-title { font-size: 0.78rem; color: rgba(200,168,255,0.82); letter-spacing: 0.42em; font-weight: 700; margin-bottom: 0.55rem; }
+    .match-paid-preview {
+      font-size: 0.77rem;
+      color: rgba(200,168,255,0.32);
+      line-height: 1.9;
+      -webkit-mask-image: linear-gradient(to bottom, black 25%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 25%, transparent 100%);
+      max-height: 48px;
+      overflow: hidden;
+      margin-bottom: 0.8rem;
+    }
+    .match-unlock-btn {
+      display: block; width: 100%;
+      padding: 0.78rem;
+      background: linear-gradient(135deg, #130a22, #251045 50%, #130a22);
+      border: 1px solid rgba(175,130,255,0.38);
+      color: rgba(200,168,255,0.82);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.88rem; font-weight: 700;
+      letter-spacing: 0.35em; cursor: pointer; border-radius: 5px;
+      transition: all 0.28s;
+    }
+    .match-unlock-btn:hover { border-color: rgba(200,168,255,0.62); }
+
+    .match-disclaimer {
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      text-align: center;
+      letter-spacing: 0.07em;
+      line-height: 1.9;
+      opacity: 0.55;
+    }
+
+    @media (max-width: 600px) {
+      .match-form-row { grid-template-columns: 1fr; }
+      .match-heart-col { padding: 0.8rem 0; }
+      .match-result-top { grid-template-columns: 1fr; }
+      .match-dim-grid { grid-template-columns: repeat(3,1fr); gap: 0.5rem; }
+    }
+
+    /* ── Deep Analysis Section ──────────────────────── */
+    #deepSection { display: none; animation: fadeIn 0.55s ease; }
+    #deepSection.visible { display: block; }
+
+    .da-section-sub {
+      text-align: center;
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.22em;
+      margin-bottom: 1.5rem;
+      margin-top: -0.8rem;
+    }
+
+    .da-divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+      margin: 1.3rem 0;
+    }
+
+    .da-free-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .da-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--gold-dim);
+      border-left: 3px solid var(--gold);
+      border-radius: 7px;
+      padding: 1rem 1.1rem;
+    }
+    .da-card.taisui-warn { border-left-color: #e8b030; background: rgba(232,176,48,0.04); }
+    .da-card.taisui-ok   { border-left-color: var(--wood); }
+
+    /* ── 犯太歲詳細卡片 ── */
+    .da-taisui-full {
+      grid-column: 1 / -1;   /* 佔滿整行，突出顯示 */
+    }
+    .tai-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #e8b030;
+      background: rgba(232,176,48,0.1);
+      border: 1px solid rgba(232,176,48,0.3);
+      border-radius: 20px;
+      padding: 0.25rem 0.85rem;
+      letter-spacing: 0.08em;
+      margin-top: 0.3rem;
+    }
+    .tai-locked-wrap {
+      margin-top: 0.9rem;
+      padding: 0.85rem 1rem;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 7px;
+    }
+    .tai-locked-head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.45rem;
+    }
+    .tai-locked-title {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.32em;
+    }
+    .tai-lock-badge {
+      font-size: 0.58rem;
+      padding: 0.1rem 0.5rem;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 10px;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+    }
+    .tai-locked-body { position: relative; overflow: hidden; max-height: 4.2em; }
+    .tai-locked-blur {
+      font-size: 0.8rem;
+      color: var(--text);
+      line-height: 1.75;
+      letter-spacing: 0.04em;
+      filter: blur(4px);
+      user-select: none;
+      pointer-events: none;
+      -webkit-mask-image: linear-gradient(to bottom, black 10%, transparent 90%);
+      mask-image: linear-gradient(to bottom, black 10%, transparent 90%);
+    }
+    .tai-unlock-btn {
+      display: block;
+      width: 100%;
+      margin-top: 0.85rem;
+      padding: 0.68rem 0.5rem;
+      background: linear-gradient(135deg, #3d1278, #5e20a8 50%, #3d1278);
+      border: 1px solid rgba(175,130,255,0.42);
+      color: rgba(235,215,255,0.92);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.25s;
+    }
+    .tai-unlock-btn:hover {
+      border-color: rgba(200,168,255,0.65);
+      box-shadow: 0 0 18px rgba(140,90,255,0.18);
+    }
+
+    .da-card-icon  { font-size: 1.3rem; line-height: 1; margin-bottom: 0.38rem; }
+    .da-card-label { font-size: 0.62rem; color: var(--text-dim); letter-spacing: 0.3em; margin-bottom: 0.28rem; }
+    .da-card-value { font-size: 0.88rem; font-weight: 700; color: var(--text); letter-spacing: 0.04em; line-height: 1.7; }
+    .da-card-sub   { font-size: 0.67rem; color: var(--text-dim); letter-spacing: 0.04em; margin-top: 0.28rem; line-height: 1.7; }
+
+    /* Paid locked section */
+    .da-paid-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .da-paid-title { font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.3em; }
+    .da-paid-badge {
+      font-size: 0.6rem;
+      padding: 0.14rem 0.6rem;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.28);
+      border-radius: 10px;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+    }
+
+    .da-paid-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .da-locked-card {
+      background: rgba(255,255,255,0.015);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 7px;
+      padding: 0.9rem 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .da-locked-label {
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.28);
+      letter-spacing: 0.28em;
+      margin-bottom: 0.3rem;
+    }
+    .da-locked-blur {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.18);
+      filter: blur(5px);
+      user-select: none;
+      pointer-events: none;
+      line-height: 1.7;
+      padding-right: 1.6rem;
+    }
+    .da-lock-icon {
+      position: absolute;
+      top: 50%; right: 0.75rem;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      opacity: 0.5;
+    }
+
+    .da-upgrade-btn {
+      display: block;
+      width: 100%;
+      padding: 0.8rem;
+      background: linear-gradient(135deg, #130a22, #251045 50%, #130a22);
+      border: 1px solid rgba(175,130,255,0.35);
+      color: rgba(200,168,255,0.82);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.45em;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.28s;
+    }
+    .da-upgrade-btn:hover { border-color: rgba(200,168,255,0.62); box-shadow: 0 0 14px rgba(175,130,255,0.1); }
+
+    /* ── Single-purchase report cards ──────────────────── */
+    .da-single-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin: 1.4rem 0 1rem;
+    }
+    .da-single-title { font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.3em; }
+    .da-single-badge {
+      font-size: 0.6rem;
+      padding: 0.14rem 0.6rem;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.28);
+      border-radius: 10px;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+    }
+    .da-single-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.3rem;
+    }
+    .da-report-card {
+      background: rgba(255,255,255,0.018);
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .da-report-icon { font-size: 1.3rem; line-height: 1; }
+    .da-report-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      line-height: 1.5;
+    }
+    .da-report-price {
+      font-size: 0.68rem;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+    }
+    .da-report-unlock {
+      margin-top: 0.3rem;
+      padding: 0.42rem 0.6rem;
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.4);
+      color: rgba(201,168,76,0.85);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.25s;
+      align-self: flex-start;
+    }
+    .da-report-unlock:hover {
+      background: rgba(201,168,76,0.08);
+      border-color: rgba(201,168,76,0.75);
+    }
+
+    /* ── Daily notification button ──────────────────────── */
+    .da-notif-wrap {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .da-notif-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.6rem 1.1rem;
+      background: linear-gradient(135deg, #0a1a0e, #132b18 50%, #0a1a0e);
+      border: 1px solid rgba(120,200,130,0.35);
+      color: rgba(150,220,155,0.85);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.28s;
+    }
+    .da-notif-btn:hover { border-color: rgba(120,200,130,0.65); box-shadow: 0 0 12px rgba(100,190,110,0.1); }
+    .da-notif-status {
+      font-size: 0.72rem;
+      color: rgba(150,220,155,0.7);
+      letter-spacing: 0.08em;
+      display: none;
+    }
+    .da-notif-status.visible { display: inline; }
+
+    /* ── AI Section ──────────────────────────────────── */
+    .btn-ai {
+      display: block;
+      width: 100%;
+      margin-top: 1.3rem;
+      padding: 0.82rem;
+      background: linear-gradient(135deg, #130a22, #251045 50%, #130a22);
+      border: 1px solid rgba(175,130,255,0.38);
+      color: #c8a8ff;
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.45em;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-ai::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(200,168,255,0.07) 50%, transparent 60%);
+      transform: translateX(-100%);
+      transition: transform 0.5s;
+    }
+    .btn-ai:hover { border-color: rgba(200,168,255,0.65); box-shadow: 0 0 18px rgba(175,130,255,0.12); }
+    .btn-ai:hover::before { transform: translateX(100%); }
+    .btn-ai:disabled { opacity: 0.5; cursor: default; }
+    .btn-ai:disabled::before { display: none; }
+
+    .ai-card { display: none; }
+    .ai-card.visible { display: block; animation: fadeIn 0.5s ease; }
+
+    .ai-card-title {
+      text-align: center;
+      color: rgba(200,168,255,0.9);
+      font-size: 0.85rem;
+      letter-spacing: 0.55em;
+      margin-bottom: 1.4rem;
+      font-weight: 500;
+    }
+
+
+    .ai-key-note {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      margin-bottom: 1.1rem;
+      opacity: 0.7;
+    }
+
+    /* Loading */
+    .ai-loading {
+      text-align: center;
+      padding: 2.2rem 1rem;
+    }
+    .ai-loading-txt {
+      font-size: 0.82rem;
+      color: rgba(200,168,255,0.65);
+      letter-spacing: 0.45em;
+      margin-bottom: 1rem;
+    }
+    .ai-dots { display: flex; justify-content: center; gap: 0.5rem; }
+    .ai-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(200,168,255,0.55);
+      animation: aiPulse 1.2s ease-in-out infinite;
+    }
+    .ai-dot:nth-child(2) { animation-delay: 0.22s; }
+    .ai-dot:nth-child(3) { animation-delay: 0.44s; }
+    @keyframes aiPulse {
+      0%,60%,100% { transform: translateY(0); opacity: 0.35; }
+      30% { transform: translateY(-7px); opacity: 1; }
+    }
+
+    /* Sections */
+    .ai-sections { display: flex; flex-direction: column; gap: 1rem; }
+
+    .ai-sec {
+      background: rgba(175,130,255,0.03);
+      border: 1px solid rgba(175,130,255,0.15);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+
+    .ai-sec-title {
+      padding: 0.7rem 1.1rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: rgba(200,168,255,0.85);
+      border-bottom: 1px solid rgba(175,130,255,0.1);
+      background: rgba(175,130,255,0.05);
+    }
+
+    .ai-sec-body {
+      padding: 0.9rem 1.1rem;
+      font-size: 0.83rem;
+      line-height: 2.1;
+      color: var(--text);
+      letter-spacing: 0.04em;
+    }
+
+    /* Locked */
+    .ai-sec-locked .ai-sec-body {
+      max-height: 68px;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, black 25%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 25%, transparent 100%);
+      pointer-events: none;
+      user-select: none;
+    }
+    .ai-lock-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.65rem 1.1rem;
+      border-top: 1px dashed rgba(175,130,255,0.12);
+      font-size: 0.72rem;
+      color: rgba(200,168,255,0.45);
+      letter-spacing: 0.15em;
+    }
+
+    /* Error */
+    .ai-error {
+      padding: 1.1rem 1.2rem;
+      background: rgba(180,50,50,0.07);
+      border: 1px solid rgba(180,50,50,0.22);
+      border-radius: 6px;
+      color: #cc8888;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      line-height: 1.9;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">風 生 水 起<span class="nav-brand-sub">FengShui Oracle</span></a>
+  <div class="nav-tabs">
+    <a class="nav-tab active" id="tab-bazi"   href="#" onclick="switchMainTab('bazi');return false">八 字 命 盤</a>
+    <a class="nav-tab"        id="tab-match"   href="#" onclick="switchMainTab('match');return false">合 婚 配 對</a>
+    <a class="nav-tab"        id="tab-rename"  href="#" onclick="switchMainTab('rename');return false">改 名 系 統</a>
+    <a class="nav-tab"        id="tab-oracle"  href="oracle.html">求 簽 問 事</a>
+    <a class="nav-tab"        id="tab-cal"     href="calendar.html">神 明 曆</a>
+  </div>
+  <div class="nav-auth" id="navAuthArea"></div>
+</nav>
+
+<header>
+  <h1 class="site-title" id="pageTitle">八 字 命 盤</h1>
+  <p class="site-subtitle" id="pageSubtitle">Four Pillars of Destiny</p>
+  <div class="divider"><span class="divider-sym">✦</span></div>
+</header>
+
+<div class="layout" id="baziLayout">
+
+  <!-- ── Sidebar ─────────────────────────────── -->
+  <aside class="sidebar">
+
+    <!-- Mobile toggle -->
+    <button class="mob-sidebar-toggle" id="mobToggle" onclick="toggleMobSidebar()">
+      我 的 檔 案 <span class="mob-icon">▾</span>
+    </button>
+
+    <!-- Desktop header -->
+    <div class="sidebar-head" onclick="toggleSidebar()">
+      <span class="sidebar-head-title">我 的 檔 案</span>
+      <span class="sb-icon" id="sbIcon">▾</span>
+    </div>
+
+    <div class="sidebar-body" id="sidebarBody">
+      <div id="profileList"></div>
+      <button class="btn-new-user" onclick="startNewUser()">＋ 新 增 用 戶</button>
+    </div>
+  </aside>
+
+  <!-- ── Main ───────────────────────────────── -->
+  <main class="main-content">
+  <div id="baziSection">
+
+    <!-- Input card -->
+    <div class="card">
+      <div class="cc tl"></div><div class="cc tr"></div>
+      <div class="cc bl"></div><div class="cc br"></div>
+      <p class="card-title">輸 入 出 生 資 料</p>
+
+      <!-- Edit mode indicator -->
+      <div class="edit-bar hidden" id="editBar">
+        <span id="editLabel">正在編輯：</span>
+        <button class="btn-cancel" onclick="cancelEdit()">取 消 編 輯</button>
+      </div>
+
+      <div class="form-grid">
+        <!-- Name – full width -->
+        <div class="form-group fg-full">
+          <label>姓　名</label>
+          <input type="text" id="profileName" placeholder="請輸入姓名（儲存檔案時必填）" autocomplete="off">
+        </div>
+        <!-- Year -->
+        <div class="form-group">
+          <label>出生年份（西曆）</label>
+          <input type="number" id="birthYear" placeholder="例：1990" min="1800" max="2100">
+        </div>
+        <!-- Month -->
+        <div class="form-group">
+          <label>出生月份</label>
+          <select id="birthMonth">
+            <option value="">請選擇</option>
+            <option value="1">一月</option><option value="2">二月</option>
+            <option value="3">三月</option><option value="4">四月</option>
+            <option value="5">五月</option><option value="6">六月</option>
+            <option value="7">七月</option><option value="8">八月</option>
+            <option value="9">九月</option><option value="10">十月</option>
+            <option value="11">十一月</option><option value="12">十二月</option>
+          </select>
+        </div>
+        <!-- Day -->
+        <div class="form-group">
+          <label>出生日期</label>
+          <input type="number" id="birthDay" placeholder="例：15" min="1" max="31">
+        </div>
+        <!-- Shichen -->
+        <div class="form-group">
+          <label>出生時辰</label>
+          <select id="birthShichen">
+            <option value="">請選擇</option>
+            <option value="0">子時　23:00 – 01:00</option>
+            <option value="1">丑時　01:00 – 03:00</option>
+            <option value="2">寅時　03:00 – 05:00</option>
+            <option value="3">卯時　05:00 – 07:00</option>
+            <option value="4">辰時　07:00 – 09:00</option>
+            <option value="5">巳時　09:00 – 11:00</option>
+            <option value="6">午時　11:00 – 13:00</option>
+            <option value="7">未時　13:00 – 15:00</option>
+            <option value="8">申時　15:00 – 17:00</option>
+            <option value="9">酉時　17:00 – 19:00</option>
+            <option value="10">戌時　19:00 – 21:00</option>
+            <option value="11">亥時　21:00 – 23:00</option>
+          </select>
+          <p class="shichen-note">※ 子時橫跨午夜，出生於 23:00-23:59 者請填翌日日期</p>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="saveCalcBtn" onclick="saveAndCalculate()">儲 存 並 計 算</button>
+        <button class="btn-calc-only" onclick="calculate()">只推算，不儲存</button>
+      </div>
+    </div>
+
+    <!-- Result card -->
+    <div id="resultSection">
+      <div class="card">
+        <div class="cc tl"></div><div class="cc tr"></div>
+        <div class="cc bl"></div><div class="cc br"></div>
+
+        <div id="resNameRow"></div>
+        <p class="result-title">八 字 四 柱 命 盤</p>
+        <p class="result-meta" id="resMeta"></p>
+
+        <div class="pillars-wrap" id="pillarsWrap"></div>
+        <div class="info-row" id="infoRow"></div>
+        <div class="el-summary">
+          <p class="el-summary-title">八 字 五 行 分 佈</p>
+          <div class="el-bars" id="elBars"></div>
+        </div>
+        <button class="btn-ai" id="btnAI" onclick="openAICard()">✦ AI 解 讀 命 盤</button>
+      </div>
+    </div>
+
+    <!-- AI Reading Card -->
+    <div class="card ai-card" id="aiCard">
+      <div class="cc tl"></div><div class="cc tr"></div>
+      <div class="cc bl"></div><div class="cc br"></div>
+      <p class="ai-card-title">AI 命 盤 解 讀</p>
+      <p class="ai-key-note" style="text-align:center;margin-bottom:1rem;">✦ 根 據 您 的 五 行 命 盤 智 能 分 析 ✦</p>
+
+      <div id="aiResult"></div>
+    </div>
+
+    <!-- ── Deep Analysis Section ──────────────── -->
+    <div id="deepSection">
+      <div class="card">
+        <div class="cc tl"></div><div class="cc tr"></div>
+        <div class="cc bl"></div><div class="cc br"></div>
+        <p class="card-title">命 盤 延 伸 分 析</p>
+        <p class="da-section-sub">根據八字命格動態推算・免費部分即時顯示</p>
+
+        <!-- Free cards -->
+        <div class="da-free-grid" id="daFreeGrid"></div>
+
+        <div class="da-divider"></div>
+
+        <!-- Paid / locked section -->
+        <div class="da-paid-header">
+          <span class="da-paid-title">月 費 會 員 專 屬</span>
+          <span class="da-paid-badge">🔒 HKD$28/月</span>
+        </div>
+        <div class="da-paid-grid" id="daPaidGrid"></div>
+        <button class="da-upgrade-btn">🔓 升 級 會 員 · 解 鎖 全 部 分 析</button>
+
+        <!-- Single-purchase reports -->
+        <div class="da-divider"></div>
+        <div class="da-single-header">
+          <span class="da-single-title">單 次 深 度 報 告</span>
+          <span class="da-single-badge">一次過解鎖・永久保存</span>
+        </div>
+        <div class="da-single-grid">
+          <div class="da-report-card">
+            <div class="da-report-icon">💑</div>
+            <div class="da-report-name">另一半性格外貌分析</div>
+            <div class="da-report-price">HKD$68</div>
+            <button class="da-report-unlock" onclick="handleSingleReport(this,'另一半性格外貌分析')">立 即 解 鎖</button>
+          </div>
+          <div class="da-report-card">
+            <div class="da-report-icon">👶</div>
+            <div class="da-report-name">子女緣分析</div>
+            <div class="da-report-price">HKD$68</div>
+            <button class="da-report-unlock" onclick="handleSingleReport(this,'子女緣分析')">立 即 解 鎖</button>
+          </div>
+          <div class="da-report-card">
+            <div class="da-report-icon">👫</div>
+            <div class="da-report-name">兄弟姊妹緣分析</div>
+            <div class="da-report-price">HKD$68</div>
+            <button class="da-report-unlock" onclick="handleSingleReport(this,'兄弟姊妹緣分析')">立 即 解 鎖</button>
+          </div>
+          <div class="da-report-card">
+            <div class="da-report-icon">📅</div>
+            <div class="da-report-name">流年逐月運程</div>
+            <div class="da-report-price">HKD$98</div>
+            <button class="da-report-unlock" onclick="handleSingleReport(this,'流年逐月運程')">立 即 解 鎖</button>
+          </div>
+          <div class="da-report-card">
+            <div class="da-report-icon">🩸</div>
+            <div class="da-report-name">血光之災提示</div>
+            <div class="da-report-price">HKD$68</div>
+            <button class="da-report-unlock" onclick="handleSingleReport(this,'血光之災提示')">立 即 解 鎖</button>
+          </div>
+        </div>
+
+        <!-- Daily notification -->
+        <div class="da-divider"></div>
+        <div class="da-notif-wrap">
+          <button class="da-notif-btn" id="daNotifBtn" onclick="requestDailyNotif()">
+            🔔 開 啟 每 日 運 程 通 知
+          </button>
+          <span class="da-notif-status" id="daNotifStatus">✅ 已開啟，每日早上8時推送運程</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end baziSection -->
+
+
+  </main>
+</div>
+
+<!-- ── 合婚配對 Section ──────────────────────────── -->
+<div id="matchSection">
+  <div class="match-container">
+
+    <div class="card">
+      <div class="cc tl"></div><div class="cc tr"></div>
+      <div class="cc bl"></div><div class="cc br"></div>
+      <p class="card-title">合 婚 配 對</p>
+
+      <div class="match-form-row">
+        <!-- Person A -->
+        <div class="match-person-a">
+          <div class="match-person-badge">甲　方</div>
+          <div class="match-form-inputs">
+            <div class="form-group">
+              <label>姓名（選填）</label>
+              <input type="text" id="maName" class="match-form-input" placeholder="例：張三" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label>出生年份</label>
+              <input type="number" id="maYear" class="match-form-input" placeholder="例：1990" min="1800" max="2100">
+            </div>
+            <div class="form-group">
+              <label>出生月份</label>
+              <select id="maMonth" class="match-form-select">
+                <option value="">請選擇</option>
+                <option value="1">一月</option><option value="2">二月</option><option value="3">三月</option><option value="4">四月</option>
+                <option value="5">五月</option><option value="6">六月</option><option value="7">七月</option><option value="8">八月</option>
+                <option value="9">九月</option><option value="10">十月</option><option value="11">十一月</option><option value="12">十二月</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>出生日期</label>
+              <input type="number" id="maDay" class="match-form-input" placeholder="例：15" min="1" max="31">
+            </div>
+            <div class="form-group">
+              <label>出生時辰</label>
+              <select id="maShichen" class="match-form-select">
+                <option value="">請選擇</option>
+                <option value="0">子時 23:00–01:00</option><option value="1">丑時 01:00–03:00</option>
+                <option value="2">寅時 03:00–05:00</option><option value="3">卯時 05:00–07:00</option>
+                <option value="4">辰時 07:00–09:00</option><option value="5">巳時 09:00–11:00</option>
+                <option value="6">午時 11:00–13:00</option><option value="7">未時 13:00–15:00</option>
+                <option value="8">申時 15:00–17:00</option><option value="9">酉時 17:00–19:00</option>
+                <option value="10">戌時 19:00–21:00</option><option value="11">亥時 21:00–23:00</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Heart -->
+        <div class="match-heart-col"><div class="match-heart">💕</div></div>
+
+        <!-- Person B -->
+        <div class="match-person-b">
+          <div class="match-person-badge b">乙　方</div>
+          <div class="match-form-inputs">
+            <div class="form-group">
+              <label>姓名（選填）</label>
+              <input type="text" id="mbName" class="match-form-input" placeholder="例：李四" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label>出生年份</label>
+              <input type="number" id="mbYear" class="match-form-input" placeholder="例：1992" min="1800" max="2100">
+            </div>
+            <div class="form-group">
+              <label>出生月份</label>
+              <select id="mbMonth" class="match-form-select">
+                <option value="">請選擇</option>
+                <option value="1">一月</option><option value="2">二月</option><option value="3">三月</option><option value="4">四月</option>
+                <option value="5">五月</option><option value="6">六月</option><option value="7">七月</option><option value="8">八月</option>
+                <option value="9">九月</option><option value="10">十月</option><option value="11">十一月</option><option value="12">十二月</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>出生日期</label>
+              <input type="number" id="mbDay" class="match-form-input" placeholder="例：22" min="1" max="31">
+            </div>
+            <div class="form-group">
+              <label>出生時辰</label>
+              <select id="mbShichen" class="match-form-select">
+                <option value="">請選擇</option>
+                <option value="0">子時 23:00–01:00</option><option value="1">丑時 01:00–03:00</option>
+                <option value="2">寅時 03:00–05:00</option><option value="3">卯時 05:00–07:00</option>
+                <option value="4">辰時 07:00–09:00</option><option value="5">巳時 09:00–11:00</option>
+                <option value="6">午時 11:00–13:00</option><option value="7">未時 13:00–15:00</option>
+                <option value="8">申時 15:00–17:00</option><option value="9">酉時 17:00–19:00</option>
+                <option value="10">戌時 19:00–21:00</option><option value="11">亥時 21:00–23:00</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div><!-- end match-form-row -->
+
+      <button class="btn-primary" id="btnAnalyzeMatch" onclick="analyzeMatch()">開 始 合 婚 分 析</button>
+    </div>
+
+    <!-- Result card -->
+    <div id="matchResult">
+      <div class="card">
+        <div class="cc tl"></div><div class="cc tr"></div>
+        <div class="cc bl"></div><div class="cc br"></div>
+        <p class="card-title">合 婚 分 析 結 果</p>
+
+        <div class="match-result-top">
+          <!-- Radar chart -->
+          <div class="match-radar-wrap">
+            <canvas id="matchRadar" width="240" height="240"></canvas>
+          </div>
+          <!-- Score ring -->
+          <div class="match-score-wrap">
+            <div class="match-score-ring-wrap">
+              <canvas id="matchScoreRing" width="130" height="130"></canvas>
+              <div class="match-score-num" id="matchScoreNum">—</div>
+            </div>
+            <div class="match-score-label">整體合拍指數</div>
+            <div class="match-score-tag" id="matchScoreTag">—</div>
+          </div>
+        </div>
+
+        <!-- Element interaction analysis -->
+        <p style="font-size:0.68rem;color:var(--text-dim);letter-spacing:0.3em;margin-bottom:0.6rem">五 行 相 生 相 剋 分 析</p>
+        <div class="match-interactions" id="matchInteractions"></div>
+
+        <!-- 3 dimension scores -->
+        <div class="match-dim-grid" id="matchDimGrid"></div>
+
+        <!-- Paid locked section -->
+        <div class="match-paid-section">
+          <div class="match-paid-title">✦ 深 度 合 婚 分 析 報 告</div>
+          <div class="match-paid-preview" id="matchPaidPreview">深度報告包含：大運流年合婚分析、兩人婚後宮位影響、財帛互動、子嗣緣分、性格深度互補分析、2026-2030年合婚走勢預測…</div>
+          <button class="match-unlock-btn">🔓 HKD$68 · 解 鎖 完 整 合 婚 報 告</button>
+        </div>
+
+        <p class="match-disclaimer">以上分析僅供參考，完整合婚請諮詢專業命理師<br>結果包含隨機因子，每次推算結果可能略有不同</p>
+      </div>
+    </div>
+
+  </div><!-- end match-container -->
+</div><!-- end matchSection -->
+
+<!-- ── 改名系統 Section ───────────────────────────── -->
+<div id="renameSection">
+  <div class="rename-container">
+
+    <div class="card">
+      <div class="cc tl"></div><div class="cc tr"></div>
+      <div class="cc bl"></div><div class="cc br"></div>
+      <p class="card-title">改 名 系 統</p>
+
+      <!-- Scene selector -->
+      <div class="scene-grid">
+        <div class="scene-card active" id="sc-baby" onclick="selectScene('baby')">
+          <div class="scene-icon">👶</div>
+          <div class="scene-name">新生兒命名</div>
+          <div class="scene-desc">依命格五行<br>推薦吉祥用字</div>
+        </div>
+        <div class="scene-card" id="sc-adult" onclick="selectScene('adult')">
+          <div class="scene-icon">🧑</div>
+          <div class="scene-name">成人改名改運</div>
+          <div class="scene-desc">分析現有名字<br>五行配合程度</div>
+        </div>
+        <div class="scene-card" id="sc-biz" onclick="selectScene('biz')">
+          <div class="scene-icon">🏢</div>
+          <div class="scene-name">公司命名</div>
+          <div class="scene-desc">創辦人命格<br>配合行業五行</div>
+        </div>
+      </div>
+
+      <!-- ── 新生兒命名 Form ── -->
+      <div class="scene-form active" id="form-baby">
+        <div class="rename-form-grid">
+          <div class="rename-fg-full">
+            <label class="rename-form-label">姓氏（將顯示在推薦名字前）</label>
+            <input class="rename-input" id="rnBabySurname" placeholder="例：陳" autocomplete="off">
+          </div>
+          <div>
+            <label class="rename-form-label">寶寶性別</label>
+            <select class="rename-select" id="rnBabyGender">
+              <option value="">請選擇</option>
+              <option value="m">男</option>
+              <option value="f">女</option>
+            </select>
+          </div>
+          <div>
+            <label class="rename-form-label">出生年份</label>
+            <input class="rename-input" id="rnBabyYear" type="number" placeholder="例：2024" min="1900" max="2100">
+          </div>
+          <div>
+            <label class="rename-form-label">出生月份</label>
+            <select class="rename-select" id="rnBabyMonth">
+              <option value="">請選擇</option>
+              <option value="1">一月</option><option value="2">二月</option><option value="3">三月</option><option value="4">四月</option>
+              <option value="5">五月</option><option value="6">六月</option><option value="7">七月</option><option value="8">八月</option>
+              <option value="9">九月</option><option value="10">十月</option><option value="11">十一月</option><option value="12">十二月</option>
+            </select>
+          </div>
+          <div>
+            <label class="rename-form-label">出生日期</label>
+            <input class="rename-input" id="rnBabyDay" type="number" placeholder="例：15" min="1" max="31">
+          </div>
+          <div>
+            <label class="rename-form-label">出生時辰</label>
+            <select class="rename-select" id="rnBabyShichen">
+              <option value="">請選擇</option>
+              <option value="0">子時 23:00–01:00</option><option value="1">丑時 01:00–03:00</option>
+              <option value="2">寅時 03:00–05:00</option><option value="3">卯時 05:00–07:00</option>
+              <option value="4">辰時 07:00–09:00</option><option value="5">巳時 09:00–11:00</option>
+              <option value="6">午時 11:00–13:00</option><option value="7">未時 13:00–15:00</option>
+              <option value="8">申時 15:00–17:00</option><option value="9">酉時 17:00–19:00</option>
+              <option value="10">戌時 19:00–21:00</option><option value="11">亥時 21:00–23:00</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary" id="btnAnalyzeBaby" onclick="analyzeRename('baby')">開 始 命 名 分 析</button>
+      </div>
+
+      <!-- ── 成人改名 Form ── -->
+      <div class="scene-form" id="form-adult">
+        <div class="rename-form-grid">
+          <div class="rename-fg-full">
+            <label class="rename-form-label">現有全名（包括姓氏）</label>
+            <input class="rename-input" id="rnAdultName" placeholder="例：陳志明" autocomplete="off">
+          </div>
+          <div>
+            <label class="rename-form-label">出生年份</label>
+            <input class="rename-input" id="rnAdultYear" type="number" placeholder="例：1985" min="1900" max="2100">
+          </div>
+          <div>
+            <label class="rename-form-label">出生月份</label>
+            <select class="rename-select" id="rnAdultMonth">
+              <option value="">請選擇</option>
+              <option value="1">一月</option><option value="2">二月</option><option value="3">三月</option><option value="4">四月</option>
+              <option value="5">五月</option><option value="6">六月</option><option value="7">七月</option><option value="8">八月</option>
+              <option value="9">九月</option><option value="10">十月</option><option value="11">十一月</option><option value="12">十二月</option>
+            </select>
+          </div>
+          <div>
+            <label class="rename-form-label">出生日期</label>
+            <input class="rename-input" id="rnAdultDay" type="number" placeholder="例：20" min="1" max="31">
+          </div>
+          <div>
+            <label class="rename-form-label">出生時辰</label>
+            <select class="rename-select" id="rnAdultShichen">
+              <option value="">請選擇</option>
+              <option value="0">子時 23:00–01:00</option><option value="1">丑時 01:00–03:00</option>
+              <option value="2">寅時 03:00–05:00</option><option value="3">卯時 05:00–07:00</option>
+              <option value="4">辰時 07:00–09:00</option><option value="5">巳時 09:00–11:00</option>
+              <option value="6">午時 11:00–13:00</option><option value="7">未時 13:00–15:00</option>
+              <option value="8">申時 15:00–17:00</option><option value="9">酉時 17:00–19:00</option>
+              <option value="10">戌時 19:00–21:00</option><option value="11">亥時 21:00–23:00</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary" id="btnAnalyzeAdult" onclick="analyzeRename('adult')">分 析 現 有 名 字</button>
+      </div>
+
+      <!-- ── 公司命名 Form ── -->
+      <div class="scene-form" id="form-biz">
+        <div class="rename-form-grid">
+          <div>
+            <label class="rename-form-label">創辦人出生年份</label>
+            <input class="rename-input" id="rnBizYear" type="number" placeholder="例：1978" min="1900" max="2100">
+          </div>
+          <div>
+            <label class="rename-form-label">出生月份</label>
+            <select class="rename-select" id="rnBizMonth">
+              <option value="">請選擇</option>
+              <option value="1">一月</option><option value="2">二月</option><option value="3">三月</option><option value="4">四月</option>
+              <option value="5">五月</option><option value="6">六月</option><option value="7">七月</option><option value="8">八月</option>
+              <option value="9">九月</option><option value="10">十月</option><option value="11">十一月</option><option value="12">十二月</option>
+            </select>
+          </div>
+          <div>
+            <label class="rename-form-label">出生日期</label>
+            <input class="rename-input" id="rnBizDay" type="number" placeholder="例：8" min="1" max="31">
+          </div>
+          <div>
+            <label class="rename-form-label">出生時辰</label>
+            <select class="rename-select" id="rnBizShichen">
+              <option value="">請選擇</option>
+              <option value="0">子時 23:00–01:00</option><option value="1">丑時 01:00–03:00</option>
+              <option value="2">寅時 03:00–05:00</option><option value="3">卯時 05:00–07:00</option>
+              <option value="4">辰時 07:00–09:00</option><option value="5">巳時 09:00–11:00</option>
+              <option value="6">午時 11:00–13:00</option><option value="7">未時 13:00–15:00</option>
+              <option value="8">申時 15:00–17:00</option><option value="9">酉時 17:00–19:00</option>
+              <option value="10">戌時 19:00–21:00</option><option value="11">亥時 21:00–23:00</option>
+            </select>
+          </div>
+          <div class="rename-fg-full">
+            <label class="rename-form-label">主要行業</label>
+            <select class="rename-select" id="rnBizIndustry">
+              <option value="">請選擇</option>
+              <option value="tech">科技 / IT</option>
+              <option value="food">飲食 / 餐飲</option>
+              <option value="finance">金融 / 投資</option>
+              <option value="health">醫療 / 健康</option>
+              <option value="edu">教育 / 培訓</option>
+              <option value="trade">貿易 / 零售</option>
+              <option value="creative">創意 / 設計</option>
+              <option value="property">地產 / 建築</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary" id="btnAnalyzeBiz" onclick="analyzeRename('biz')">開 始 公 司 命 名 分 析</button>
+      </div>
+    </div>
+
+    <!-- Result card -->
+    <div id="renameResult">
+      <div class="card">
+        <div class="cc tl"></div><div class="cc tr"></div>
+        <div class="cc bl"></div><div class="cc br"></div>
+        <p class="card-title" id="rnResultTitle">分 析 結 果</p>
+
+        <!-- Free result grid -->
+        <div class="rn-free-grid" id="rnFreeGrid"></div>
+
+        <!-- Score bars (adult only) -->
+        <div id="rnScoreBars" style="display:none;margin-bottom:1.2rem">
+          <p style="font-size:0.65rem;color:var(--text-dim);letter-spacing:0.35em;margin-bottom:0.7rem">名 字 五 行 評 分</p>
+          <div id="rnScoreBarsInner"></div>
+        </div>
+
+        <!-- Paid section -->
+        <div class="rn-paid-section">
+          <div class="rn-paid-title" id="rnPaidTitle">✦ 完 整 改 名 報 告</div>
+          <div class="rn-paid-preview" id="rnPaidPreview">完整報告包含10個推薦名字，每個名字附筆劃五行分析、音義解說、與命格配合度評分，以及最佳選用時機建議…</div>
+          <button class="rn-unlock-btn" id="rnUnlockBtn">🔓 HKD$98 · 解 鎖 完 整 報 告</button>
+        </div>
+
+        <p class="rn-disclaimer">以上分析僅供參考，完整改名建議請諮詢專業命理師<br>筆劃五行以康熙字典筆劃為準，本系統採簡化演算</p>
+      </div>
+    </div>
+
+  </div>
+</div><!-- end renameSection -->
+
+<footer><p>風水羅盤 · FengShui Oracle · 月柱以節氣近似日期推算，子時橫跨午夜請注意日期</p><p style="margin-top:0.5rem">本 App 所有分析僅供娛樂及參考，不構成專業命理建議。如需完整分析請諮詢專業命理師。</p></footer>
+
+<script>
+// ── Constants ───────────────────────────────────────────
+const STEMS    = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const BRANCHES = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const STEM_EL  = ['木','木','火','火','土','土','金','金','水','水'];
+const BRAN_EL  = ['水','土','木','木','土','火','火','土','金','金','土','水'];
+const ANIMALS  = ['鼠','牛','虎','兔','龍','蛇','馬','羊','猴','雞','狗','豬'];
+const EL_CLS   = {'木':'el-wood','火':'el-fire','土':'el-earth','金':'el-metal','水':'el-water'};
+const EL_COL   = {'木':'var(--wood)','火':'var(--fire)','土':'var(--earth)','金':'var(--metal)','水':'var(--water)'};
+const EL_LIST  = ['木','火','土','金','水'];
+const MONTH_NAMES = ['','一','二','三','四','五','六','七','八','九','十','十一','十二'];
+
+// Solar term start dates [month, day] for each 月建
+// 0=寅月(立春) … 10=子月(大雪) … 11=丑月(小寒)
+const MONTH_STARTS = [
+  [2,4],[3,6],[4,5],[5,6],[6,6],[7,7],
+  [8,7],[9,8],[10,8],[11,7],[12,7],[1,6]
+];
+const MONTH_BRANCH = [2,3,4,5,6,7,8,9,10,11,0,1];
+
+// ── State ───────────────────────────────────────────────
+let editingId    = null;
+let activeId     = null;
+
+// ── Calculation ─────────────────────────────────────────
+function toJDN(y, m, d) {
+  const a = Math.floor((14 - m) / 12);
+  const Y = y + 4800 - a;
+  const M = m + 12 * a - 3;
+  return d + Math.floor((153*M+2)/5) + 365*Y
+         + Math.floor(Y/4) - Math.floor(Y/100) + Math.floor(Y/400) - 32045;
+}
+
+function getMonthBuilding(m, d) {
+  if (m === 1 && d < 6)  return 10; // 子月延續
+  if (m === 1 || (m === 2 && d < 4)) return 11; // 丑月
+  for (let i = 10; i >= 0; i--) {
+    const [sm, sd] = MONTH_STARTS[i];
+    if (m > sm || (m === sm && d >= sd)) return i;
+  }
+  return 11;
+}
+
+function computePillars(year, month, day, shichen) {
+  // 年柱 — 立春前屬前一年
+  let bzyear = year;
+  if (month < 2 || (month === 2 && day < 4)) bzyear--;
+  const yStem   = ((bzyear - 4) % 10 + 10) % 10;
+  const yBranch = ((bzyear - 4) % 12 + 12) % 12;
+
+  // 月柱
+  const mb        = getMonthBuilding(month, day);
+  const mBranch   = MONTH_BRANCH[mb];
+  const mStemBase = [2,4,6,8,0][yStem % 5];
+  const mStem     = (mStemBase + mb) % 10;
+
+  // 日柱 — 1900-01-01 = 甲戌 = 六十甲子第10位
+  const dayPos  = ((10 + toJDN(year, month, day) - toJDN(1900,1,1)) % 60 + 60) % 60;
+  const dStem   = dayPos % 10;
+  const dBranch = dayPos % 12;
+
+  // 時柱 — shichen(0-11) 直接為地支索引
+  const hBranch   = shichen;
+  const hStemBase = [0,2,4,6,8][dStem % 5];
+  const hStem     = (hStemBase + hBranch) % 10;
+
+  return [
+    { label:'年柱', stem:yStem,  branch:yBranch, bzyear },
+    { label:'月柱', stem:mStem,  branch:mBranch },
+    { label:'日柱', stem:dStem,  branch:dBranch },
+    { label:'時柱', stem:hStem,  branch:hBranch },
+  ];
+}
+
+// ── Calculate & render ──────────────────────────────────
+function calculate() {
+  const year    = parseInt(document.getElementById('birthYear').value);
+  const month   = parseInt(document.getElementById('birthMonth').value);
+  const day     = parseInt(document.getElementById('birthDay').value);
+  const shichen = parseInt(document.getElementById('birthShichen').value);
+  const name    = document.getElementById('profileName').value.trim();
+
+  if (!year || !month || !day || isNaN(shichen)) {
+    shake(document.querySelector('.btn-primary'));
+    return;
+  }
+  if (year < 1800 || year > 2100) { alert('請輸入 1800–2100 年之間的年份'); return; }
+
+  const pillars = computePillars(year, month, day, shichen);
+  renderResult(pillars, year, month, day, shichen, name);
+}
+
+function renderResult(pillars, year, month, day, shichen, name) {
+  const shichenName = BRANCHES[shichen] + '時';
+  const dateStr = `西曆 ${year} 年 ${MONTH_NAMES[month]} 月 ${day} 日　${shichenName}`;
+
+  document.getElementById('resNameRow').innerHTML = name
+    ? `<div class="result-name">${name}</div>` : '';
+  document.getElementById('resMeta').textContent = dateStr;
+
+  // Pillars
+  document.getElementById('pillarsWrap').innerHTML = pillars.map(p => {
+    const se = STEM_EL[p.stem], be = BRAN_EL[p.branch];
+    return `
+      <div class="pillar">
+        <div class="pillar-label">${p.label}</div>
+        <span class="pillar-stem ${EL_CLS[se]}">${STEMS[p.stem]}</span>
+        <div class="pillar-sep"></div>
+        <span class="pillar-branch ${EL_CLS[be]}">${BRANCHES[p.branch]}</span>
+        <div class="pillar-el-row">
+          <span class="${EL_CLS[se]}">${se}</span>
+          <span style="color:var(--text-dim)"> · </span>
+          <span class="${EL_CLS[be]}">${be}</span>
+        </div>
+        <div class="pillar-animal">${ANIMALS[p.branch]}</div>
+      </div>`;
+  }).join('');
+
+  // Info cards
+  const bazi      = pillars.map(p => STEMS[p.stem]+BRANCHES[p.branch]).join(' ');
+  const yearGZ    = STEMS[pillars[0].stem] + BRANCHES[pillars[0].branch];
+  const bzyear    = pillars[0].bzyear;
+  const dayMaster = STEMS[pillars[2].stem];
+  const dayEl     = STEM_EL[pillars[2].stem];
+
+  document.getElementById('infoRow').innerHTML = `
+    <div class="info-card">
+      <div class="ic-label">八 字</div>
+      <div class="ic-value" style="letter-spacing:0.22em">${bazi}</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-label">命 主 干 支 年</div>
+      <div class="ic-value">${bzyear}年・${yearGZ}年・${ANIMALS[pillars[0].branch]}年</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-label">日 主（我）</div>
+      <div class="ic-value">
+        <span class="${EL_CLS[dayEl]}" style="font-size:1.15rem;font-weight:900">${dayMaster}</span>
+        <span style="color:var(--text-dim)">（${dayEl}）</span>
+      </div>
+    </div>`;
+
+  // Element bars
+  const cnt = {'木':0,'火':0,'土':0,'金':0,'水':0};
+  pillars.forEach(p => { cnt[STEM_EL[p.stem]]++; cnt[BRAN_EL[p.branch]]++; });
+  const max = Math.max(...Object.values(cnt), 1);
+  document.getElementById('elBars').innerHTML = EL_LIST.map(el => {
+    const pct = Math.round((cnt[el] / max) * 100);
+    const bar = cnt[el] > 0
+      ? `<div class="el-bar" style="width:${pct}%;background:${EL_COL[el]};opacity:0.85"></div>`
+      : ``;
+    return `
+      <div class="el-bar-wrap">
+        <div class="el-bar-lbl ${EL_CLS[el]}">${el}</div>
+        <div class="el-bar-track">${bar}</div>
+        <div class="el-bar-cnt">${cnt[el]}</div>
+      </div>`;
+  }).join('');
+
+  const sec = document.getElementById('resultSection');
+  sec.classList.add('visible');
+  setTimeout(() => sec.scrollIntoView({behavior:'smooth', block:'nearest'}), 80);
+
+  // Deep analysis (rendered after a brief delay for better UX)
+  setTimeout(() => renderDeepAnalysis(pillars, year), 120);
+}
+
+// ── Deep Analysis Data ──────────────────────────────────
+const DA_LUCKY_COLORS = {
+  '木':{ main:['綠色','青色','藍色'],   avoid:'白色、金色' },
+  '火':{ main:['紅色','橙色','紫色'],   avoid:'黑色、深藍色' },
+  '土':{ main:['黃色','咖啡色','米色'], avoid:'綠色、青色' },
+  '金':{ main:['白色','銀色','米白'],   avoid:'紅色、橙色' },
+  '水':{ main:['黑色','深藍色','灰色'], avoid:'黃色、咖啡色' },
+};
+const DA_LUCKY_NUMS = { '木':[3,8], '火':[2,7], '土':[5,0], '金':[4,9], '水':[1,6] };
+
+// 天乙貴人：日干 → 地支索引（子=0…亥=11）
+const DA_GUIREN = {
+  0:[1,7], 1:[0,8], 2:[11,9], 3:[11,9], 4:[1,7],
+  5:[0,8], 6:[1,7], 7:[6,2],  8:[3,5],  9:[3,5],
+};
+
+// 犯太歲 2026 丙午（午=branch 6）— 馬鼠兔雞
+const TAISUI_2026 = { branch:6, conflicts:{ 6:'犯太歲（本命年）', 0:'沖太歲', 3:'破太歲', 9:'刑太歲' } };
+
+// 詳細太歲資料：每個受影響生肖的簡介、深度分析及化解方法
+const TAISUI_DETAIL = {
+  6: { // 馬
+    icon:'🐴', animal:'屬馬',
+    intro:'今年運勢變動較大，諸事宜守不宜攻',
+    detail:'今年本命年，屬流年最大沖剋，事業、感情、財運均易有波動起伏。宜低調行事，切忌大動土木或重大投資決策，凡事謹慎保守方能化危為機。',
+    methods:['① 安太歲（最重要）：農曆正月前往廟宇辦安太歲儀式，推薦黃大仙祠、圓玄學院','② 佩戴本命佛或太歲符隨身護身，全年貼身守護','③ 每月初一、十五拜太歲星君，誠心祈求平安','④ 多行善積德：放生、捐款、義工服務，以善業化煞'],
+  },
+  0: { // 鼠
+    icon:'🐭', animal:'屬鼠',
+    intro:'今年易有衝突動盪，注意人際關係',
+    detail:'今年子午相沖，人際關係易起波瀾，工作上易與上司或同事產生摩擦，感情亦易有衝突誤解。出行需格外謹慎，避免意外。宜多溝通、少爭論，保持謙遜低調。',
+    methods:['① 佩戴玉器或粉晶化解沖剋，穩定情緒','② 遇事多忍讓三分，凡事以和為貴，避免硬碰','③ 出行謹慎，避免高風險活動及陌生地區','④ 可在家中或辦公室供奉太歲神牌化解沖剋'],
+  },
+  3: { // 兔
+    icon:'🐰', animal:'屬兔',
+    intro:'今年易有暗耗，注意財務損失',
+    detail:'今年卯午相破，主財物暗耗，易有不預期支出或無端損失，健康方面亦需注意腸胃及情緒問題。宜加強財務規劃，避免大額投資、擔保他人及衝動消費。',
+    methods:['① 隨身佩戴銅錢或葫蘆吊墜化解暗耗','② 加強財務管理，記錄收支，避免衝動消費','③ 定期健康檢查，及早發現問題及早處理','④ 多做善事積陰德，以善業抵消流年暗耗之氣'],
+  },
+  9: { // 雞
+    icon:'🐓', animal:'屬雞',
+    intro:'今年易有是非官非，謹言慎行',
+    detail:'今年酉午相刑，易招惹口舌是非、官司訴訟，說話需格外謹慎，在社交媒體及公開場合發言更需三思。宜以和為貴，主動避免捲入他人糾紛。',
+    methods:['① 謹言慎行，避免在公開場合發表敏感或爭議言論','② 重要文件、合約需仔細審閱，必要時請律師協助','③ 佩戴文昌塔吊墜或龍形吊墜化解口舌是非','④ 誠心拜文昌帝君或城隍爺，祈求官非化解'],
+  },
+};
+
+const DA_YIJI = {
+  '木':{ yi:'宜穿青綠藍色服裝；宜向東方出行；宜親近大自然', ji:'忌穿白色金色；忌過度急躁；忌西方決策' },
+  '火':{ yi:'宜穿紅橙紫色服裝；宜向南方發展；宜積極社交', ji:'忌穿黑色深藍；忌情緒過激；忌北方行事' },
+  '土':{ yi:'宜穿黃咖啡米色；宜居中穩定；宜踏實誠信待人', ji:'忌穿青綠服裝；忌偏激行事；忌頻繁遷移' },
+  '金':{ yi:'宜穿白銀金色；宜向西方部署；宜守規守法行事', ji:'忌穿紅橙服裝；忌衝動行事；忌南方冒進' },
+  '水':{ yi:'宜穿黑深藍灰；宜向北方求學；宜增廣見識', ji:'忌穿黃咖色；忌原地踏步；忌輕信謠言' },
+};
+
+// Paid data (blurred mock)
+const DA_SURNAMES = {
+  '木':{ gui:['林','楊','葉','柳','江'], xiao:['金','辛','白','廉','石'] },
+  '火':{ gui:['朱','丁','唐','赫','炎'], xiao:['江','何','海','吳','許'] },
+  '土':{ gui:['黃','戴','許','趙','田'], xiao:['林','楊','葉','柳','穆'] },
+  '金':{ gui:['金','鐘','石','白','廉'], xiao:['朱','丁','唐','赫','赤'] },
+  '水':{ gui:['江','何','海','吳','馮'], xiao:['黃','戴','許','趙','田'] },
+};
+const DA_DIRECTION = {
+  '木':'東方（利求財求職）', '火':'南方（利事業發展）',
+  '土':'中央／西南（利安居置業）', '金':'西方／西北（利偏財財運）',
+  '水':'北方（利學業智慧）',
+};
+const DA_JEWELRY = {
+  '木':'翡翠、綠松石、木質飾品（以植物為主題）',
+  '火':'紅寶石、石榴石、珊瑚（以圓形為吉形）',
+  '土':'黃水晶、虎眼石、琥珀（以方形為吉形）',
+  '金':'白水晶、珍珠、鑽石（以金屬系飾品為佳）',
+  '水':'海藍寶、黑曜石、月光石（以弧形流線設計）',
+};
+const DA_BODY = {
+  '木':'肝臟、膽囊、筋骨、眼睛，宜多做伸展運動',
+  '火':'心臟、小腸、血液循環，宜保持情緒穩定',
+  '土':'脾胃、消化系統、肌肉，宜注意飲食規律',
+  '金':'肺部、大腸、皮膚呼吸，宜多做深呼吸',
+  '水':'腎臟、膀胱、生殖系統，宜注意保暖防寒',
+};
+const DA_DETAIL = {
+  '木':'宜食：酸味食物、綠色蔬菜、芽菜類\n忌食：辛辣、煎炸食物\n宜職：教育、文藝、醫療、設計\n忌職：金融、珠寶、機械製造',
+  '火':'宜食：苦味食物、紅色食物、心臟滋補食材\n忌食：鹹味、黑色食物\n宜職：表演、銷售、公關、廚藝\n忌職：海運、漁業、冷凍業',
+  '土':'宜食：甘甜食物、根莖蔬菜、滋補食材\n忌食：酸味、清淡食物\n宜職：農業、地產、建築、餐飲\n忌職：快速消費品、風水木業',
+  '金':'宜食：辛味食物、白色食物、肺部滋補食材\n忌食：苦味、火旺食物\n宜職：金融、珠寶、律師、軍警\n忌職：木藝、農業、教育',
+  '水':'宜食：鹹味食物、黑色食物、腎臟滋補食材\n忌食：甘甜、過多土質食物\n宜職：學術、旅遊、哲學、IT\n忌職：地產、農業、建築',
+};
+
+// ── Render deep analysis ─────────────────────────────────
+function renderDeepAnalysis(pillars, year) {
+  const dStem   = pillars[2].stem;
+  const yBranch = pillars[0].branch;
+  const dayEl   = STEM_EL[dStem];
+
+  // Weakest element
+  const cnt = { '木':0,'火':0,'土':0,'金':0,'水':0 };
+  pillars.forEach(p => { cnt[STEM_EL[p.stem]]++; cnt[BRAN_EL[p.branch]]++; });
+  const weakEl = EL_LIST.reduce((a,b) => cnt[a] <= cnt[b] ? a : b);
+
+  // Use the most lacking element for colours / nums / direction / yiji
+  const isMissing  = cnt[weakEl] === 0;
+  const lackLabel  = isMissing ? `命盤缺${weakEl}` : `${weakEl}氣最弱`;
+  const colors  = DA_LUCKY_COLORS[weakEl];
+  const nums    = DA_LUCKY_NUMS[weakEl];
+  const guiZod  = DA_GUIREN[dStem].map(b => ANIMALS[b]);
+  const yiji    = DA_YIJI[weakEl];
+
+  // 犯太歲 card — 帶免費簡介 + 付費鎖定詳細分析
+  const taiType = TAISUI_2026.conflicts[yBranch];
+  const taiInfo = TAISUI_DETAIL[yBranch];
+  let taiCardHtml;
+  if (taiType && taiInfo) {
+    taiCardHtml = `
+    <div class="da-card taisui-warn da-taisui-full">
+      <div class="da-card-icon">⚠️</div>
+      <div class="da-card-label">2026 年 太 歲 提 示</div>
+      <!-- 免費：類型名稱 + 一句簡介 -->
+      <div class="tai-type-badge">${taiInfo.icon} ${taiInfo.animal}・${taiType}</div>
+      <div class="da-card-value" style="margin-top:0.4rem;font-size:0.92rem;line-height:1.8">${taiInfo.intro}</div>
+      <!-- 付費鎖定：詳細分析 + 化解方法 -->
+      <div class="tai-locked-wrap">
+        <div class="tai-locked-head">
+          <span class="tai-locked-title">詳 細 影 響 分 析</span>
+          <span class="tai-lock-badge">🔒 月費解鎖</span>
+        </div>
+        <div class="tai-locked-body">
+          <div class="tai-locked-blur">${taiInfo.detail}</div>
+        </div>
+        <div class="tai-locked-head" style="margin-top:0.6rem">
+          <span class="tai-locked-title">具 體 化 解 方 法</span>
+        </div>
+        <div class="tai-locked-body">
+          <div class="tai-locked-blur">${taiInfo.methods.join('<br>')}</div>
+        </div>
+        <button class="tai-unlock-btn" onclick="openSubsModal()">🔓 解 鎖 完 整 化 解 方 法</button>
+      </div>
+    </div>`;
+  } else {
+    taiCardHtml = `
+    <div class="da-card taisui-ok">
+      <div class="da-card-icon">✅</div>
+      <div class="da-card-label">2026 年 太 歲 提 示</div>
+      <div class="da-card-value">不犯太歲</div>
+      <div class="da-card-sub">今年不受太歲影響，可積極行事、把握機遇</div>
+    </div>`;
+  }
+
+  const freeCards = [
+    { icon:'🎨', label:'幸運顏色', value: colors.main.join('　'), sub:`補${weakEl}氣・忌：${colors.avoid}` },
+    { icon:'🔢', label:'幸運數字', value: nums.map(n=>n===0?'0/10':n).join('　　'), sub:`補${weakEl}・${lackLabel}` },
+    { icon:'🐾', label:'貴人生肖', value: guiZod.join('、'), sub:'與此生肖合作行事更順' },
+    { icon:'☯️', label:'五行宜忌（基本）', value: yiji.yi, sub: yiji.ji },
+  ];
+
+  document.getElementById('daFreeGrid').innerHTML =
+    freeCards.map(c => `
+      <div class="da-card ${c.cls||''}">
+        <div class="da-card-icon">${c.icon}</div>
+        <div class="da-card-label">${c.label}</div>
+        <div class="da-card-value">${c.value}</div>
+        <div class="da-card-sub">${c.sub}</div>
+      </div>`).join('') + taiCardHtml;
+
+  // Paid cards (locked)
+  const sn = DA_SURNAMES[dayEl];
+  const paidCards = [
+    { label:'貴人姓氏',       preview: sn.gui.join('、') },
+    { label:'小人姓氏',       preview: sn.xiao.join('、') },
+    { label:'旺身方向',       preview: DA_DIRECTION[weakEl] },
+    { label:'適合首飾配件',   preview: DA_JEWELRY[dayEl] },
+    { label:`身體需注意（${weakEl}弱）`, preview: DA_BODY[weakEl] },
+    { label:'五行詳細宜忌',   preview: DA_DETAIL[weakEl].substring(0,20)+'…' },
+  ];
+
+  document.getElementById('daPaidGrid').innerHTML = paidCards.map(c => `
+    <div class="da-locked-card">
+      <div class="da-locked-label">${c.label}</div>
+      <div class="da-locked-blur">${c.preview}</div>
+      <div class="da-lock-icon">🔒</div>
+    </div>`).join('');
+
+  document.getElementById('deepSection').classList.add('visible');
+}
+
+// ── Profile system ──────────────────────────────────────
+const STORE_KEY = 'fengshui_profiles_v1';
+
+function loadProfiles()       { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); }
+function persistProfiles(arr) { localStorage.setItem(STORE_KEY, JSON.stringify(arr)); }
+
+function saveAndCalculate() {
+  const name    = document.getElementById('profileName').value.trim();
+  const year    = parseInt(document.getElementById('birthYear').value);
+  const month   = parseInt(document.getElementById('birthMonth').value);
+  const day     = parseInt(document.getElementById('birthDay').value);
+  const shichen = parseInt(document.getElementById('birthShichen').value);
+
+  if (!name)   { alert('請先輸入姓名才能儲存'); document.getElementById('profileName').focus(); return; }
+  if (!year || !month || !day || isNaN(shichen)) { shake(document.getElementById('saveCalcBtn')); return; }
+
+  const profiles = loadProfiles();
+
+  if (editingId) {
+    const idx = profiles.findIndex(p => p.id === editingId);
+    if (idx >= 0) {
+      profiles[idx] = { ...profiles[idx], name, year, month, day, shichen };
+      activeId = editingId;
+    }
+    exitEditMode();
+  } else {
+    const newId = Date.now().toString(36);
+    profiles.unshift({ id: newId, name, year, month, day, shichen });
+    activeId = newId;
+  }
+
+  persistProfiles(profiles);
+  renderProfileList();
+  flashBtn('saveCalcBtn', '✓ 已儲存');
+
+  const pillars = computePillars(year, month, day, shichen);
+  renderResult(pillars, year, month, day, shichen, name);
+}
+
+function saveProfile() { saveAndCalculate(); }
+
+function loadProfile(id) {
+  const p = loadProfiles().find(x => x.id === id);
+  if (!p) return;
+  activeId = id;
+
+  document.getElementById('profileName').value   = p.name;
+  document.getElementById('birthYear').value     = p.year;
+  document.getElementById('birthMonth').value    = p.month;
+  document.getElementById('birthDay').value      = p.day;
+  document.getElementById('birthShichen').value  = p.shichen;
+
+  renderProfileList();
+
+  const pillars = computePillars(p.year, p.month, p.day, p.shichen);
+  renderResult(pillars, p.year, p.month, p.day, p.shichen, p.name);
+}
+
+function editProfile(id) {
+  const p = loadProfiles().find(x => x.id === id);
+  if (!p) return;
+  editingId = id;
+
+  document.getElementById('profileName').value   = p.name;
+  document.getElementById('birthYear').value     = p.year;
+  document.getElementById('birthMonth').value    = p.month;
+  document.getElementById('birthDay').value      = p.day;
+  document.getElementById('birthShichen').value  = p.shichen;
+
+  document.getElementById('editBar').classList.remove('hidden');
+  document.getElementById('editLabel').textContent = `正在編輯：${p.name}`;
+  document.getElementById('saveCalcBtn').textContent = '更 新 並 計 算';
+
+  document.getElementById('profileName').scrollIntoView({behavior:'smooth', block:'center'});
+  document.getElementById('profileName').focus();
+}
+
+function deleteProfile(id) {
+  const p = loadProfiles().find(x => x.id === id);
+  if (!p || !confirm(`確定刪除「${p.name}」的檔案嗎？`)) return;
+
+  persistProfiles(loadProfiles().filter(x => x.id !== id));
+
+  if (activeId === id) {
+    activeId = null;
+    clearForm();
+    document.getElementById('resultSection').classList.remove('visible');
+  document.getElementById('deepSection').classList.remove('visible');
+  }
+  if (editingId === id) exitEditMode();
+  renderProfileList();
+}
+
+function cancelEdit() { exitEditMode(); clearForm(); }
+
+function exitEditMode() {
+  editingId = null;
+  document.getElementById('editBar').classList.add('hidden');
+  document.getElementById('saveCalcBtn').textContent = '儲 存 並 計 算';
+}
+
+function clearForm() {
+  ['profileName','birthYear','birthDay'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('birthMonth').value   = '';
+  document.getElementById('birthShichen').value = '';
+}
+
+// ── Render profile list ─────────────────────────────────
+function renderProfileList() {
+  const profiles = loadProfiles();
+  const el = document.getElementById('profileList');
+
+  if (!profiles.length) {
+    el.innerHTML = '<div class="profile-empty">尚無已儲存檔案<br><br>填妥資料後點擊<br>「儲存並計算」</div>';
+    return;
+  }
+
+  el.innerHTML = profiles.map(p => {
+    let bzy = p.year;
+    if (p.month < 2 || (p.month === 2 && p.day < 4)) bzy--;
+    const animal  = ANIMALS[((bzy - 4) % 12 + 12) % 12];
+    const scName  = BRANCHES[p.shichen] + '時';
+    const isActive = p.id === activeId;
+    return `
+      <div class="p-card ${isActive ? 'active' : ''}" onclick="loadProfile('${p.id}')">
+        <div class="p-card-name">${p.name}</div>
+        <div class="p-card-info">
+          ${p.year}年 ${MONTH_NAMES[p.month]}月 ${p.day}日<br>
+          ${scName}　${animal}年
+        </div>
+        <div class="p-card-actions">
+          <button class="p-btn p-btn-edit"   onclick="event.stopPropagation();editProfile('${p.id}')">編 輯</button>
+          <button class="p-btn p-btn-delete" onclick="event.stopPropagation();deleteProfile('${p.id}')">刪 除</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Sidebar toggle ──────────────────────────────────────
+function toggleSidebar() {
+  document.getElementById('sidebarBody').classList.toggle('collapsed');
+  document.getElementById('sbIcon').classList.toggle('up');
+}
+
+function toggleMobSidebar() {
+  document.getElementById('sidebarBody').classList.toggle('mob-open');
+  document.getElementById('mobToggle').classList.toggle('open');
+}
+
+// ── Utilities ───────────────────────────────────────────
+function flashBtn(id, msg) {
+  const btn = document.getElementById(id);
+  const orig = btn.textContent;
+  btn.textContent = msg;
+  setTimeout(() => { btn.textContent = orig; }, 1600);
+}
+
+function startNewUser() {
+  if (editingId) exitEditMode();
+  activeId = null;
+  clearForm();
+  renderProfileList();
+  document.getElementById('resultSection').classList.remove('visible');
+  document.getElementById('deepSection').classList.remove('visible');
+  document.getElementById('profileName').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => document.getElementById('profileName').focus(), 400);
+}
+
+function shake(el) {
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = 'shake 0.4s ease';
+  el.addEventListener('animationend', () => el.style.animation = '', {once:true});
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') calculate(); });
+
+// ── AI Reading ──────────────────────────────────────────
+const AI_FREE_SECTIONS = 2;
+
+function openAICard() {
+  const card = document.getElementById('aiCard');
+  card.classList.add('visible');
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  doCallAI();
+}
+
+const DAY_MASTER_TRAITS = {
+  '甲': { core: '甲木日主，性格如參天大樹，剛直不阿，充滿上進心與領導氣質。您天生具備開拓精神，凡事追求突破，不甘居於人下。待人直率坦誠，重視承諾與原則，一旦下定決心便貫徹始終。', detail: '甲木之人富有遠見，善於規劃長遠目標，對理想懷抱強烈執著。在人際關係上，您重情重義，朋友遍及各方，但有時過於固執己見，難以接受他人意見，宜培養彈性與包容心。' },
+  '乙': { core: '乙木日主，性格如藤蘿靈動，柔中帶韌，適應力極強。您天生親和力十足，善解人意，處事圓融，能在複雜環境中找到生存之道。情感豐富細膩，對美感有獨特品味。', detail: '乙木之人思維靈活，擅長借力使力，往往能在不利環境中逆流而上。您對人際關係敏感，善於觀察他人需求，但有時過於在意外界評價，缺乏主見，需要培養自信與獨立決斷的能力。' },
+  '丙': { core: '丙火日主，性格如烈日當空，熱情奔放，光明磊落。您天生具有感染力，走到哪裡都能帶動氣氛，樂觀積極的態度令人如沐春風。對事業充滿熱忱，行動力強，喜歡站在聚光燈下。', detail: '丙火之人慷慨大方，樂於助人，在社交場合如魚得水。您的笑容與活力是最大的魅力資本，能輕鬆吸引貴人相助。但有時過於衝動，思慮不夠周全，且情緒起伏較大，宜學習沉澱與深思熟慮。' },
+  '丁': { core: '丁火日主，性格如燭火溫柔，內斂而持久，熱情而細膩。您擁有豐富的內心世界，對藝術與美學有天然的感知力，待人真誠溫暖，給人安全感。思維縝密，做事一絲不苟。', detail: '丁火之人直覺敏銳，富有同理心，能深刻感受他人的情緒變化。您在小圈子中是不可或缺的溫暖核心，但有時過於感性，容易因情緒波動影響判斷。建議多培養理性分析能力，避免過度投入感情而傷及自身。' },
+  '戊': { core: '戊土日主，性格如厚實大地，穩重可靠，胸懷寬廣。您天生具備包容萬物的氣度，為人踏實守信，做事有始有終，是旁人最可信賴的支柱。不追求浮華，重視內在積累。', detail: '戊土之人耐力超凡，能承受常人難以忍受的壓力與挫折，越挫越勇是您最大的特質。您重視家庭與傳統，對責任有強烈使命感。但有時過於保守，不願嘗試新事物，思維略顯僵化，宜適時走出舒適圈。' },
+  '己': { core: '己土日主，性格如沃土滋養，溫潤謙遜，內斂而深邃。您擅長細膩處理人際關係，思考周密，凡事考慮周全，給人謙遜親切的印象。對細節的把控能力是您的一大優勢。', detail: '己土之人善於傾聽與包容，往往是團隊中最能化解紛爭的調和者。您重視和諧，不喜衝突，但有時過於委曲求全，壓抑自身需求。宜學習適時表達意見，建立清晰的個人邊界，避免犧牲自我成全他人。' },
+  '庚': { core: '庚金日主，性格如礦石堅毅，果斷剛強，執行力一流。您天生具備武將之氣，做事雷厲風行，敢於直面挑戰，絕不輕言放棄。原則性強，是非分明，不喜拐彎抹角。', detail: '庚金之人意志力強大，一旦確定目標便全力以赴，不達目的誓不罷休。您的魄力與決斷力令人敬佩，在危機時刻更能展現領導才能。但有時過於強硬，說話直接可能傷及他人感情，宜培養溫柔的表達方式。' },
+  '辛': { core: '辛金日主，性格如珠玉精緻，聰慧靈敏，追求完美。您具備敏銳的審美眼光，對品質有很高要求，無論工作還是生活都力求精益求精。外表優雅，內心卻頗為敏感細膩。', detail: '辛金之人思維清晰，分析能力強，善於發現問題的核心所在。您重視自我形象，在乎他人的評價與看法。但過度追求完美有時會令自己陷入焦慮，且容易在小事上糾結。建議放鬆心態，學習接受「夠好」而非「最好」。' },
+  '壬': { core: '壬水日主，性格如江河奔騰，思維活躍，智慧過人。您天生充滿好奇心，學習能力極強，視野開闊，善於融通古今，將不同領域的知識融為一體。適應力強，能屈能伸。', detail: '壬水之人反應敏捷，口才出眾，在各種場合都能侃侃而談。您追求自由，不喜被束縛，對新事物充滿熱忱。但有時注意力分散，難以持久專注於一件事；多謀卻寡斷也是需要克服的弱點，宜培養執行力與堅持。' },
+  '癸': { core: '癸水日主，性格如細雨滋潤，溫柔體貼，富有靈性。您直覺敏銳，擁有超乎常人的感知力，能感受到旁人忽略的細微變化。智慧深藏不露，往往在關鍵時刻展現驚人洞察力。', detail: '癸水之人情感豐富，同理心強，善於理解他人的痛苦與喜悅。您有藝術天分，對文學、音樂、靈性領域有天然親和力。但有時過於感性，容易鑽牛角尖，情緒起伏影響行動力；且有時過於內斂，不善主動爭取機會，宜學習適時展示自身才華。' },
+};
+
+function getMockElAnalysis(cnt, dayEl) {
+  const sorted = EL_LIST.slice().sort((a,b) => cnt[b] - cnt[a]);
+  const strong = sorted.filter(e => cnt[e] >= 2);
+  const weak   = sorted.filter(e => cnt[e] === 0);
+  const lacking = sorted.filter(e => cnt[e] <= 1 && e !== dayEl);
+  const strongStr = strong.length ? strong.join('、') + '偏旺' : '各行較為均衡';
+  const weakStr   = weak.length   ? weak.join('、')   + '完全缺失，' : '';
+  const adviceEl  = weak.length ? weak[0] : lacking[0] || '木';
+  const adviceMap = {
+    '木': '建議多接觸大自然、種植花草，或從事與教育、文化相關的活動，以補充木氣。',
+    '火': '建議多曬太陽、接觸紅色系事物，或培養熱情活潑的興趣愛好，以補充火氣。',
+    '土': '建議保持規律作息、多接地氣（如旅行山野），腳踏實地有助平衡土氣。',
+    '金': '建議多佩戴金屬飾品，或從事需要精密思考的工作，以補充金氣。',
+    '水': '建議多接觸水域環境、增加旅行及學習，或多飲水靜心，以補充水氣。',
+  };
+  return `您的命盤${strongStr}，${weakStr}整體五行分佈${weak.length ? '較不均衡' : '尚算均衡'}。` +
+    `${dayEl}為日主本氣，是您能量的核心來源；` +
+    `${strong.length ? strong.join('與') + '旺盛，代表您在相關領域具備天然優勢，但也需注意不要過度消耗；' : ''}` +
+    `${adviceEl ? adviceMap[adviceEl] : '建議維持現有生活節奏，保持五行平衡。'}` +
+    `整體而言，適當調節生活環境與作息，有助於命盤能量的平衡流通，讓各方面運勢更加順暢。`;
+}
+
+async function doCallAI() {
+  const year    = parseInt(document.getElementById('birthYear').value);
+  const month   = parseInt(document.getElementById('birthMonth').value);
+  const day     = parseInt(document.getElementById('birthDay').value);
+  const shichen = parseInt(document.getElementById('birthShichen').value);
+  if (!year || !month || !day || isNaN(shichen)) { alert('請先推算命盤，再使用 AI 解讀功能'); return; }
+  const name    = document.getElementById('profileName').value.trim() || '命主';
+  const pillars = computePillars(year, month, day, shichen);
+  const cnt     = { '木':0,'火':0,'土':0,'金':0,'水':0 };
+  pillars.forEach(p => { cnt[STEM_EL[p.stem]]++; cnt[BRAN_EL[p.branch]]++; });
+  const dayMaster = STEMS[pillars[2].stem];
+  const dayEl     = STEM_EL[pillars[2].stem];
+  const trait     = DAY_MASTER_TRAITS[dayMaster] || DAY_MASTER_TRAITS['甲'];
+  const nameStr   = name !== '命主' ? `${name}，您` : '您';
+  const btn = document.getElementById('btnAI');
+  btn.disabled = true;
+  btn.textContent = '解讀中…';
+  document.getElementById('aiResult').innerHTML = `
+    <div class="ai-loading">
+      <div class="ai-loading-txt">正 在 解 讀 命 盤</div>
+      <div class="ai-dots"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+    </div>`;
+  await new Promise(r => setTimeout(r, 2500));
+  const mockText =
+`【一】日主特質\n${nameStr}的日主為${dayMaster}${dayEl}，${trait.core}${trait.detail}\n\n【二】五行強弱分析\n${getMockElAnalysis(cnt, dayEl)}\n\n【三】性格優缺點\n此部分需升級會員方可查看完整解讀。\n\n【四】事業財運方向\n此部分需升級會員方可查看完整解讀。`;
+  renderAIResult(mockText);
+  btn.disabled = false;
+  btn.textContent = '✦ 重 新 解 讀';
+}
+
+function parseAISections(text) {
+  const markers = ['【一】','【二】','【三】','【四】'];
+  const titles  = ['日主特質','五行強弱分析','性格優缺點','事業財運方向'];
+  return markers.map((m, i) => {
+    const start = text.indexOf(m);
+    if (start === -1) return { title: titles[i], content: '' };
+    const nextIdx = markers.slice(i+1).map(nm => text.indexOf(nm)).find(n => n > -1) ?? text.length;
+    let content = text.slice(start + m.length, nextIdx).trim();
+    const nl = content.indexOf('\n');
+    if (nl > 0 && nl < 25) content = content.slice(nl).trim();
+    return { title: titles[i], content };
+  });
+}
+
+function renderAIResult(text) {
+  const sections = parseAISections(text);
+  const nums = ['一','二','三','四'];
+  const html = sections.map((sec, i) => {
+    const locked = i >= AI_FREE_SECTIONS;
+    return `
+      <div class="ai-sec${locked ? ' ai-sec-locked' : ''}">
+        <div class="ai-sec-title">【${nums[i]}】${sec.title}</div>
+        <div class="ai-sec-body">${sec.content.replace(/\n/g,'<br>')}</div>
+        ${locked ? `<div class="ai-lock-bar"><span>🔒</span><span>升 級 會 員 解 鎖 完 整 解 讀</span></div>` : ''}
+      </div>`;
+  }).join('');
+  document.getElementById('aiResult').innerHTML = `<div class="ai-sections">${html}</div>`;
+}
+
+// ── (Oracle system lives in oracle.html) ─────────────
+
+
+// ── Tab switching ───────────────────────────────────────
+function switchMainTab(tab) {
+  const sections = { bazi: 'baziLayout', match: 'matchSection', rename: 'renameSection' };
+  Object.entries(sections).forEach(([key, id]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (key === 'bazi') {
+      el.style.display = tab === 'bazi' ? '' : 'none';
+    } else {
+      tab === key ? el.classList.add('active') : el.classList.remove('active');
+    }
+  });
+  ['bazi','match','rename'].forEach(k => {
+    document.getElementById('tab-' + k)?.classList.toggle('active', k === tab);
+  });
+  const titles    = { bazi:'八 字 命 盤', match:'合 婚 配 對', rename:'改 名 系 統' };
+  const subtitles = { bazi:'Four Pillars of Destiny', match:'Compatibility Analysis', rename:'Name & Fortune Analysis' };
+  document.getElementById('pageTitle').textContent    = titles[tab]    || titles.bazi;
+  document.getElementById('pageSubtitle').textContent = subtitles[tab] || subtitles.bazi;
+  // Sync mobile bottom tab bar
+  const mobMap = { bazi:'mobTabBazi', match:'mobTabMatch', rename:'mobTabRename' };
+  ['bazi','match','rename'].forEach(k => {
+    document.getElementById(mobMap[k])?.classList.toggle('active', k === tab);
+  });
+}
+
+// ── Match Analysis ──────────────────────────────────────
+const EL_GENERATES = {'木':'火','火':'土','土':'金','金':'水','水':'木'};
+const EL_RESTRICTS = {'木':'土','土':'水','水':'火','火':'金','金':'木'};
+
+function cntElements(pillars) {
+  const c = {'木':0,'火':0,'土':0,'金':0,'水':0};
+  pillars.forEach(p => { c[STEM_EL[p.stem]]++; c[BRAN_EL[p.branch]]++; });
+  return c;
+}
+
+function analyzeMatch() {
+  const aYear    = parseInt(document.getElementById('maYear').value);
+  const aMonth   = parseInt(document.getElementById('maMonth').value);
+  const aDay     = parseInt(document.getElementById('maDay').value);
+  const aShichen = parseInt(document.getElementById('maShichen').value);
+  const bYear    = parseInt(document.getElementById('mbYear').value);
+  const bMonth   = parseInt(document.getElementById('mbMonth').value);
+  const bDay     = parseInt(document.getElementById('mbDay').value);
+  const bShichen = parseInt(document.getElementById('mbShichen').value);
+
+  if (!aYear || !aMonth || !aDay || isNaN(aShichen) ||
+      !bYear || !bMonth || !bDay || isNaN(bShichen)) {
+    shake(document.getElementById('btnAnalyzeMatch'));
+    return;
+  }
+
+  const aName = document.getElementById('maName').value.trim() || '甲方';
+  const bName = document.getElementById('mbName').value.trim() || '乙方';
+
+  const aPil = computePillars(aYear, aMonth, aDay, aShichen);
+  const bPil = computePillars(bYear, bMonth, bDay, bShichen);
+  const aC   = cntElements(aPil);
+  const bC   = cntElements(bPil);
+
+  // Dominant and weakest elements
+  const aTop  = EL_LIST.reduce((a,b) => aC[a] >= aC[b] ? a : b);
+  const bTop  = EL_LIST.reduce((a,b) => bC[a] >= bC[b] ? a : b);
+  const aWeak = EL_LIST.reduce((a,b) => aC[a] <= aC[b] ? a : b);
+  const bWeak = EL_LIST.reduce((a,b) => bC[a] <= bC[b] ? a : b);
+
+  let score = 60;
+  const ints = [];
+
+  if (EL_GENERATES[aTop] === bWeak) {
+    score += 9;
+    ints.push({t:'pos', s:`${aName}${aTop}旺，生${bName}所需${bWeak}，相輔相成，感情滋養深厚`});
+  }
+  if (EL_GENERATES[bTop] === aWeak) {
+    score += 9;
+    ints.push({t:'pos', s:`${bName}${bTop}旺，補${aName}命格所缺${aWeak}氣，天作之合，互相成就`});
+  }
+  if (EL_GENERATES[aTop] === bTop) {
+    score += 5;
+    ints.push({t:'pos', s:`${aName}${aTop}生${bName}${bTop}，感情中甲方較為主動付出，關係溫馨`});
+  }
+  if (EL_RESTRICTS[aTop] === bTop) {
+    score -= 10;
+    ints.push({t:'neg', s:`${aName}${aTop}剋${bName}${bTop}，性格上較易摩擦，需多溝通包容，培養默契`});
+  }
+  if (EL_RESTRICTS[bTop] === aTop) {
+    score -= 8;
+    ints.push({t:'neg', s:`${bName}${bTop}剋${aName}${aTop}，感情中乙方較主導，甲方宜調適心態`});
+  }
+  if (aTop === bTop) {
+    score += 4;
+    ints.push({t:'neu', s:`兩人同屬${aTop}旺，志趣相投，惟決策上各持己見，宜互相退讓`});
+  }
+  // Complementary missing elements
+  const bMissing = EL_LIST.filter(e => bC[e] === 0 && aC[e] > 0);
+  if (bMissing.length) {
+    score += 5;
+    ints.push({t:'pos', s:`${aName}命盤${bMissing[0]}旺，填補${bName}缺失的${bMissing[0]}氣，五行互補相融`});
+  }
+  if (!ints.length) {
+    ints.push({t:'neu', s:`兩人五行各自獨立，互不干擾，感情平穩踏實，需靠後天共同經營`});
+  }
+
+  // Random factor based on birth data (deterministic per pair)
+  const seed = (aYear * 7 + aMonth * 3 + aDay) ^ (bYear * 5 + bMonth * 11 + bDay);
+  const rand = ((seed % 9) - 4);
+  score = Math.max(32, Math.min(97, score + rand));
+
+  const tag = score >= 85 ? '天作之合 💕' : score >= 70 ? '緣份相合 ❤️' : score >= 55 ? '平穩可期 💛' : '需要磨合 🤝';
+
+  const s2 = (aDay * 7 + bMonth * 3) % 16 - 8;
+  const s3 = (aMonth * 5 + bDay * 7) % 14 - 7;
+  const s4 = (aShichen * 11 + bShichen * 7) % 12 - 6;
+  const lovScore  = Math.max(32, Math.min(97, score + s2));
+  const workScore = Math.max(32, Math.min(97, score + s3));
+  const famScore  = Math.max(32, Math.min(97, score + s4));
+
+  // Render
+  document.getElementById('matchScoreNum').textContent = score;
+  document.getElementById('matchScoreTag').textContent = tag;
+
+  document.getElementById('matchInteractions').innerHTML = ints.map(i =>
+    `<div class="match-int-item ${i.t}">${i.s}</div>`).join('');
+
+  document.getElementById('matchDimGrid').innerHTML = [
+    {icon:'💕', name:'感情合拍', sc:lovScore,  desc:lovScore  >= 80 ? '心心相印' : lovScore  >= 65 ? '相處融洽' : '需要磨合'},
+    {icon:'💼', name:'事業互助', sc:workScore, desc:workScore >= 80 ? '珠聯璧合' : workScore >= 65 ? '互補互進' : '各有優勢'},
+    {icon:'🏠', name:'家庭和諧', sc:famScore,  desc:famScore  >= 80 ? '家和萬事興': famScore  >= 65 ? '溫馨和睦' : '需磨合相處'},
+  ].map(d => `
+    <div class="match-dim-card">
+      <div class="match-dim-icon">${d.icon}</div>
+      <div class="match-dim-name">${d.name}</div>
+      <div class="match-dim-score">${d.sc}</div>
+      <div class="match-dim-desc">${d.desc}</div>
+    </div>`).join('');
+
+  drawMatchRadar(aC, bC, aName, bName);
+  drawScoreRing(score);
+
+  const res = document.getElementById('matchResult');
+  res.classList.add('visible');
+  setTimeout(() => res.scrollIntoView({behavior:'smooth', block:'start'}), 120);
+}
+
+// ── Radar chart ─────────────────────────────────────────
+function drawMatchRadar(aC, bC, aName, bName) {
+  const canvas = document.getElementById('matchRadar');
+  const ctx    = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2;
+  const R  = Math.min(W, H) * 0.34;
+  const labels = ['木','火','土','金','水'];
+  const N      = labels.length;
+  const angles = labels.map((_, i) => (i * 2 * Math.PI / N) - Math.PI / 2);
+  const MAX    = 4;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid rings
+  for (let r = 1; r <= 4; r++) {
+    ctx.beginPath();
+    angles.forEach((a, i) => {
+      const x = cx + (R * r / 4) * Math.cos(a);
+      const y = cy + (R * r / 4) * Math.sin(a);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(201,168,76,0.13)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  // Axis spokes
+  angles.forEach(a => {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
+    ctx.strokeStyle = 'rgba(201,168,76,0.2)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  function drawPoly(cnt, strokeCol, fillCol) {
+    ctx.beginPath();
+    angles.forEach((a, i) => {
+      const v = Math.min(cnt[labels[i]], MAX);
+      const rr = (v / MAX) * R;
+      const x = cx + rr * Math.cos(a);
+      const y = cy + rr * Math.sin(a);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.closePath();
+    ctx.fillStyle = fillCol;
+    ctx.fill();
+    ctx.strokeStyle = strokeCol;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  drawPoly(bC, '#cc5555', 'rgba(204,85,85,0.15)');
+  drawPoly(aC, '#c9a84c', 'rgba(201,168,76,0.18)');
+
+  // Element labels
+  const EL_COL_R = {'木':'#5a9a6a','火':'#cc4422','土':'#C4870A','金':'#A8A8A8','水':'#4488cc'};
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = 'bold 13px serif';
+  angles.forEach((a, i) => {
+    ctx.fillStyle = EL_COL_R[labels[i]];
+    ctx.fillText(labels[i], cx + (R + 20) * Math.cos(a), cy + (R + 20) * Math.sin(a));
+  });
+
+  // Legend
+  const legY = H - 22;
+  ctx.font = '11px serif';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#c9a84c';
+  ctx.fillRect(8, legY - 6, 10, 10);
+  ctx.fillStyle = 'rgba(232,208,163,0.75)';
+  ctx.fillText(aName, 22, legY);
+  ctx.fillStyle = '#cc5555';
+  ctx.fillRect(W/2 + 8, legY - 6, 10, 10);
+  ctx.fillStyle = 'rgba(232,208,163,0.75)';
+  ctx.fillText(bName, W/2 + 22, legY);
+}
+
+// ── Score ring ──────────────────────────────────────────
+function drawScoreRing(score) {
+  const canvas = document.getElementById('matchScoreRing');
+  const ctx    = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2;
+  const r  = Math.min(W, H) / 2 - 9;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Track
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(201,168,76,0.12)';
+  ctx.lineWidth = 11;
+  ctx.stroke();
+
+  // Score arc
+  const grad = ctx.createLinearGradient(cx - r, cy, cx + r, cy);
+  if (score >= 80) {
+    grad.addColorStop(0, '#e8d080'); grad.addColorStop(1, '#c9a84c');
+  } else if (score >= 60) {
+    grad.addColorStop(0, '#8aaa6a'); grad.addColorStop(1, '#c9a84c');
+  } else {
+    grad.addColorStop(0, '#cc7744'); grad.addColorStop(1, '#cc4444');
+  }
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, -Math.PI/2, -Math.PI/2 + (score/100) * Math.PI * 2);
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 11;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+}
+
+// ── Rename System ───────────────────────────────────────
+let currentScene = 'baby';
+
+function selectScene(scene) {
+  currentScene = scene;
+  ['baby','adult','biz'].forEach(s => {
+    document.getElementById('sc-'+s).classList.toggle('active', s === scene);
+    document.getElementById('form-'+s).classList.toggle('active', s === scene);
+  });
+  document.getElementById('renameResult').classList.remove('visible');
+}
+
+// 五行 from stroke count (simplified: charCode % 10 → element)
+const RN_EL_CYCLE = ['木','木','火','火','土','土','金','金','水','水'];
+function charToEl(ch) {
+  const code = ch.charCodeAt(0);
+  // Simulate stroke count using code point; 1-indexed mod 10
+  const strokeSim = ((code % 10) + 10) % 10;
+  return RN_EL_CYCLE[strokeSim];
+}
+function nameToElements(name) {
+  const cnt = {'木':0,'火':0,'土':0,'金':0,'水':0};
+  for (const ch of name) { if (ch.trim()) cnt[charToEl(ch)]++; }
+  return cnt;
+}
+
+// Radical/character suggestions per missing element
+const RN_RADICALS = {
+  '木': { label:'木、林、森、草、花、葉、柳、楊、青、東', reason:'補木氣，助生長發達' },
+  '火': { label:'炎、日、光、明、炫、晨、曦、昕、煜、燁', reason:'補火氣，增熱情領導力' },
+  '土': { label:'坤、城、基、埔、堅、培、坤、均、坤、塵', reason:'補土氣，穩重踏實' },
+  '金': { label:'鑫、銘、鋒、鏡、鉑、鈞、鑫、鎧、金、鑄', reason:'補金氣，增決斷與財運' },
+  '水': { label:'海、江、洋、潤、清、澄、淼、泓、渝、澳', reason:'補水氣，智慧靈動' },
+};
+
+// Industry → lucky element
+const BIZ_INDUSTRY_EL = {
+  tech:'水', food:'火', finance:'金', health:'木',
+  edu:'木', trade:'金', creative:'火', property:'土',
+};
+const BIZ_INDUSTRY_NAME = {
+  tech:'科技/IT', food:'飲食/餐飲', finance:'金融/投資', health:'醫療/健康',
+  edu:'教育/培訓', trade:'貿易/零售', creative:'創意/設計', property:'地產/建築',
+};
+
+const EL_COLOR_HEX = {'木':'var(--wood)','火':'var(--fire)','土':'var(--earth)','金':'var(--metal)','水':'var(--water)'};
+
+function analyzeRename(scene) {
+  let pillars, name = '', surname = '', gender = '', industry = '';
+  let year, month, day, shichen;
+
+  if (scene === 'baby') {
+    year    = parseInt(document.getElementById('rnBabyYear').value);
+    month   = parseInt(document.getElementById('rnBabyMonth').value);
+    day     = parseInt(document.getElementById('rnBabyDay').value);
+    shichen = parseInt(document.getElementById('rnBabyShichen').value);
+    surname = document.getElementById('rnBabySurname').value.trim();
+    gender  = document.getElementById('rnBabyGender').value;
+    if (!year||!month||!day||isNaN(shichen)) { shake(document.getElementById('btnAnalyzeBaby')); return; }
+  } else if (scene === 'adult') {
+    year    = parseInt(document.getElementById('rnAdultYear').value);
+    month   = parseInt(document.getElementById('rnAdultMonth').value);
+    day     = parseInt(document.getElementById('rnAdultDay').value);
+    shichen = parseInt(document.getElementById('rnAdultShichen').value);
+    name    = document.getElementById('rnAdultName').value.trim();
+    if (!year||!month||!day||isNaN(shichen)||!name) { shake(document.getElementById('btnAnalyzeAdult')); return; }
+  } else {
+    year     = parseInt(document.getElementById('rnBizYear').value);
+    month    = parseInt(document.getElementById('rnBizMonth').value);
+    day      = parseInt(document.getElementById('rnBizDay').value);
+    shichen  = parseInt(document.getElementById('rnBizShichen').value);
+    industry = document.getElementById('rnBizIndustry').value;
+    if (!year||!month||!day||isNaN(shichen)||!industry) { shake(document.getElementById('btnAnalyzeBiz')); return; }
+  }
+
+  pillars = computePillars(year, month, day, shichen);
+  const bazCnt = {'木':0,'火':0,'土':0,'金':0,'水':0};
+  pillars.forEach(p => { bazCnt[STEM_EL[p.stem]]++; bazCnt[BRAN_EL[p.branch]]++; });
+  const dayEl   = STEM_EL[pillars[2].stem];
+  const weakEls = EL_LIST.filter(e => bazCnt[e] === 0);
+  const lackEl  = weakEls.length ? weakEls[0]
+                : EL_LIST.reduce((a,b) => bazCnt[a] <= bazCnt[b] ? a : b);
+
+  let freeCards = [], paidTitle = '', paidPreview = '', unlockLabel = '';
+
+  if (scene === 'baby') {
+    document.getElementById('rnResultTitle').textContent = '新 生 兒 命 名 分 析';
+    const gLabel = gender === 'm' ? '男寶寶' : gender === 'f' ? '女寶寶' : '寶寶';
+    freeCards = [
+      { icon:'🔮', label:'命格日主', val:`${STEMS[pillars[2].stem]}${dayEl}`, sub:`日主五行屬${dayEl}，命格核心能量` },
+      { icon:'⚖️', label:'五行平衡', val: weakEls.length ? `命格缺${weakEls.join('、')}` : '五行尚算均衡',
+        sub: weakEls.length ? `取名宜補${weakEls.join('、')}氣，化解命格缺失` : '取名著重音義優美即可' },
+      { icon:'✍️', label:'推薦用字偏旁', val:`補${lackEl}氣用字`, sub: RN_RADICALS[lackEl].reason,
+        extra: RN_RADICALS[lackEl].label },
+      { icon:'🎵', label:'音韻方向',
+        val: gender==='f' ? '宜選音韻柔和，如「妍、雅、琳、欣」' : '宜選音韻響亮，如「朗、峻、霖、博」',
+        sub: `${gLabel}取名音韻建議` },
+    ];
+    paidTitle   = '✦ 10個完整推薦名字 + 筆劃五行評分';
+    paidPreview = `為${surname||''}${gLabel}精心推薦10個吉名：${surname||'○'}○○、${surname||'○'}○○…每個名字附康熙字典筆劃分析、五行配合分數、音義解說及適合改名時機…`;
+    unlockLabel = `🔓 HKD$98 · 解 鎖 10 個 推 薦 名 字`;
+
+  } else if (scene === 'adult') {
+    document.getElementById('rnResultTitle').textContent = '成 人 改 名 分 析';
+    const nameCnt   = nameToElements(name);
+    const nameEls   = EL_LIST.filter(e => nameCnt[e] > 0);
+    const totalName = Object.values(nameCnt).reduce((a,b)=>a+b,0);
+
+    // Compatibility: how well does name complement bazi
+    let compat = 60;
+    EL_LIST.forEach(e => {
+      if (bazCnt[e] === 0 && nameCnt[e] > 0) compat += 10; // name fills bazi gap
+      if (bazCnt[e] >= 3 && nameCnt[e] > 0) compat -= 6;   // name adds to already strong el
+    });
+    const seed2 = (year * 3 + day * 7 + name.charCodeAt(0)) % 15 - 7;
+    compat = Math.max(28, Math.min(96, compat + seed2));
+
+    const compatColor = compat >= 75 ? 'var(--wood)' : compat >= 55 ? 'var(--earth)' : 'var(--fire)';
+    const compatLabel = compat >= 75 ? '配合良好' : compat >= 55 ? '尚可接受' : '建議改善';
+
+    freeCards = [
+      { icon:'📛', label:'現有名字', val: name, sub:`共${name.length}字，五行屬性分析如下` },
+      { icon:'⚗️', label:'名字主要五行', val: nameEls.length ? nameEls.join('、') : '—',
+        sub:`名字五行組成：${EL_LIST.map(e=>nameCnt[e]?`${e}×${nameCnt[e]}`:'').filter(Boolean).join(' ')}` },
+      { icon:'🎯', label:'與命格配合度', val:`${compat}%`, sub: compatLabel, score: compat, scoreColor: compatColor },
+      { icon:'💡', label:'改名方向建議',
+        val:`宜補${lackEl}氣用字`, sub: RN_RADICALS[lackEl].reason, extra: RN_RADICALS[lackEl].label },
+    ];
+
+    // Score bars
+    document.getElementById('rnScoreBars').style.display = 'block';
+    document.getElementById('rnScoreBarsInner').innerHTML = EL_LIST.map(e => {
+      const pct = totalName ? Math.round(nameCnt[e]/totalName*100) : 0;
+      return `<div class="rn-score-wrap">
+        <span style="font-size:0.72rem;font-weight:700;width:1.1em;${EL_COLOR_HEX[e]?`color:${EL_COLOR_HEX[e]}`:''}">${e}</span>
+        <div class="rn-score-bar-track">
+          <div class="rn-score-bar" style="width:${pct}%;background:${EL_COLOR_HEX[e]}"></div>
+        </div>
+        <span class="rn-score-num">${pct}%</span>
+      </div>`;
+    }).join('');
+
+    paidTitle   = '✦ 改 名 建 議 方 向 + 推 薦 用 字';
+    paidPreview = `根據${name}的五行分析，深度改名報告包含：適合筆劃數範圍、30個推薦用字列表（含五行屬性）、每字音義分析、最佳改名時機（流年吉凶）、改名後運勢預測…`;
+    unlockLabel = `🔓 HKD$98 · 解 鎖 完 整 改 名 方 案`;
+
+  } else {
+    document.getElementById('rnResultTitle').textContent = '公 司 命 名 分 析';
+    const indEl   = BIZ_INDUSTRY_EL[industry];
+    const indName = BIZ_INDUSTRY_NAME[industry];
+    const synergy = EL_GENERATES[dayEl] === indEl ? '相生，極為有利'
+                  : EL_RESTRICTS[dayEl] === indEl ? '相剋，需注意'
+                  : dayEl === indEl ? '同氣，志同道合' : '平和，可行';
+    document.getElementById('rnScoreBars').style.display = 'none';
+    freeCards = [
+      { icon:'👤', label:'創辦人日主', val:`${STEMS[pillars[2].stem]}${dayEl}`, sub:`命格核心五行屬${dayEl}` },
+      { icon:'🏭', label:'行業五行屬性', val:`${indName}　屬${indEl}`, sub:`${indEl}行業與命格${dayEl}${synergy}` },
+      { icon:'🎨', label:'公司名用字方向', val:`宜含${lackEl}氣偏旁`, sub: RN_RADICALS[lackEl].reason, extra: RN_RADICALS[lackEl].label },
+      { icon:'📊', label:'適合發展方向',
+        val: EL_GENERATES[dayEl] === indEl ? '天時地利，大力發展' : '穩紮穩打，循序漸進',
+        sub:`日主${dayEl}與${indEl}行業五行關係：${synergy}` },
+    ];
+    paidTitle   = '✦ 5 個 公 司 名 建 議 + 五 行 評 分';
+    paidPreview = `根據創辦人命格及${indName}行業屬性，精選5個公司名：○○科技、○○創新…每個名字附五行評分、筆劃吉凶分析、適合開業日期推算、公司命格走勢預測…`;
+    unlockLabel = `🔓 HKD$98 · 解 鎖 5 個 公 司 命 名 方 案`;
+  }
+
+  // Render free cards
+  document.getElementById('rnFreeGrid').innerHTML = freeCards.map(c => `
+    <div class="rn-card">
+      <div class="rn-card-icon">${c.icon}</div>
+      <div class="rn-card-label">${c.label}</div>
+      <div class="rn-card-val">${c.val}</div>
+      ${c.score !== undefined ? `<div class="rn-score-wrap" style="margin-top:0.4rem">
+        <div class="rn-score-bar-track"><div class="rn-score-bar" style="width:${c.score}%;background:${c.scoreColor}"></div></div>
+        <span class="rn-score-num">${c.score}%</span></div>` : ''}
+      <div class="rn-card-sub">${c.sub}</div>
+      ${c.extra ? `<div class="rn-radical-list">${c.extra.split('、').map(r=>`<span class="rn-radical-chip">${r}</span>`).join('')}</div>` : ''}
+    </div>`).join('');
+
+  document.getElementById('rnPaidTitle').textContent   = paidTitle;
+  document.getElementById('rnPaidPreview').textContent = paidPreview;
+  document.getElementById('rnUnlockBtn').textContent   = unlockLabel;
+
+  const res = document.getElementById('renameResult');
+  res.classList.add('visible');
+  setTimeout(() => res.scrollIntoView({behavior:'smooth', block:'start'}), 100);
+}
+
+// ── Init ────────────────────────────────────────────────
+renderProfileList();
+// Auto-switch tab if navigated from oracle.html
+const _initTab = sessionStorage.getItem('tab');
+if (_initTab === 'match' || _initTab === 'rename') {
+  sessionStorage.removeItem('tab');
+  switchMainTab(_initTab);
+}
+
+// ── Single-purchase report handler ──────────────────────
+function handleSingleReport(btn, reportName) {
+  if (typeof openSubscribeModal === 'function') {
+    openSubscribeModal('single');
+  }
+}
+
+// ── Daily notification handler ───────────────────────────
+function requestDailyNotif() {
+  const btn    = document.getElementById('daNotifBtn');
+  const status = document.getElementById('daNotifStatus');
+
+  if (!('Notification' in window)) {
+    alert('此瀏覽器不支援推播通知');
+    return;
+  }
+
+  if (Notification.permission === 'granted') {
+    showNotifEnabled(btn, status);
+    return;
+  }
+
+  Notification.requestPermission().then(perm => {
+    if (perm === 'granted') {
+      showNotifEnabled(btn, status);
+    } else {
+      alert('未獲授權，請在瀏覽器設定中允許通知。');
+    }
+  });
+}
+
+function showNotifEnabled(btn, status) {
+  btn.textContent = '🔔 通知已開啟';
+  btn.disabled = true;
+  btn.style.opacity = '0.6';
+  btn.style.cursor = 'default';
+  status.classList.add('visible');
+}
+</script>
+
+<!-- ── Auth Modal ──────────────────────────────── -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-modal">
+    <button class="auth-close" onclick="closeAuthModal()">✕</button>
+    <div class="auth-modal-inner">
+      <div class="auth-brand">風 生 水 起</div>
+      <div class="auth-brand-sub">FengShui Oracle</div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login"    onclick="switchAuthTab('login')">登 入</button>
+        <button class="auth-tab"        data-tab="register" onclick="switchAuthTab('register')">註 冊</button>
+      </div>
+
+      <!-- Login panel -->
+      <div class="auth-panel active" data-panel="login">
+        <div class="auth-field">
+          <label class="auth-label">電 郵 地 址</label>
+          <input class="auth-input" type="email" id="loginEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">密 碼</label>
+          <input class="auth-input" type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <div class="auth-error" id="loginError"></div>
+        <button class="auth-submit" onclick="doLogin()">登 入</button>
+        <div class="auth-or">或</div>
+        <button class="auth-google" onclick="doGoogleLogin()">
+          <svg class="auth-google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google 登入（示範）
+        </button>
+        <div class="auth-terms">登入即代表同意使用條款及私隱政策</div>
+      </div>
+
+      <!-- Register panel -->
+      <div class="auth-panel" data-panel="register">
+        <div class="auth-field">
+          <label class="auth-label">姓 名 / 暱 稱</label>
+          <input class="auth-input" type="text" id="regName" placeholder="你的名字" onkeydown="if(event.key==='Enter')doRegister()">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">電 郵 地 址</label>
+          <input class="auth-input" type="email" id="regEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doRegister()">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">密 碼（最少6位）</label>
+          <input class="auth-input" type="password" id="regPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doRegister()">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">確 認 密 碼</label>
+          <input class="auth-input" type="password" id="regPass2" placeholder="••••••••" onkeydown="if(event.key==='Enter')doRegister()">
+        </div>
+        <div class="auth-error" id="regError"></div>
+        <button class="auth-submit" onclick="doRegister()">立 即 註 冊</button>
+        <div class="auth-or">或</div>
+        <button class="auth-google" onclick="doGoogleLogin()">
+          <svg class="auth-google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Google 註冊（示範）
+        </button>
+        <div class="auth-terms">註冊即代表同意使用條款及私隱政策</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Settings / Subscriptions Modal ─────────── -->
+<div class="auth-overlay" id="settingsOverlay">
+  <div class="settings-modal">
+    <button class="auth-close" onclick="closeSettings()">✕</button>
+    <div id="settingsBody"></div>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+
+<!-- ── Mobile bottom tab bar ── -->
+<nav class="mob-tab-bar">
+  <a class="mob-tab-item active" id="mobTabBazi" href="index.html" onclick="switchMainTab('bazi');return false">
+    <span class="mob-tab-icon">☯</span>
+    <span class="mob-tab-label">命盤</span>
+  </a>
+  <a class="mob-tab-item" id="mobTabMatch" href="#" onclick="switchMainTab('match');return false">
+    <span class="mob-tab-icon">♡</span>
+    <span class="mob-tab-label">合婚</span>
+  </a>
+  <a class="mob-tab-item" id="mobTabRename" href="#" onclick="switchMainTab('rename');return false">
+    <span class="mob-tab-icon">文</span>
+    <span class="mob-tab-label">改名</span>
+  </a>
+  <a class="mob-tab-item" href="oracle.html">
+    <span class="mob-tab-icon">籤</span>
+    <span class="mob-tab-label">求簽</span>
+  </a>
+  <a class="mob-tab-item" href="calendar.html">
+    <span class="mob-tab-icon">曆</span>
+    <span class="mob-tab-label">神曆</span>
+  </a>
+</nav>
+</body>
+</html>
