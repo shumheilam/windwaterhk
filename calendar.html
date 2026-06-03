@@ -250,7 +250,8 @@
     .择日-label { font-size: 0.62rem; color: var(--text-dim); letter-spacing: 0.3em;
                  display: block; margin-bottom: 0.45rem; }
     .择日-input {
-      width: 100%; background: var(--bg-input); border: 1px solid rgba(201,168,76,0.22);
+      width: 100%; max-width: 100%; box-sizing: border-box;
+      background: var(--bg-input); border: 1px solid rgba(201,168,76,0.22);
       border-radius: 6px; color: var(--text); font-family: 'Noto Serif TC', serif;
       font-size: 0.82rem; padding: 0.55rem 0.8rem; outline: none; letter-spacing: 0.05em;
       transition: border-color 0.2s;
@@ -1176,75 +1177,91 @@ const EVENT_DATA = {
   },
 };
 
-// 事項→必要宜忌標籤映射：推薦日必須符合對應事項
+// ── 事項→必要宜忌標籤映射 ────────────────────────────────────────────────────
 const EVENT_PRIMARY_TAG = {
   '結婚': '嫁娶',
   '開業': '開市',
   '搬屋': '移徙',
   '動土': '動土',
   '出行': '出行',
-  '簽約': '訂盟',   // 訂盟/簽約通用
-  '剖腹產': null,   // 避血刃為主，無單一必要標籤
+  '簽約': '簽約',
+  '剖腹產': null,  // 無特定必要標籤；避忌日即可
 };
 
-// Secondary tag for 簽約 (either is acceptable)
-const EVENT_ALT_TAG = { '簽約': '簽約' };
+// ── 建除十二神宜忌（通勝基本原則，每格yi/ji互不重複）────────────────────
+// 索引 0=建 1=除 2=滿 3=平 4=定 5=執 6=破 7=危 8=成 9=收 10=開 11=閉
+const JIANZHU = [
+  { name:'建', yi:['嫁娶','開市','祭祀','祈福'],              ji:['動土','移徙'],                        bad:false },
+  { name:'除', yi:['移徙','出行','搬家','入宅'],              ji:['嫁娶','開市'],                        bad:false },
+  { name:'滿', yi:['開市','動土','興工','求財'],              ji:['嫁娶','移徙','安葬'],                 bad:false },
+  { name:'平', yi:['嫁娶','祈福','安床','納采'],              ji:['動土','移徙'],                        bad:false },
+  { name:'定', yi:['出行','簽約','求財','納財'],              ji:['嫁娶','動土','開市'],                 bad:false },
+  { name:'執', yi:['祭祀','祈福','入宅','安床'],              ji:['嫁娶','出行','開市','簽約'],          bad:false },
+  { name:'破', yi:['祭祀'],                                    ji:['嫁娶','開市','動土','出行','移徙','簽約'], bad:true },
+  { name:'危', yi:['嫁娶','開市','安床','祈福'],              ji:['動土','移徙','出行'],                 bad:false },
+  { name:'成', yi:['移徙','動土','嫁娶','開市','出行','簽約'], ji:['安葬'],                             bad:false },
+  { name:'收', yi:['嫁娶','求財','安床','祈福'],              ji:['出行','動土','移徙','簽約'],          bad:false },
+  { name:'開', yi:['嫁娶','開市','出行','動土','移徙','簽約'], ji:['安葬'],                             bad:false },
+  { name:'閉', yi:['安葬','祭祀'],                             ji:['嫁娶','開市','出行','動土','移徙','簽約'], bad:true },
+];
 
-// Auspicious days scoring: strict event matching — must have required yi, must not have in ji
+/**
+ * 返回某農曆日期的固定宜忌。
+ * 優先使用 SPECIAL_DAYS（節日/傳統吉凶日），其餘日子按建除十二神循環計算。
+ * 同一日 yi 與 ji 絕無重複，確保唔自相矛盾。
+ */
+function getDayYiJi(lunar) {
+  const special = SPECIAL_DAYS.find(s => s.m === lunar.month && s.d === lunar.day);
+  if (special) return special;
+
+  // 建除計算：以農曆月份 + 日數取 mod 12 得建除位，月份偏移確保跨月唔同位
+  // 正月建寅(2)，二月建卯(3)…十二月建丑(1)
+  const MONTH_BRANCH = [2,3,4,5,6,7,8,9,10,11,0,1]; // 正月…十二月
+  const base = MONTH_BRANCH[lunar.month - 1];
+  const idx  = ((lunar.day - 1) + base) % 12;
+  const jz   = JIANZHU[idx];
+  return { type: jz.bad ? 'inauspicious' : 'auspicious', yi: jz.yi, ji: jz.ji, jianchu: jz.name };
+}
+
+// ── 推薦吉日評分（嚴格事項匹配：必須在宜，且不在忌）────────────────────────
 function scoreDay(date, eventType) {
   const lunar = solarToLunar(date);
-  const special = SPECIAL_DAYS.find(s => s.m === lunar.month && s.d === lunar.day);
 
-  // Hard exclusions: inauspicious days
-  if (special?.type === 'inauspicious') return -999;
-  if ([5, 14, 23].includes(lunar.day)) return -100; // 五路喪門
+  // 五路喪門：農曆初五、十四、廿三
+  if ([5, 14, 23].includes(lunar.day)) return -999;
+
+  const dayData = getDayYiJi(lunar);
+
+  // 忌日直接排除
+  if (dayData.type === 'inauspicious') return -999;
 
   const primaryTag = EVENT_PRIMARY_TAG[eventType];
-  const altTag     = EVENT_ALT_TAG[eventType] || null;
 
-  // Hard exclusion: day explicitly forbids the event's primary action
-  if (primaryTag && special?.ji?.includes(primaryTag)) return -999;
-  // Also exclude if alt tag is forbidden
-  if (altTag && special?.ji?.includes(altTag)) return -999;
-
-  let score = 0;
-
-  // Bonus if yi tags match event
-  if (special?.type === 'auspicious') {
-    // For days with special data, require the primary tag to be in yi (or no primary tag)
-    if (primaryTag) {
-      const hasTag = special.yi.includes(primaryTag) || (altTag && special.yi.includes(altTag));
-      if (!hasTag) {
-        // Auspicious day but NOT for this event — give low score instead of ignoring
-        score += 5;
-      } else {
-        score += 50; // Strong bonus for explicitly matching event
-      }
-    } else {
-      score += 30; // 剖腹產: general auspicious bonus
-    }
-    const evData = EVENT_DATA[eventType];
-    if (evData) {
-      const matches = special.yi.filter(t => evData.yi.includes(t)).length;
-      score += matches * 15;
-    }
-  } else if (!special) {
-    // No special day data — neutral day, acceptable as fallback
-    score += 10;
+  // 若事項有必要標籤：忌中有則排除，宜中無則不適合
+  if (primaryTag) {
+    if (dayData.ji.includes(primaryTag)) return -999; // 明確忌此事 → 排除
+    if (!dayData.yi.includes(primaryTag)) return -1;  // 宜中無此事 → 不合適
   }
 
-  // Deity birthday = extra auspicious energy
+  // 通過篩選，開始計分
+  let score = 50;
+
+  // 特殊節日加分
+  const isSpecial = SPECIAL_DAYS.find(s => s.m === lunar.month && s.d === lunar.day);
+  if (isSpecial) score += 20;
+
+  // 神明聖誕加分
   const deities = DEITY_BIRTHDAYS.filter(db => db.month === lunar.month && db.day === lunar.day);
   if (deities.length) score += 15;
 
-  // Prefer Tue–Thu (less chaotic)
+  // 星期二至四（週中穩定）
   const dow = date.getDay();
   if (dow >= 2 && dow <= 4) score += 8;
 
-  // Prefer mid-month (15) and first/last auspicious lunar days
+  // 農曆吉日（初一、初三、初八、十五、十八）
   if ([1, 3, 8, 15, 18].includes(lunar.day)) score += 12;
 
-  // Slight randomness for variety (deterministic per date)
+  // 確定性隨機，增加多樣性
   score += (date.getDate() * 7 + lunar.month * 13) % 17;
 
   return score;
@@ -1294,12 +1311,12 @@ function findAuspiciousDays() {
       <div class="aday-top"><span class="aday-rank">${rankLabel}</span></div>
       <div class="aday-body"><div class="aday-row"><div class="aday-tags"><span class="aday-tag-good">宜 —</span></div></div></div>
     </div>`;
-    const lunar  = solarToLunar(d);
+    const lunar    = solarToLunar(d);
     const lunarStr = `農曆${LUNAR_MONTH_NAMES[lunar.month-1]}月${LUNAR_DAY_NAMES[lunar.day-1]}`;
     const solarStr = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（星期${WEEKDAYS[d.getDay()]}）`;
-    const special = SPECIAL_DAYS.find(s => s.m === lunar.month && s.d === lunar.day);
-    const yiList  = special?.yi?.length ? special.yi : evData.yi;
-    const jiList  = special?.ji?.length ? special.ji : evData.ji.slice(0,2);
+    const dayData  = getDayYiJi(lunar);
+    const yiList   = dayData.yi || [];
+    const jiList   = dayData.ji || [];
     return `<div class="aday-card">
       <div class="aday-top">
         <span class="aday-rank">${rankLabel}</span>

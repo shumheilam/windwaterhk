@@ -3050,7 +3050,7 @@ function switchMainTab(tab) {
     document.getElementById('tab-' + k)?.classList.toggle('active', k === tab);
   });
   const titles    = { bazi:'八 字 命 盤', match:'合 婚 配 對', rename:'改 名 系 統', liuNian:'流 年 運 程' };
-  const subtitles = { bazi:'Four Pillars of Destiny', match:'Compatibility Analysis', rename:'Name & Fortune Analysis', liuNian:'Annual Fortune · 2026<br>丙&nbsp;午&nbsp;年' };
+  const subtitles = { bazi:'Four Pillars of Destiny', match:'Compatibility Analysis', rename:'Name & Fortune Analysis', liuNian:'Annual Fortune · 2026<br><span style="white-space:nowrap;letter-spacing:0.4em">丙 午 年</span>' };
   document.getElementById('pageTitle').textContent = titles[tab] || titles.bazi;
   document.getElementById('pageSubtitle').innerHTML = subtitles[tab] || subtitles.bazi;
   // Sync mobile bottom tab bar
