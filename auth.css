@@ -856,7 +856,8 @@
     background: #c9a84c;
     border-radius: 0 0 2px 2px;
   }
-  .mob-tab-icon { font-size: 1.25rem; line-height: 1; }
+  .mob-tab-icon { font-size: 1.25rem; line-height: 1; display:flex; align-items:center; justify-content:center; width:22px; height:22px; }
+  .mob-tab-icon svg { width:22px; height:22px; display:block; }
   .mob-tab-label { font-size: 10px; letter-spacing: 0.04em; line-height: 1; }
 
   /* ── 更多 button (same shape as mob-tab-item) ── */

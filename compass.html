@@ -142,8 +142,13 @@
     }
     .compass-svg-wrap {
       position: relative;
-      width: 280px;
-      height: 280px;
+      width: 100%;
+      max-width: 280px;
+    }
+    .compass-svg-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
     }
     #compassRing {
       transition: transform 0.15s ease-out;
@@ -566,7 +571,8 @@
       -webkit-tap-highlight-color: transparent;
     }
     .mob-tab-item.active, .mob-tab-item:hover { color: var(--gold); }
-    .mob-tab-icon { font-size: 1.25rem; line-height: 1; }
+    .mob-tab-icon { font-size: 1.25rem; line-height: 1; display:flex; align-items:center; justify-content:center; width:22px; height:22px; }
+    .mob-tab-icon svg { width:22px; height:22px; display:block; }
     .mob-tab-label { font-size: 0.58rem; letter-spacing: 0.12em; }
 
     .mob-more-overlay {
@@ -643,7 +649,7 @@
     <div class="compass-wrap">
       <!-- SVG compass -->
       <div class="compass-svg-wrap">
-        <svg viewBox="0 0 280 280" width="280" height="280" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
           <!-- Static outer ring -->
           <circle cx="140" cy="140" r="136" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="1.5"/>
           <circle cx="140" cy="140" r="128" fill="none" stroke="rgba(201,168,76,0.12)" stroke-width="0.8"/>
@@ -726,7 +732,7 @@
       </div>
 
       <button class="perm-btn" id="permBtn" onclick="requestCompassPerm()">
-        🧭 啟動指南針
+        啟 動 指 南 針
       </button>
 
       <!-- Direction analysis -->
@@ -808,23 +814,23 @@
 <!-- ── Mobile bottom tab bar ───────────────────────── -->
 <nav class="mob-tab-bar">
   <a class="mob-tab-item" href="index.html">
-    <span class="mob-tab-icon">☯</span>
+    <span class="mob-tab-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="8"/><path d="M10 2C10 5.5 6.5 5.5 6.5 10C6.5 14.5 10 14.5 10 18"/><circle cx="10" cy="6" r="1.8" fill="currentColor" stroke="none"/><circle cx="10" cy="14" r="1.8" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span>
     <span class="mob-tab-label">命盤</span>
   </a>
   <a class="mob-tab-item" href="oracle.html">
-    <span class="mob-tab-icon">籤</span>
+    <span class="mob-tab-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M6 7.5L5.5 17Q5.5 18.5 10 18.5Q14.5 18.5 14.5 17L14 7.5"/><ellipse cx="10" cy="7.5" rx="4" ry="1.5"/><line x1="10" y1="2" x2="9.5" y2="6"/><line x1="12.5" y1="2.5" x2="12" y2="6"/><line x1="7.5" y1="2.5" x2="8" y2="6"/></svg></span>
     <span class="mob-tab-label">求籤</span>
   </a>
   <a class="mob-tab-item" href="index.html" onclick="sessionStorage.setItem('tab','match')">
-    <span class="mob-tab-icon">♡</span>
+    <span class="mob-tab-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M10 16C10 16 2.5 11 2.5 6.2C2.5 4 4.5 2.5 7 3.5C8.2 4 9.3 5.2 10 6.2C10.7 5.2 11.8 4 13 3.5C15.5 2.5 17.5 4 17.5 6.2C17.5 11 10 16 10 16Z"/></svg></span>
     <span class="mob-tab-label">合婚</span>
   </a>
   <a class="mob-tab-item active" href="compass.html">
-    <span class="mob-tab-icon">🧭</span>
+    <span class="mob-tab-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="1.5" fill="currentColor" stroke="none"/><line x1="10" y1="3.5" x2="10" y2="8.5" stroke-width="2.2"/><line x1="10" y1="11.5" x2="10" y2="16.5"/><line x1="3.5" y1="10" x2="8.5" y2="10"/><line x1="11.5" y1="10" x2="16.5" y2="10"/></svg></span>
     <span class="mob-tab-label">羅盤</span>
   </a>
   <button class="mob-tab-item mob-more-btn" id="mobMoreTrigger" onclick="toggleMobMore(event)">
-    <span class="mob-tab-icon">···</span>
+    <span class="mob-tab-icon"><svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="4" cy="10" r="1.8"/><circle cx="10" cy="10" r="1.8"/><circle cx="16" cy="10" r="1.8"/></svg></span>
     <span class="mob-tab-label">更多</span>
   </button>
 </nav>
@@ -844,7 +850,7 @@
     <span class="mob-more-icon">☰</span>奇 門 遁 甲
   </a>
   <a class="mob-more-item active" href="compass.html" onclick="closeMobMore()">
-    <span class="mob-more-icon">🧭</span>風 水 羅 盤
+    <span class="mob-more-icon">盤</span>風 水 羅 盤
   </a>
 </nav>
 
