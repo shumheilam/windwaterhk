@@ -241,6 +241,12 @@
                 border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.4rem; }
     .择日-form-row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
     .择日-field { flex: 1; min-width: 140px; }
+    /* Mobile: stack date fields vertically, each takes full width */
+    @media (max-width: 480px) {
+      .择日-form-row { flex-direction: column; align-items: stretch; }
+      .择日-field { flex: none; width: 100%; min-width: unset; }
+      .择日-btn { width: 100%; text-align: center; }
+    }
     .择日-label { font-size: 0.62rem; color: var(--text-dim); letter-spacing: 0.3em;
                  display: block; margin-bottom: 0.45rem; }
     .择日-input {
@@ -1170,26 +1176,61 @@ const EVENT_DATA = {
   },
 };
 
-// Simple auspiciousness scoring: avoid inauspicious SPECIAL_DAYS,
-// prefer days matching event yi tags, weekdays 2-5 boost, month day not 5/14/23
+// 事項→必要宜忌標籤映射：推薦日必須符合對應事項
+const EVENT_PRIMARY_TAG = {
+  '結婚': '嫁娶',
+  '開業': '開市',
+  '搬屋': '移徙',
+  '動土': '動土',
+  '出行': '出行',
+  '簽約': '訂盟',   // 訂盟/簽約通用
+  '剖腹產': null,   // 避血刃為主，無單一必要標籤
+};
+
+// Secondary tag for 簽約 (either is acceptable)
+const EVENT_ALT_TAG = { '簽約': '簽約' };
+
+// Auspicious days scoring: strict event matching — must have required yi, must not have in ji
 function scoreDay(date, eventType) {
   const lunar = solarToLunar(date);
   const special = SPECIAL_DAYS.find(s => s.m === lunar.month && s.d === lunar.day);
 
-  // Hard exclusions
+  // Hard exclusions: inauspicious days
   if (special?.type === 'inauspicious') return -999;
   if ([5, 14, 23].includes(lunar.day)) return -100; // 五路喪門
+
+  const primaryTag = EVENT_PRIMARY_TAG[eventType];
+  const altTag     = EVENT_ALT_TAG[eventType] || null;
+
+  // Hard exclusion: day explicitly forbids the event's primary action
+  if (primaryTag && special?.ji?.includes(primaryTag)) return -999;
+  // Also exclude if alt tag is forbidden
+  if (altTag && special?.ji?.includes(altTag)) return -999;
 
   let score = 0;
 
   // Bonus if yi tags match event
   if (special?.type === 'auspicious') {
-    score += 30;
+    // For days with special data, require the primary tag to be in yi (or no primary tag)
+    if (primaryTag) {
+      const hasTag = special.yi.includes(primaryTag) || (altTag && special.yi.includes(altTag));
+      if (!hasTag) {
+        // Auspicious day but NOT for this event — give low score instead of ignoring
+        score += 5;
+      } else {
+        score += 50; // Strong bonus for explicitly matching event
+      }
+    } else {
+      score += 30; // 剖腹產: general auspicious bonus
+    }
     const evData = EVENT_DATA[eventType];
     if (evData) {
       const matches = special.yi.filter(t => evData.yi.includes(t)).length;
-      score += matches * 20;
+      score += matches * 15;
     }
+  } else if (!special) {
+    // No special day data — neutral day, acceptable as fallback
+    score += 10;
   }
 
   // Deity birthday = extra auspicious energy

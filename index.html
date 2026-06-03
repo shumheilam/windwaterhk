@@ -2648,17 +2648,29 @@ function renderDeepAnalysis(pillars, year) {
   const yBranch = pillars[0].branch;
   const dayEl   = STEM_EL[dStem];
 
-  // Weakest element
+  // Weakest element — includes all four pillars (year/month/day/hour)
   const cnt = { '木':0,'火':0,'土':0,'金':0,'水':0 };
   pillars.forEach(p => { cnt[STEM_EL[p.stem]]++; cnt[BRAN_EL[p.branch]]++; });
-  const weakEl = EL_LIST.reduce((a,b) => cnt[a] <= cnt[b] ? a : b);
+
+  // Find minimum count
+  const minCnt = Math.min(...EL_LIST.map(e => cnt[e]));
+  const weakEls = EL_LIST.filter(e => cnt[e] === minCnt);
+  // When tied, use hour stem's element to break the tie (makes hour meaningful)
+  const hStem  = pillars[3].stem;
+  const hEl    = STEM_EL[hStem];
+  const weakEl = weakEls.includes(hEl) ? hEl : weakEls[0];
 
   // Use the most lacking element for colours / nums / direction / yiji
   const isMissing  = cnt[weakEl] === 0;
   const lackLabel  = isMissing ? `命盤缺${weakEl}` : `${weakEl}氣最弱`;
   const colors  = DA_LUCKY_COLORS[weakEl];
   const nums    = DA_LUCKY_NUMS[weakEl];
-  const guiZod  = DA_GUIREN[dStem].map(b => ANIMALS[b]);
+
+  // 貴人生肖：合併日干 + 時干的天乙貴人，確保唔同時辰有唔同結果
+  const dGuirenBranches = DA_GUIREN[dStem] || [];
+  const hGuirenBranches = DA_GUIREN[hStem] || [];
+  const allGuirenBranches = [...new Set([...dGuirenBranches, ...hGuirenBranches])];
+  const guiZod = allGuirenBranches.slice(0, 3).map(b => ANIMALS[b]);
   const yiji    = DA_YIJI[weakEl];
 
   // 犯太歲 card — 帶免費簡介 + 付費鎖定詳細分析
@@ -3038,9 +3050,9 @@ function switchMainTab(tab) {
     document.getElementById('tab-' + k)?.classList.toggle('active', k === tab);
   });
   const titles    = { bazi:'八 字 命 盤', match:'合 婚 配 對', rename:'改 名 系 統', liuNian:'流 年 運 程' };
-  const subtitles = { bazi:'Four Pillars of Destiny', match:'Compatibility Analysis', rename:'Name & Fortune Analysis', liuNian:'Annual Fortune · 2026 丙午年' };
-  document.getElementById('pageTitle').textContent    = titles[tab]    || titles.bazi;
-  document.getElementById('pageSubtitle').textContent = subtitles[tab] || subtitles.bazi;
+  const subtitles = { bazi:'Four Pillars of Destiny', match:'Compatibility Analysis', rename:'Name & Fortune Analysis', liuNian:'Annual Fortune · 2026<br>丙&nbsp;午&nbsp;年' };
+  document.getElementById('pageTitle').textContent = titles[tab] || titles.bazi;
+  document.getElementById('pageSubtitle').innerHTML = subtitles[tab] || subtitles.bazi;
   // Sync mobile bottom tab bar
   const mobMap = { bazi:'mobTabBazi', match:'mobTabMatch', rename:'mobTabRename', liuNian:'mobTabLiuNian' };
   ['bazi','match','rename','liuNian'].forEach(k => {
