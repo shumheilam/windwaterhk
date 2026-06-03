@@ -923,8 +923,18 @@
     font-size: 1.1rem;
     line-height: 1;
     flex-shrink: 0;
-    width: 1.4rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
+  }
+  .mob-more-icon svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    display: block;
+    flex-shrink: 0;
   }
 
   /* ── 更多 button: arrow indicator ── */

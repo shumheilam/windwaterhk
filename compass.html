@@ -152,6 +152,9 @@
       display: block;
     }
     #compassRing {
+      /* dial is fixed — no rotation */
+    }
+    #needleGroup {
       transition: transform 0.15s ease-out;
       transform-origin: center;
     }
@@ -1065,9 +1068,9 @@
     <span class="mob-tab-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M10 16C10 16 2.5 11 2.5 6.2C2.5 4 4.5 2.5 7 3.5C8.2 4 9.3 5.2 10 6.2C10.7 5.2 11.8 4 13 3.5C15.5 2.5 17.5 4 17.5 6.2C17.5 11 10 16 10 16Z"/></svg></span>
     <span class="mob-tab-label">合婚</span>
   </a>
-  <a class="mob-tab-item active" href="compass.html">
-    <span class="mob-tab-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="1.5" fill="currentColor" stroke="none"/><line x1="10" y1="3.5" x2="10" y2="8.5" stroke-width="2.2"/><line x1="10" y1="11.5" x2="10" y2="16.5"/><line x1="3.5" y1="10" x2="8.5" y2="10"/><line x1="11.5" y1="10" x2="16.5" y2="10"/></svg></span>
-    <span class="mob-tab-label">羅盤</span>
+  <a class="mob-tab-item" href="index.html" onclick="sessionStorage.setItem('tab','rename')">
+    <span class="mob-tab-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M3 17L4.5 12.5L13.5 3.5L16.5 6.5L7.5 15.5Z"/><line x1="3" y1="17" x2="17" y2="17"/></svg></span>
+    <span class="mob-tab-label">改名</span>
   </a>
   <button class="mob-tab-item mob-more-btn" id="mobMoreTrigger" onclick="toggleMobMore(event)">
     <span class="mob-tab-icon"><svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="4" cy="10" r="1.8"/><circle cx="10" cy="10" r="1.8"/><circle cx="16" cy="10" r="1.8"/></svg></span>
@@ -1087,10 +1090,10 @@
     <span class="mob-more-icon">日</span>擇 日 系 統
   </a>
   <a class="mob-more-item" href="qimen.html" onclick="closeMobMore()">
-    <span class="mob-more-icon">☰</span>奇 門 遁 甲
+    <span class="mob-more-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="16" height="16" rx="1.5"/><line x1="7.3" y1="2" x2="7.3" y2="18"/><line x1="12.7" y1="2" x2="12.7" y2="18"/><line x1="2" y1="7.3" x2="18" y2="7.3"/><line x1="2" y1="12.7" x2="18" y2="12.7"/></svg></span>奇 門 遁 甲
   </a>
   <a class="mob-more-item active" href="compass.html" onclick="closeMobMore()">
-    <span class="mob-more-icon">盤</span>風 水 羅 盤
+    <span class="mob-more-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="8"/><circle cx="10" cy="10" r="1.5" fill="currentColor" stroke="none"/><line x1="10" y1="3.5" x2="10" y2="8.5" stroke-width="2.2"/><line x1="10" y1="11.5" x2="10" y2="16.5"/><line x1="3.5" y1="10" x2="8.5" y2="10"/><line x1="11.5" y1="10" x2="16.5" y2="10"/></svg></span>風 水 羅 盤
   </a>
 </nav>
 
@@ -1218,19 +1221,11 @@ function updateCompassUI(deg) {
   document.getElementById('dirDesc').textContent = data.desc;
   document.getElementById('dirTip').textContent = '擺設建議：' + data.tip;
 
-  // Rotate compass ring so north stays at top (ring rotates opposite to heading)
-  const ring = document.getElementById('compassRing');
-  // The ring has directions painted on it; rotate it so the faced direction points to top
-  // We rotate the entire ring by -deg so the faced direction is at top
-  // Actually, the SVG has 南(S) at top of the ring. So we need to rotate by (180 - deg) to put
-  // the faced direction at top. Actually let's think: deg=0 means facing north.
-  // We want north pointing up when facing north. The ring has 北 at bottom (y=262).
-  // So we need to rotate ring by 180 when deg=0 to put 北 at top?
-  // Let's keep it simpler: ring rotates by -deg (subtract heading) so that
-  // whichever direction the user faces ends up at the top indicator.
-  // Since 南 is painted at top (y~26) of ring: when deg=180 (facing south), ring rotation=0 looks correct.
-  // So rotation = (180 - deg).
-  ring.setAttribute('transform', `rotate(${180 - deg}, 140, 140)`);
+  // Dial (compassRing) is FIXED — only the needle rotates.
+  // SVG layout: 南 at top, 北 at bottom, 東 at left, 西 at right.
+  // rotate(180-deg): when deg=0(N) needle tip→bottom(北)✓, deg=90(E) needle→left(東)✓, deg=180(S) needle→top(南)✓
+  const needle = document.getElementById('needleGroup');
+  needle.setAttribute('transform', `rotate(${180 - deg}, 140, 140)`);
 
   // Personal direction
   showPersonalDir(dir);
