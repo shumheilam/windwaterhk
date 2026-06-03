@@ -1964,7 +1964,7 @@
         <!-- Paid / locked section -->
         <div class="da-paid-header">
           <span class="da-paid-title">月 費 會 員 專 屬</span>
-          <span class="da-paid-badge">🔒 HKD$28/月</span>
+          <span class="da-paid-badge">🔒 HKD$48起/月</span>
         </div>
         <div class="da-paid-grid" id="daPaidGrid"></div>
         <button class="da-upgrade-btn">🔓 升 級 會 員 · 解 鎖 全 部 分 析</button>
@@ -2176,7 +2176,7 @@
         <div class="match-paid-section">
           <div class="match-paid-title">✦ 深 度 合 婚 分 析 報 告</div>
           <div class="match-paid-preview" id="matchPaidPreview">深度報告包含：大運流年合婚分析、兩人婚後宮位影響、財帛互動、子嗣緣分、性格深度互補分析、2026-2030年合婚走勢預測…</div>
-          <button class="match-unlock-btn">🔓 HKD$68 · 解 鎖 完 整 合 婚 報 告</button>
+          <button class="match-unlock-btn">🔓 HKD$68 · 解 鎖 深 度 合 婚 報 告</button>
         </div>
 
         <p class="match-disclaimer">以上分析僅供參考，完整合婚請諮詢專業命理師<br>結果包含隨機因子，每次推算結果可能略有不同</p>
@@ -2373,7 +2373,7 @@
         <div class="rn-paid-section">
           <div class="rn-paid-title" id="rnPaidTitle">✦ 完 整 改 名 報 告</div>
           <div class="rn-paid-preview" id="rnPaidPreview">完整報告包含10個推薦名字，每個名字附筆劃五行分析、音義解說、與命格配合度評分，以及最佳選用時機建議…</div>
-          <button class="rn-unlock-btn" id="rnUnlockBtn">🔓 HKD$98 · 解 鎖 完 整 報 告</button>
+          <button class="rn-unlock-btn" id="rnUnlockBtn">🔓 HKD$128 · 解 鎖 完 整 報 告</button>
         </div>
 
         <p class="rn-disclaimer">以上分析僅供參考，完整改名建議請諮詢專業命理師<br>筆劃五行以康熙字典筆劃為準，本系統採簡化演算</p>
@@ -3307,7 +3307,7 @@ function renderLiuNian() {
       </div>
 
       <button class="ln-unlock-btn" onclick="alert('付費功能開發中，敬請期待！')">
-        🔓 &nbsp; HKD$28 / 月 &nbsp; 解 鎖 完 整 流 年
+        🔓 &nbsp; HKD$48 / 月 &nbsp; 解 鎖 完 整 流 年
       </button>
       <div class="ln-disclaimer">
         解鎖後即可查看全年12個月詳細運程分析，包括事業、感情、財運、健康及每月化解建議<br>
@@ -3650,7 +3650,7 @@ function analyzeRename(scene) {
     ];
     paidTitle   = '✦ 10個完整推薦名字 + 筆劃五行評分';
     paidPreview = `為${surname||''}${gLabel}精心推薦10個吉名：${surname||'○'}○○、${surname||'○'}○○…每個名字附康熙字典筆劃分析、五行配合分數、音義解說及適合改名時機…`;
-    unlockLabel = `🔓 HKD$98 · 解 鎖 10 個 推 薦 名 字`;
+    unlockLabel = `🔓 HKD$128 · 解 鎖 10 個 推 薦 名 字`;
 
   } else if (scene === 'adult') {
     document.getElementById('rnResultTitle').textContent = '成 人 改 名 分 析';
@@ -3694,7 +3694,7 @@ function analyzeRename(scene) {
 
     paidTitle   = '✦ 改 名 建 議 方 向 + 推 薦 用 字';
     paidPreview = `根據${name}的五行分析，深度改名報告包含：適合筆劃數範圍、30個推薦用字列表（含五行屬性）、每字音義分析、最佳改名時機（流年吉凶）、改名後運勢預測…`;
-    unlockLabel = `🔓 HKD$98 · 解 鎖 完 整 改 名 方 案`;
+    unlockLabel = `🔓 HKD$128 · 解 鎖 完 整 改 名 方 案`;
 
   } else {
     document.getElementById('rnResultTitle').textContent = '公 司 命 名 分 析';
@@ -3714,7 +3714,7 @@ function analyzeRename(scene) {
     ];
     paidTitle   = '✦ 5 個 公 司 名 建 議 + 五 行 評 分';
     paidPreview = `根據創辦人命格及${indName}行業屬性，精選5個公司名：○○科技、○○創新…每個名字附五行評分、筆劃吉凶分析、適合開業日期推算、公司命格走勢預測…`;
-    unlockLabel = `🔓 HKD$98 · 解 鎖 5 個 公 司 命 名 方 案`;
+    unlockLabel = `🔓 HKD$128 · 解 鎖 5 個 公 司 命 名 方 案`;
   }
 
   // Render free cards

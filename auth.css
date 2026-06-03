@@ -651,10 +651,21 @@
   padding: 0.1rem 0.5rem;
   border-radius: 10px;
 }
+.subs-plan-tier-label {
+  display: inline-block;
+  font-size: 0.58rem;
+  letter-spacing: 0.3em;
+  color: #907050;
+  border: 1px solid rgba(144,112,80,0.35);
+  border-radius: 3px;
+  padding: 0.15rem 0.55rem;
+  margin-bottom: 0.55rem;
+}
 .subs-plan-name {
-  font-size: 0.72rem;
-  color: var(--text-dim);
-  letter-spacing: 0.35em;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.3em;
   margin-bottom: 0.3rem;
 }
 .subs-plan-price {

@@ -290,7 +290,7 @@ function renderSettingsModal(view) {
          <div style="font-size:0.7rem;color:var(--text-dim);letter-spacing:0.06em;line-height:2;">到期日：2026年12月31日<br>自動續期：已開啟</div>
          <button class="subs-upgrade-btn" style="margin-top:0.9rem;border-color:rgba(180,50,50,0.4);color:#cc7777;" onclick="mockCancelSubs()">取消訂閱</button>`
       : `<div class="subs-status">目前：免費版</div>
-         <div style="font-size:0.72rem;color:var(--text-dim);letter-spacing:0.06em;line-height:2;margin-bottom:0.8rem;">月費會員 HKD$28-68/月<br>解鎖深度命盤、流年運程、無限求簽等</div>
+         <div style="font-size:0.72rem;color:var(--text-dim);letter-spacing:0.06em;line-height:2;margin-bottom:0.8rem;">玄學娛樂層 HKD$48/月 · 人生決策層 HKD$68/月<br>解鎖深度命盤、流年運程、無限求簽等</div>
          <button class="subs-upgrade-btn" onclick="mockUpgrade()">✦ 立即升級月費會員</button>`;
 
     body.innerHTML = `
@@ -385,32 +385,82 @@ function injectSubscribeModal() {
         <div class="subs-header">
           <div class="subs-header-icon">👑</div>
           <div class="subs-header-title">升 級 會 員</div>
-          <div class="subs-header-sub">解鎖命盤深度分析 · 流年運程 · 無限求簽</div>
+          <div class="subs-header-sub">兩個月費層級 · 按需選擇 · 隨時取消</div>
         </div>
         <div class="subs-tabs">
           <button class="subs-tab active" data-stab="monthly" onclick="switchSubsTab('monthly')">月 費 計 劃</button>
           <button class="subs-tab" data-stab="single" onclick="switchSubsTab('single')">單 次 報 告</button>
         </div>
         <div class="subs-panel active" id="subsTabMonthly">
+
+          <!-- Tier 1: $48 -->
           <div class="subs-plan-box">
-            <div class="subs-plan-name">月 費 計 劃</div>
-            <div class="subs-plan-price">HKD$28<span>&nbsp;/月</span></div>
+            <div class="subs-plan-tier-label">基 礎 層</div>
+            <div class="subs-plan-name">玄 學 娛 樂 層</div>
+            <div class="subs-plan-price">HKD$48<span>&nbsp;/月</span></div>
             <div class="subs-plan-desc">隨時取消 · 立即生效</div>
             <div class="subs-features">
-              <div class="subs-feature"><span class="subs-feature-check">✦</span>深度命盤分析（貴人／小人姓氏、旺身方向）</div>
-              <div class="subs-feature"><span class="subs-feature-check">✦</span>適合首飾配件建議 · 身體注意部位</div>
-              <div class="subs-feature"><span class="subs-feature-check">✦</span>五行詳細宜忌（食物、顏色、職業、環境）</div>
-              <div class="subs-feature"><span class="subs-feature-check">✦</span>流年運程（事業、感情、財運、健康）</div>
               <div class="subs-feature"><span class="subs-feature-check">✦</span>無限求簽 · AI 深度解籤</div>
-              <div class="subs-feature"><span class="subs-feature-check">✦</span>AI 八字全面解盤（日主特質 · 五行 · 建議）</div>
-              <div class="subs-feature"><span class="subs-feature-check">✦</span>神明曆進階功能 · 擇日建議</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>流年逐月分析</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>每日運程推播通知</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>犯太歲化解方法</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>旺身方向 · 首飾 · 身體建議</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>風水問答 10條/月</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>用戶檔案最多 10個</div>
             </div>
+            <button class="subs-subscribe-btn" onclick="doMockSubscribe('monthly-48')">訂 閱 · $48/月</button>
           </div>
-          <button class="subs-subscribe-btn" onclick="doMockSubscribe('monthly')">立 即 訂 閱</button>
-          <div class="subs-safe-note">🔒 安全付款 · Mock 示範模式 · 不會扣款</div>
+
+          <!-- Tier 2: $68 recommended -->
+          <div class="subs-plan-box" style="margin-top:0.9rem;border-color:rgba(201,168,76,0.55);background:rgba(201,168,76,0.04)">
+            <div class="subs-plan-tier-label" style="color:#e8d080;border-color:rgba(232,208,128,0.5)">✦ 推 薦</div>
+            <div class="subs-plan-name">人 生 決 策 層</div>
+            <div class="subs-plan-price">HKD$68<span>&nbsp;/月</span></div>
+            <div class="subs-plan-desc">包含所有 $48 功能 · 更多深度分析</div>
+            <div class="subs-features">
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>AI 命盤深度分析</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>每月 AI 個人化運程報告</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>個人化八字擇日（每月1次）</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>深度合婚月報（每月1份）</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>無限風水問答</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>單次報告7折（每月限2次，奇門遁甲豁免）</div>
+              <div class="subs-feature"><span class="subs-feature-check">✦</span>無限用戶檔案</div>
+            </div>
+            <button class="subs-subscribe-btn" onclick="doMockSubscribe('monthly-68')" style="background:linear-gradient(135deg,#6b1010,#9b2020 50%,#6b1010);border-color:#e8d080;color:#e8d080">訂 閱 · $68/月</button>
+          </div>
+
+          <div class="subs-safe-note" style="margin-top:0.8rem">🔒 安全付款 · Mock 示範模式 · 不會扣款</div>
         </div>
         <div class="subs-panel" id="subsTabSingle">
           <div class="subs-report-list">
+            <div class="subs-report-item" onclick="selectReport(this,'個人化八字擇日','HKD$68')">
+              <div class="subs-report-left">
+                <div class="subs-report-icon">📆</div>
+                <div><div class="subs-report-name">個人化八字擇日</div><div class="subs-report-desc">配合命格揀選最佳吉日</div></div>
+              </div>
+              <div class="subs-report-price">HKD$68</div>
+            </div>
+            <div class="subs-report-item" onclick="selectReport(this,'深度合婚報告','HKD$68')">
+              <div class="subs-report-left">
+                <div class="subs-report-icon">💍</div>
+                <div><div class="subs-report-name">深度合婚報告</div><div class="subs-report-desc">雙方命格深度匹配分析</div></div>
+              </div>
+              <div class="subs-report-price">HKD$68</div>
+            </div>
+            <div class="subs-report-item" onclick="selectReport(this,'深度改名報告','HKD$128')">
+              <div class="subs-report-left">
+                <div class="subs-report-icon">✍️</div>
+                <div><div class="subs-report-name">深度改名報告</div><div class="subs-report-desc">五行補缺 · 康熙筆劃分析</div></div>
+              </div>
+              <div class="subs-report-price">HKD$128</div>
+            </div>
+            <div class="subs-report-item" onclick="selectReport(this,'流年逐月詳細','HKD$98')">
+              <div class="subs-report-left">
+                <div class="subs-report-icon">📅</div>
+                <div><div class="subs-report-name">流年逐月詳細</div><div class="subs-report-desc">逐月細化運勢走向</div></div>
+              </div>
+              <div class="subs-report-price">HKD$98</div>
+            </div>
             <div class="subs-report-item" onclick="selectReport(this,'另一半性格外貌分析','HKD$68')">
               <div class="subs-report-left">
                 <div class="subs-report-icon">💑</div>
@@ -421,44 +471,16 @@ function injectSubscribeModal() {
             <div class="subs-report-item" onclick="selectReport(this,'子女緣分析','HKD$68')">
               <div class="subs-report-left">
                 <div class="subs-report-icon">👶</div>
-                <div><div class="subs-report-name">子女緣分析</div><div class="subs-report-desc">子女緣份深淺判斷</div></div>
+                <div><div class="subs-report-name">子女緣 · 血光 · 面相 · 手相</div><div class="subs-report-desc">各類深度單次分析報告</div></div>
               </div>
               <div class="subs-report-price">HKD$68</div>
             </div>
-            <div class="subs-report-item" onclick="selectReport(this,'兄弟姊妹緣分析','HKD$68')">
+            <div class="subs-report-item" onclick="selectReport(this,'奇門遁甲完整盤','HKD$198')">
               <div class="subs-report-left">
-                <div class="subs-report-icon">👨‍👩‍👧‍👦</div>
-                <div><div class="subs-report-name">兄弟姊妹緣分析</div><div class="subs-report-desc">手足情緣命格分析</div></div>
+                <div class="subs-report-icon">☰</div>
+                <div><div class="subs-report-name">奇門遁甲完整盤</div><div class="subs-report-desc">八門九星完整時盤分析</div></div>
               </div>
-              <div class="subs-report-price">HKD$68</div>
-            </div>
-            <div class="subs-report-item" onclick="selectReport(this,'流年逐月運程','HKD$98')">
-              <div class="subs-report-left">
-                <div class="subs-report-icon">📅</div>
-                <div><div class="subs-report-name">流年逐月運程</div><div class="subs-report-desc">逐月細化運勢走向</div></div>
-              </div>
-              <div class="subs-report-price">HKD$98</div>
-            </div>
-            <div class="subs-report-item" onclick="selectReport(this,'血光之災提示','HKD$68')">
-              <div class="subs-report-left">
-                <div class="subs-report-icon">⚠️</div>
-                <div><div class="subs-report-name">血光之災提示</div><div class="subs-report-desc">危險時期預防提示</div></div>
-              </div>
-              <div class="subs-report-price">HKD$68</div>
-            </div>
-            <div class="subs-report-item" onclick="selectReport(this,'合婚深度分析','HKD$68')">
-              <div class="subs-report-left">
-                <div class="subs-report-icon">💍</div>
-                <div><div class="subs-report-name">合婚深度分析</div><div class="subs-report-desc">雙方命格深度匹配</div></div>
-              </div>
-              <div class="subs-report-price">HKD$68</div>
-            </div>
-            <div class="subs-report-item" onclick="selectReport(this,'改名深度報告','HKD$98')">
-              <div class="subs-report-left">
-                <div class="subs-report-icon">✍️</div>
-                <div><div class="subs-report-name">改名深度報告</div><div class="subs-report-desc">五行補缺 · 筆劃分析</div></div>
-              </div>
-              <div class="subs-report-price">HKD$98</div>
+              <div class="subs-report-price">HKD$198</div>
             </div>
           </div>
           <button class="subs-report-btn" id="subsReportBtn" onclick="doMockSubscribe('single')" disabled style="opacity:0.45;">
