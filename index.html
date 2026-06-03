@@ -1523,14 +1523,14 @@
       margin-bottom: 1.4rem;
       position: relative;
     }
-    .ln-year-title { display: none; }
-    .ln-year-sub {
-      font-size: 11px;
-      color: var(--text-dim);
-      letter-spacing: 0.25em;
-      margin-top: 0;
-      white-space: nowrap;
+    .ln-year-title {
+      font-size: clamp(1.2rem, 3.5vw, 1.7rem);
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 0.4em;
+      text-shadow: 0 0 18px rgba(201,168,76,0.3);
     }
+    .ln-year-sub { display: none; }
     .ln-profile-badge {
       display: inline-block;
       margin-top: 0.65rem;
@@ -3230,6 +3230,8 @@ function renderLiuNian() {
   el.innerHTML = `
     <!-- Year banner -->
     <div class="ln-year-banner">
+      <div class="ln-year-title">二〇二六 · 丙 午 年</div>
+      <div style="margin-top:0.8rem"></div>
       <div class="ln-profile-badge">📖 ${profile.name} · 日主 ${dStem}${dBranch}（${data.dayEl}）</div>
     </div>
 

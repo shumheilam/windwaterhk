@@ -236,28 +236,17 @@
     .event-card-label { font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.12em; }
     .event-card.selected .event-card-label { color: var(--gold); }
 
-    /* Date range row */
+    /* Date range — always vertical stack so all three items share the same width */
     .择日-form { background: var(--bg-card); border: 1px solid var(--gold-dim);
                 border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.4rem;
                 width: 100%; box-sizing: border-box; overflow: hidden; }
-    .择日-form-row { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;
-                    width: 100%; box-sizing: border-box; overflow: hidden; }
-    .择日-field { flex: 1; min-width: 140px; width: 100%; box-sizing: border-box; overflow: hidden; }
-    /* Forceful date input containment */
-    .择日-field,
+    .择日-form-row { display: flex; flex-direction: column; gap: 0.75rem;
+                    width: 100%; box-sizing: border-box; }
+    .择日-field { width: 100%; box-sizing: border-box; }
     .择日-field input,
-    input[type='date'].择日-input {
-      width: 100% !important;
-      max-width: 100% !important;
-      box-sizing: border-box !important;
-      overflow: hidden !important;
-    }
-    /* Mobile: stack date fields vertically, each takes full width */
-    @media (max-width: 600px) {
-      .择日-form-row { flex-direction: column; align-items: stretch; }
-      .择日-field { flex: none; width: 100%; min-width: unset; }
-      .择日-btn { width: 100%; text-align: center; }
-    }
+    input[type='date'].择日-input { width: 100% !important; max-width: 100% !important;
+                                    box-sizing: border-box !important; overflow: hidden !important; }
+    .择日-btn { width: 100%; text-align: center; }
     .择日-label { font-size: 0.62rem; color: var(--text-dim); letter-spacing: 0.3em;
                  display: block; margin-bottom: 0.45rem; }
     .择日-input {
@@ -271,10 +260,11 @@
     .择日-input:focus { border-color: var(--gold); }
     .择日-input::-webkit-calendar-picker-indicator { filter: invert(0.6) sepia(1) saturate(2) hue-rotate(5deg); cursor: pointer; }
     .择日-btn {
-      padding: 0.55rem 1.6rem; border-radius: 6px; background: linear-gradient(135deg, #c9a84c 0%, #a07828 100%);
+      width: 100%; padding: 0.55rem 1.6rem; border-radius: 6px;
+      background: linear-gradient(135deg, #c9a84c 0%, #a07828 100%);
       color: #1a1000; font-family: 'Noto Serif TC', serif; font-size: 0.82rem; font-weight: 700;
-      letter-spacing: 0.2em; border: none; cursor: pointer; white-space: nowrap;
-      transition: opacity 0.2s, transform 0.15s; flex-shrink: 0;
+      letter-spacing: 0.2em; border: none; cursor: pointer; box-sizing: border-box;
+      transition: opacity 0.2s, transform 0.15s;
     }
     .择日-btn:hover { opacity: 0.88; transform: translateY(-1px); }
     .择日-btn:active { transform: translateY(0); }
