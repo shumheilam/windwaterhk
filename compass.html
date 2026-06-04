@@ -568,6 +568,75 @@
       letter-spacing: 0.2em;
       margin-bottom: 1rem;
     }
+
+    /* ── Category Tabs ───────────────────────────────── */
+    .qa-tabs {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+      justify-content: center;
+    }
+    .qa-tab {
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      padding: 0.38rem 0.75rem;
+      border-radius: 5px;
+      border: 1px solid rgba(201,168,76,0.28);
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .qa-tab:hover { color: var(--text); border-color: rgba(201,168,76,0.5); }
+    .qa-tab.active {
+      background: rgba(201,168,76,0.12);
+      border-color: rgba(201,168,76,0.55);
+      color: var(--gold);
+    }
+    .qa-category { display: none; }
+    .qa-category.active { display: block; }
+    .qa-cat-header {
+      text-align: center;
+      margin-bottom: 0.9rem;
+    }
+    .qa-cat-title {
+      font-size: 0.68rem;
+      color: var(--gold);
+      letter-spacing: 0.45em;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── Paid Consultation v2 ────────────────────────── */
+    .paid-consult-v2 {
+      margin-top: 1.6rem;
+      border: 1px dashed rgba(201,168,76,0.3);
+      border-radius: 8px;
+      padding: 1.4rem 1.2rem;
+      background: rgba(201,168,76,0.03);
+      text-align: center;
+    }
+    .paid-consult-v2 .paid-lock-sym { font-size: 1.4rem; color: var(--text-dim); margin-bottom: 0.5rem; }
+    .paid-consult-v2 .paid-lock-title {
+      font-size: 0.85rem; font-weight: 700;
+      color: var(--gold); letter-spacing: 0.35em; margin-bottom: 0.6rem;
+    }
+    .paid-tier-row {
+      display: flex; gap: 0.6rem; justify-content: center;
+      flex-wrap: wrap; margin-bottom: 1rem;
+    }
+    .paid-tier-chip {
+      padding: 0.35rem 0.9rem;
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 4px;
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+    .paid-tier-chip .lock-icon { font-size: 0.75rem; }
+
     .preset-q {
       border: 1px solid rgba(201,168,76,0.2);
       border-radius: 8px;
@@ -905,113 +974,344 @@
     </div>
   </div>
 
-  <!-- ── AI Consultation Card ─────────────────────── -->
-  <div class="card">
+  <!-- ── Home FengShui Analysis Card ──────────────── -->
+  <div class="card" id="homeAnalysisCard">
     <div class="cc tl"></div><div class="cc tr"></div>
     <div class="cc bl"></div><div class="cc br"></div>
-    <div class="card-title">風 水 問 答 AI 諮 詢</div>
+    <div class="card-title">家 居 風 水 分 析</div>
 
-    <p class="ai-intro">常見風水問題，即時解答。以下三條預設問題免費開放，<br>自訂問題需升級月費計劃由 Claude AI 即時解答。</p>
-    <div style="text-align:center"><span class="free-tag">免 費 · 三 條 預 設 問 題</span></div>
+    <p class="ai-intro">五大空間逐一解析，每個類別免費提供三條預設問答。<br>點擊問題展開詳細化解建議，AI 個人化諮詢需升級計劃。</p>
 
-    <!-- Q1: 大門煞 -->
-    <div class="preset-q" id="pq1">
-      <div class="preset-q-header" onclick="togglePresetQ('pq1')">
-        <span class="preset-q-num">1</span>
-        <span class="preset-q-text">大門正對電梯、樓梯或廁所，有何風水影響及化解方法？</span>
-        <span class="preset-q-arrow">▾</span>
+    <!-- Category Tabs -->
+    <div class="qa-tabs">
+      <button class="qa-tab active" onclick="switchQaTab('door')">大 門 風 水</button>
+      <button class="qa-tab" onclick="switchQaTab('living')">客 廳 佈 局</button>
+      <button class="qa-tab" onclick="switchQaTab('bedroom')">睡 房 擺 設</button>
+      <button class="qa-tab" onclick="switchQaTab('kitchen')">廚 廁 位 置</button>
+      <button class="qa-tab" onclick="switchQaTab('office')">辦 公 室 格 局</button>
+    </div>
+
+    <!-- ── 大門風水 ── -->
+    <div class="qa-category active" id="cat-door">
+      <div class="qa-cat-header">
+        <div class="qa-cat-title">大 門 風 水</div>
+        <span class="free-tag">免 費 · 三 條 預 設 問 題</span>
       </div>
-      <div class="preset-q-body">
-        <div class="preset-q-inner">
-          <div class="ans-label">風 水 師 解 答</div>
-          <div class="ans-text">大門係住宅納氣之口，正對電梯、樓梯或廁所會形成不同類型的「形煞」，令宅氣難以凝聚、財氣外洩。<br><br>
-          <strong style="color:var(--gold)">大門對電梯：</strong>電梯頻繁升降，氣流不穩，宅氣被抽走，主財來財去、事業不穩。<br><br>
-          <strong style="color:var(--gold)">大門對樓梯：</strong>若樓梯向下斜射，形成「財水直流」之象，財富難聚；若向上，氣流沖射入宅，亦主口舌是非。<br><br>
-          <strong style="color:var(--gold)">大門對廁所：</strong>最為不利，穢氣直入住宅，影響全家健康運勢及財運，需盡快化解。</div>
-          <div class="ans-box">
-            <div class="ans-box-title">化 煞 擺 設 建 議</div>
-            <div class="ans-box-text">
-              · 對電梯：門口掛八卦凸鏡一面，反射沖射之氣；可配合五帝錢（順序串）鋪於門檻<br>
-              · 對樓梯：於門口放置虎地毯（虎頭向外），或懸掛山海鎮，阻擋衝射<br>
-              · 對廁所：廁所門保持常關，門口放屏風或玄關柜遮擋視線；廁所內放六帝錢化穢；門口可放小石獅化煞<br>
-              · 通用化解：大門兩旁各放一盆常青植物，以旺氣填補，招納生氣入宅
+
+      <div class="preset-q" id="door-1">
+        <div class="preset-q-header" onclick="toggleHomeQ('door-1','door')">
+          <span class="preset-q-num">1</span>
+          <span class="preset-q-text">大門正對電梯點化解？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">屬「穿心煞」，電梯頻繁升降令宅氣被抽走，主財來財去、事業不穩。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">化 煞 建 議</div>
+              <div class="ans-box-text">可放屏風阻隔視線，門口掛八卦鏡反射沖射之氣，或在門檻鋪五帝錢串。門口兩旁各放一盆大葉常青植物，補旺氣入宅。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-q" id="door-2">
+        <div class="preset-q-header" onclick="toggleHomeQ('door-2','door')">
+          <span class="preset-q-num">2</span>
+          <span class="preset-q-text">大門正對樓梯點化解？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">財水直流，樓梯向下斜射形成「財水外瀉」之象，財富難聚；氣流亦易沖射入宅，主口舌是非。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">化 煞 建 議</div>
+              <div class="ans-box-text">宜放虎地毯（虎頭向外）於門口阻擋，或懸掛山海鎮化解沖射。可在門口放玄關櫃實體阻隔，令氣流無法直衝入屋。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-q" id="door-3">
+        <div class="preset-q-header" onclick="toggleHomeQ('door-3','door')">
+          <span class="preset-q-num">3</span>
+          <span class="preset-q-text">大門正對廁所點化解？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">最為不利，穢氣直入住宅，影響全家健康運勢及財運，需盡快化解。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">化 煞 建 議</div>
+              <div class="ans-box-text">宜常關廁所門，門口放屏風或玄關櫃遮擋視線。廁所內放六帝錢化穢，廁所門可掛五帝錢門簾。入口放粗鹽一碗（每月更換）吸收穢氣。</div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Q2: 床位擺放 -->
-    <div class="preset-q" id="pq2">
-      <div class="preset-q-header" onclick="togglePresetQ('pq2')">
-        <span class="preset-q-num">2</span>
-        <span class="preset-q-text">睡房床位擺放有什麼風水禁忌？如何選擇最佳位置？</span>
-        <span class="preset-q-arrow">▾</span>
+    <!-- ── 客廳佈局 ── -->
+    <div class="qa-category" id="cat-living">
+      <div class="qa-cat-header">
+        <div class="qa-cat-title">客 廳 佈 局</div>
+        <span class="free-tag">免 費 · 三 條 預 設 問 題</span>
       </div>
-      <div class="preset-q-body">
-        <div class="preset-q-inner">
-          <div class="ans-label">風 水 師 解 答</div>
-          <div class="ans-text">睡房是休養生息、補充元氣之所，床位擺放直接影響睡眠質素、健康及感情運勢。以下禁忌需特別注意：<br><br>
-          <strong style="color:#d04040">床頭靠窗：</strong>陰氣從窗入侵，睡眠不安穩、多噩夢，長期影響健康。床頭必須靠實牆，方可安穩。<br><br>
-          <strong style="color:#d04040">床腳正對門：</strong>「腳踢棺材」之煞，主健康欠佳、容易生病，感情不順。需移動床位或加裝門帘阻擋。<br><br>
-          <strong style="color:#d04040">橫樑壓床：</strong>睡於橫樑正下方，受壓迫感影響，主頭痛、健康問題。可在橫樑兩端各掛葫蘆化解，或移動床位。<br><br>
-          <strong style="color:#d04040">鏡子正對床：</strong>鏡中反射容易驚魂，影響睡眠，亦主感情生變。鏡子應避免正對床，可用布遮蓋。</div>
-          <div class="ans-box">
-            <div class="ans-box-title">最 佳 床 位 擺 法</div>
-            <div class="ans-box-text">
-              · 床頭靠實牆，不靠窗、不靠廁所牆<br>
-              · 床與門成 45 度角斜放最為理想，睡覺時可看到房門（掌握氣口）<br>
-              · 床兩側留有空間，不可緊貼牆壁（尤其右側），利於陰陽之氣流通<br>
-              · 床頭牆宜素淨，可掛山水畫（山在後方如靠山），忌掛人物畫像<br>
-              · 睡房整體宜整潔，床底勿堆積雜物，以免積聚陰氣影響氣場
+
+      <div class="preset-q" id="living-1">
+        <div class="preset-q-header" onclick="toggleHomeQ('living-1','living')">
+          <span class="preset-q-num">1</span>
+          <span class="preset-q-text">沙發應該點擺？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">沙發代表一家之靠山，擺放直接影響家人運勢及家庭和諧。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">最 佳 擺 法</div>
+              <div class="ans-box-text">背靠實牆，唔好背窗，窗外空曠無依主運勢飄忽。沙發後可掛山水畫增靠山運。沙發不可正對大門，宜成45度角，令氣流緩和入宅。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-q" id="living-2">
+        <div class="preset-q-header" onclick="toggleHomeQ('living-2','living')">
+          <span class="preset-q-num">2</span>
+          <span class="preset-q-text">財位喺邊？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">客廳財位在進門對角線位置，為氣流聚集之處，好好利用可大旺財運。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">催 財 擺 設</div>
+              <div class="ans-box-text">宜放招財貓、黃色水晶、常開燈以旺財氣。可放水種植物或小魚缸令財氣流動。財位忌堆放雜物、鞋子，勿設廁所門或走廊正對財位。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-q" id="living-3">
+        <div class="preset-q-header" onclick="toggleHomeQ('living-3','living')">
+          <span class="preset-q-num">3</span>
+          <span class="preset-q-text">電視牆有咩禁忌？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">電視牆是客廳焦點，不當擺放會形成鏡煞及氣場干擾，影響家人磁場。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">注 意 事 項</div>
+              <div class="ans-box-text">電視牆唔好正對大門，螢幕熄滅時如鏡面反射，形成鏡煞影響磁場。電視後方宜為實牆，忌背靠廁所牆。屏幕旁忌放魚缸，水剋電器五行相沖。</div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Q3: 廚廁位置 -->
-    <div class="preset-q" id="pq3">
-      <div class="preset-q-header" onclick="togglePresetQ('pq3')">
-        <span class="preset-q-num">3</span>
-        <span class="preset-q-text">廚房同廁所相鄰或相對，有何風水影響？點樣化解？</span>
-        <span class="preset-q-arrow">▾</span>
+    <!-- ── 睡房擺設 ── -->
+    <div class="qa-category" id="cat-bedroom">
+      <div class="qa-cat-header">
+        <div class="qa-cat-title">睡 房 擺 設</div>
+        <span class="free-tag">免 費 · 三 條 預 設 問 題</span>
       </div>
-      <div class="preset-q-body">
-        <div class="preset-q-inner">
-          <div class="ans-label">風 水 師 解 答</div>
-          <div class="ans-text">廚房五行屬火（主食祿、財富），廁所五行屬水（主穢氣、陰氣），水火相剋，廚廁相鄰乃住宅常見問題，影響家人健康、夫妻感情及財運。<br><br>
-          <strong style="color:#d04040">廚廁相鄰：</strong>廁所穢氣滲入廚房，影響食物及家人腸胃健康，長期可能有慢性疾病隱患。火水相剋，家人易生矛盾爭執。<br><br>
-          <strong style="color:#d04040">廚廁門相對：</strong>穢氣直衝廚房（食祿之位），主財運受損、飲食健康問題。尤以廁門正對爐灶最為不利。<br><br>
-          <strong style="color:#d04040">廁所在廚房正上方：</strong>（樓上廁所正壓廚房）為大忌，水剋火象，財帛漏失，需做風水化解。</div>
-          <div class="ans-box">
-            <div class="ans-box-title">化 煞 及 日 常 注 意</div>
-            <div class="ans-box-text">
-              · 廚廁門相對：在廁所門掛一串五帝錢或門帘，阻隔穢氣；可在廚廁之間擺放屏風<br>
-              · 廁所保持清潔乾燥，馬桶蓋常關，減少穢氣擴散<br>
-              · 廚房爐灶旁忌放水種植物或魚缸，以免水剋火加重影響<br>
-              · 廁所入口可放粗鹽一碗（每月更換），吸收穢氣及陰氣<br>
-              · 如條件許可，可在廚廁之間加裝實體隔板或改門方向，從根本解決問題
+
+      <div class="preset-q" id="bedroom-1">
+        <div class="preset-q-header" onclick="toggleHomeQ('bedroom-1','bedroom')">
+          <span class="preset-q-num">1</span>
+          <span class="preset-q-text">床頭應該點方向？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">床頭方向直接影響睡眠質素與健康，是睡房風水最重要的一環。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">最 佳 床 頭 方 向</div>
+              <div class="ans-box-text">床頭靠實牆，唔好靠窗，窗後無依主睡眠不安穩。可參考個人命卦旺位選擇最佳方向。床兩側需留空間，忌緊貼牆壁，利於陰陽氣流通。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-q" id="bedroom-2">
+        <div class="preset-q-header" onclick="toggleHomeQ('bedroom-2','bedroom')">
+          <span class="preset-q-num">2</span>
+          <span class="preset-q-text">鏡子正對床點辦？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">鏡子正對床是睡房大忌，半夜反射人影容易驚魂，影響睡眠質素，亦主感情生變、第三者介入。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">化 解 方 法</div>
+              <div class="ans-box-text">宜用深色布遮蓋鏡子（尤其睡覺時），或將鏡子移走。如為衣櫃鏡，確保關門時遮蓋鏡面。化妝鏡收納入抽屜或側面，唔好正對床位。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-q" id="bedroom-3">
+        <div class="preset-q-header" onclick="toggleHomeQ('bedroom-3','bedroom')">
+          <span class="preset-q-num">3</span>
+          <span class="preset-q-text">床腳對門點化解？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">「腳踢棺材」之煞，床腳正對房門主健康欠佳、容易生病，感情事業均受影響。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">化 解 方 法</div>
+              <div class="ans-box-text">最佳方法是移床位，令床與門成45度角，睡覺時可看到門口為最佳。如空間有限，可加裝厚門帘或珠簾阻擋衝射。床頭宜靠近命卦旺位之牆。</div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Paid: unlimited consultation -->
-    <div class="paid-consult-wrap">
-      <div class="paid-consult-blur">
-        <div class="paid-consult-label">自 訂 風 水 問 題</div>
-        <textarea class="paid-consult-textarea" placeholder="輸入您的風水問題，例如：我家客廳擺設如何改善財運？"></textarea>
-        <button class="paid-consult-send">發 送 問 題</button>
+    <!-- ── 廚廁位置 ── -->
+    <div class="qa-category" id="cat-kitchen">
+      <div class="qa-cat-header">
+        <div class="qa-cat-title">廚 廁 位 置</div>
+        <span class="free-tag">免 費 · 三 條 預 設 問 題</span>
       </div>
-      <div class="paid-consult-overlay">
-        <div class="paid-lock-sym">🔒</div>
-        <div class="paid-lock-title">解 鎖 無 限 AI 諮 詢</div>
-        <div class="paid-lock-desc">輸入任何風水問題<br>由 Claude AI 即時提供個人化解答</div>
-        <button class="btn-unlock" style="margin-top:0.4rem">HKD$48/月　立 即 解 鎖</button>
-        <div class="paid-api-note">需要：Anthropic Claude API · Phase 4 接入</div>
+
+      <div class="preset-q" id="kitchen-1">
+        <div class="preset-q-header" onclick="toggleHomeQ('kitchen-1','kitchen')">
+          <span class="preset-q-num">1</span>
+          <span class="preset-q-text">廚廁相鄰點化解？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">廚房屬火、廁所屬水，水火相剋，廚廁相鄰令穢氣滲入食祿之地，影響家人腸胃健康及家庭和諧。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">化 解 方 法</div>
+              <div class="ans-box-text">可在廚廁之間放屏風或種植物阻隔穢氣。廁所門保持常關，馬桶蓋常蓋。廚廁入口可各放一盆大葉植物，以木氣轉化水火相剋之煞。</div>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <div class="preset-q" id="kitchen-2">
+        <div class="preset-q-header" onclick="toggleHomeQ('kitchen-2','kitchen')">
+          <span class="preset-q-num">2</span>
+          <span class="preset-q-text">廁所喺屋中央點辦？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">屋中央為明堂之位，屬土，廁所居中最為不利，穢氣污染全宅氣場，影響財運及健康。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">化 解 方 法</div>
+              <div class="ans-box-text">保持廁所清潔乾燥，馬桶蓋常關，廁所門常閉。放六帝錢於廁所門前化煞。可放粗鹽一碗（每月換）吸收穢氣。廁所內放黃色小地毯以土克水。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-q" id="kitchen-3">
+        <div class="preset-q-header" onclick="toggleHomeQ('kitchen-3','kitchen')">
+          <span class="preset-q-num">3</span>
+          <span class="preset-q-text">爐灶對住廁所門點化解？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">爐灶代表財祿，廁所門正對爐灶主財運受損、飲食健康問題，水剋火為五行大忌。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">化 解 方 法</div>
+              <div class="ans-box-text">廁所門常關，可掛五帝錢門簾隔絕穢氣。爐灶旁放植物化解（木洩水、木生火，作緩衝媒介）。如條件許可，可改變廁所門方向從根本解決。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 辦公室格局 ── -->
+    <div class="qa-category" id="cat-office">
+      <div class="qa-cat-header">
+        <div class="qa-cat-title">辦 公 室 格 局</div>
+        <span class="free-tag">免 費 · 三 條 預 設 問 題</span>
+      </div>
+
+      <div class="preset-q" id="office-1">
+        <div class="preset-q-header" onclick="toggleHomeQ('office-1','office')">
+          <span class="preset-q-num">1</span>
+          <span class="preset-q-text">老闆位點揀？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">老闆位是辦公室風水核心，位置直接影響決策力、貴人運及整體事業發展。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">最 佳 老 闆 位</div>
+              <div class="ans-box-text">背靠實牆面向門口，可看到整個辦公室全局，象徵掌控全局。唔好背門，背門主遭小人背刺。側面唔好有走廊，氣流沖射影響決策。座位後方可放山水畫催旺靠山運。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-q" id="office-2">
+        <div class="preset-q-header" onclick="toggleHomeQ('office-2','office')">
+          <span class="preset-q-num">2</span>
+          <span class="preset-q-text">員工座位有咩禁忌？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">員工座位影響工作效率、人際關係及升遷運勢，以下禁忌需注意。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">座 位 禁 忌</div>
+              <div class="ans-box-text">唔好背門（主遭背刺、防小人），唔好面牆（主事業阻滯、無晉升空間）。唔好坐喺樑下（受壓迫，頭痛、思維不清晰）。唔好正對廁所門、垃圾桶或柱角沖射。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preset-q" id="office-3">
+        <div class="preset-q-header" onclick="toggleHomeQ('office-3','office')">
+          <span class="preset-q-num">3</span>
+          <span class="preset-q-text">辦公室財位喺邊？</span>
+          <span class="preset-q-arrow">▾</span>
+        </div>
+        <div class="preset-q-body">
+          <div class="preset-q-inner">
+            <div class="ans-label">風 水 師 解 答</div>
+            <div class="ans-text">辦公室財位同住宅原理相同，在進門對角線位置為氣流聚集之所，善用可催旺業務財運。</div>
+            <div class="ans-box">
+              <div class="ans-box-title">催 財 擺 設</div>
+              <div class="ans-box-text">進門對角線位置可放綠色植物（生旺財氣）或小魚缸（流動催財）。財位忌放廢紙箱、雜物或複印機（振動耗散財氣）。老闆辦公室財位可放黃晶或金元寶強化財運。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── AI 個人化風水諮詢 (Paid Lock) ── -->
+    <div class="paid-consult-v2">
+      <div class="paid-lock-sym">🔒</div>
+      <div class="paid-lock-title">AI 個 人 化 風 水 諮 詢</div>
+      <div class="paid-tier-row">
+        <div class="paid-tier-chip"><span class="lock-icon">🔒</span>$98月費會員：無限提問</div>
+        <div class="paid-tier-chip"><span class="lock-icon">🔒</span>單次：HKD$98／次</div>
+      </div>
+      <div class="paid-lock-desc" style="font-size:0.7rem;color:var(--text-dim);letter-spacing:0.1em;line-height:1.75;margin-bottom:1rem;">輸入您的家居平面圖問題或具體情況<br>由 Claude AI 即時提供針對性個人化建議</div>
+      <button class="btn-unlock" onclick="document.getElementById('registerModal').classList.add('open')">立 即 升 級　解 鎖 AI 諮 詢</button>
+      <div class="paid-api-note" style="margin-top:0.6rem;font-size:0.6rem;color:rgba(144,112,80,0.5);letter-spacing:0.1em;">需要：Anthropic Claude API · Phase 4 接入</div>
     </div>
   </div>
 
@@ -1366,14 +1666,29 @@ function submitRegister() {
   setTimeout(closeRegisterModal, 2200);
 }
 
-// ── Preset Q toggle ──────────────────────────────────────
-function togglePresetQ(id) {
+// ── Home FengShui: Category Tab Switch ──────────────────
+const QA_CATS = ['door','living','bedroom','kitchen','office'];
+
+function switchQaTab(cat) {
+  // Update tab buttons
+  document.querySelectorAll('.qa-tab').forEach((btn, i) => {
+    btn.classList.toggle('active', QA_CATS[i] === cat);
+  });
+  // Show/hide categories
+  QA_CATS.forEach(c => {
+    const el = document.getElementById('cat-' + c);
+    if (el) el.classList.toggle('active', c === cat);
+  });
+  // Close all open questions when switching tab
+  document.querySelectorAll('.preset-q.open').forEach(el => el.classList.remove('open'));
+}
+
+// ── Home FengShui: Q&A Accordion ────────────────────────
+function toggleHomeQ(id, cat) {
   const el = document.getElementById(id);
   const isOpen = el.classList.contains('open');
-  // Close all others
-  ['pq1','pq2','pq3'].forEach(qid => {
-    document.getElementById(qid).classList.remove('open');
-  });
+  // Close all questions in this category
+  document.querySelectorAll('#cat-' + cat + ' .preset-q').forEach(q => q.classList.remove('open'));
   if (!isOpen) el.classList.add('open');
 }
 
