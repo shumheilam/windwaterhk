@@ -48,7 +48,7 @@
     .divider-sym { color: var(--gold); font-size: 0.85rem; opacity: 0.65; }
 
     /* ── Layout ── */
-    .cal-layout { display: flex; gap: 1.4rem; max-width: 1080px; margin: 0 auto; padding: 0 1.2rem 1.5rem; align-items: flex-start; }
+    .cal-layout { display: flex; gap: 1.4rem; max-width: 1080px; margin: 0 auto; padding: 0 1.2rem 1.5rem; align-items: flex-start; justify-content: center; }
     .cal-main { flex: 1; min-width: 0; }
     .cal-sidebar { width: 240px; flex-shrink: 0; position: sticky; top: 1rem; }
 
@@ -243,7 +243,7 @@
     .择日-form { background: var(--bg-card);
                 border: 1px solid rgba(201,168,76,0.45);
                 border-radius: 10px; padding: 1.2rem 1.4rem; margin-bottom: 1.4rem;
-                width: 100%; box-sizing: border-box; }
+                width: 100%; box-sizing: border-box; overflow: hidden; }
     .择日-form-row { display: flex; flex-direction: column; gap: 0.75rem;
                     width: 100%; box-sizing: border-box; }
     .择日-field { width: 100%; box-sizing: border-box; }
@@ -255,11 +255,22 @@
                  display: block; margin-bottom: 0.45rem; }
     .择日-input {
       display: block;
-      width: 100% !important; max-width: 100% !important; box-sizing: border-box !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
       overflow: hidden !important;
-      background: var(--bg-input); border: 1px solid rgba(201,168,76,0.22);
-      border-radius: 6px; color: var(--text); font-family: 'Noto Serif TC', serif;
-      font-size: 0.82rem; padding: 0.55rem 0.8rem; outline: none; letter-spacing: 0.05em;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--bg-input);
+      border: 1px solid rgba(201,168,76,0.22);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.82rem;
+      padding: 0.55rem 0.8rem;
+      outline: none;
+      letter-spacing: 0.05em;
       transition: border-color 0.2s;
     }
     .择日-input:focus { border-color: var(--gold); }
@@ -356,6 +367,7 @@
     @media (max-width: 700px) {
       nav { padding: 0.7rem 1rem; }
       .cal-layout { flex-direction: column; padding: 0 0.6rem 1.5rem; }
+      .cal-main, .cal-sidebar { width: 100%; max-width: 100%; }
       .cal-sidebar { width: 100%; position: static; }
 
       /* Calendar cells: min 44px touch target */
@@ -410,6 +422,8 @@
     <a class="nav-tab" href="index.html" onclick="sessionStorage.setItem('tab','rename')">改 名 系 統</a>
     <a class="nav-tab" href="oracle.html">求 簽 問 事</a>
     <a class="nav-tab active" href="calendar.html">神 明 曆</a>
+    <a class="nav-tab" href="qimen.html">奇 門 遁 甲</a>
+    <a class="nav-tab" href="compass.html">風 水 羅 盤</a>
   </div>
   <div class="nav-auth" id="navAuthArea"></div>
 </nav>
