@@ -1799,6 +1799,155 @@
       .ln-month-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
+    /* ── Partner Appearance Panel ───────────────────── */
+    .da-partner-panel {
+      display: none; /* shown by JS after calculation */
+      margin-bottom: 1.3rem;
+      border: 1px solid rgba(201,168,76,0.28);
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.012);
+    }
+    .da-partner-teaser {
+      padding: 1.05rem 1.1rem 0.9rem;
+      border-bottom: 1px solid rgba(201,168,76,0.14);
+    }
+    .da-partner-top {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.55rem;
+    }
+    .da-partner-top-icon { font-size: 1.3rem; line-height: 1; }
+    .da-partner-top-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.04em;
+    }
+    .da-partner-free-line {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      line-height: 1.65;
+    }
+    .da-partner-free-el {
+      color: var(--gold-light);
+      text-shadow: 0 0 12px rgba(232,208,128,0.4);
+    }
+
+    /* locked blurred section */
+    .da-partner-locked {
+      position: relative;
+      padding: 0.9rem 1.1rem;
+    }
+    .da-partner-preview-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.52rem;
+      filter: blur(5px);
+      user-select: none;
+      pointer-events: none;
+    }
+    .da-partner-preview-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .da-pp-label {
+      font-size: 0.7rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      min-width: 5.5rem;
+      padding-top: 0.05rem;
+    }
+    .da-pp-value {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      line-height: 1.6;
+    }
+    .da-partner-ai-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.45rem;
+      filter: blur(5px);
+      pointer-events: none;
+      user-select: none;
+    }
+    .da-partner-ai-badge {
+      font-size: 0.65rem;
+      color: #af8fff;
+      border: 1px solid rgba(175,143,255,0.3);
+      border-radius: 4px;
+      padding: 0.22rem 0.5rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* lock overlay */
+    .da-partner-lock-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(6,4,4,0.65) 30%, rgba(6,4,4,0.92) 60%, #060404 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 1.1rem 1.05rem;
+    }
+    .da-partner-cta {
+      width: 100%;
+      background: linear-gradient(135deg, #0e0606 0%, #1a0d0d 100%);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+    }
+    .da-partner-cta-head {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      margin-bottom: 0.55rem;
+      text-align: center;
+    }
+    .da-partner-cta-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+      margin-bottom: 0.65rem;
+    }
+    .da-partner-cta-list li {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+    }
+    .da-partner-cta-list li::before { content: '• '; color: var(--gold); }
+    .da-partner-unlock-btn {
+      display: block;
+      width: 100%;
+      padding: 0.62rem 1rem;
+      background: linear-gradient(135deg, #6b1010, #9b2020 50%, #6b1010);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.25s;
+      text-align: center;
+    }
+    .da-partner-unlock-btn:hover {
+      border-color: var(--gold-light);
+      color: var(--gold-light);
+      box-shadow: 0 0 14px rgba(201,168,76,0.18);
+    }
+
     /* ── Web Push Notification Banner ──────────────── */
     .fso-notif-banner {
       position: fixed;
@@ -2130,13 +2279,61 @@
           <span class="da-single-title">單 次 深 度 報 告</span>
           <span class="da-single-badge">一次過解鎖・永久保存</span>
         </div>
-        <div class="da-single-grid">
-          <div class="da-report-card">
-            <div class="da-report-icon">💑</div>
-            <div class="da-report-name">另一半性格外貌分析</div>
-            <div class="da-report-price">HKD$68</div>
-            <button class="da-report-unlock" onclick="handleSingleReport(this,'另一半性格外貌分析')">立 即 解 鎖</button>
+        <!-- 另一半性格外貌分析 expanded panel -->
+        <div class="da-partner-panel" id="daPartnerPanel">
+          <!-- Free teaser -->
+          <div class="da-partner-teaser">
+            <div class="da-partner-top">
+              <span class="da-partner-top-icon">💑</span>
+              <span class="da-partner-top-title">另一半性格外貌分析</span>
+            </div>
+            <div class="da-partner-free-line" id="daPartnerFreeLine">計算命盤後顯示您的緣份桃花提示</div>
           </div>
+          <!-- Blurred preview + lock overlay -->
+          <div class="da-partner-locked">
+            <div class="da-partner-preview-list" id="daPartnerPreview">
+              <div class="da-partner-preview-item">
+                <span class="da-pp-label">詳細五官外貌</span>
+                <span class="da-pp-value" id="daPartnerFace">眼睛明亮有神，鼻樑高挺秀氣，雙唇豐潤，面容清秀耐看，輪廓分明</span>
+              </div>
+              <div class="da-partner-preview-item">
+                <span class="da-pp-label">身材氣質</span>
+                <span class="da-pp-value" id="daPartnerBody">身形修長勻稱，舉手投足自帶氣質，給人優雅從容之感</span>
+              </div>
+              <div class="da-partner-preview-item">
+                <span class="da-pp-label">性格特質</span>
+                <span class="da-pp-value" id="daPartnerChar">理性智慧兼具，溫柔體貼，做事認真負責，對感情專一忠誠</span>
+              </div>
+              <div class="da-partner-preview-item">
+                <span class="da-pp-label">職業傾向</span>
+                <span class="da-pp-value" id="daPartnerJob">文教、藝術、創意設計或科技行業，多有一技之長</span>
+              </div>
+              <div class="da-partner-preview-item">
+                <span class="da-pp-label">相遇時機</span>
+                <span class="da-pp-value" id="daPartnerTime">最旺緣份月份：農曆三月、八月；相遇地點多在文化場所或朋友介紹</span>
+              </div>
+            </div>
+            <div class="da-partner-ai-row">
+              <span class="da-partner-ai-badge">🎨 AI 生成專屬樣貌圖</span>
+              <span style="font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;">Phase 4 推出・Coming Soon</span>
+            </div>
+            <!-- Lock CTA overlay -->
+            <div class="da-partner-lock-overlay">
+              <div class="da-partner-cta">
+                <div class="da-partner-cta-head">🔮 緣份已定，樣貌可知<br><span style="opacity:0.7;font-weight:400;font-size:0.72rem;">🔒 解鎖完整緣份報告</span></div>
+                <ul class="da-partner-cta-list">
+                  <li>詳細外貌特徵描述</li>
+                  <li>性格與職業傾向</li>
+                  <li>相遇時機與地點</li>
+                  <li>Phase 4：AI 生成專屬樣貌圖</li>
+                </ul>
+                <button class="da-partner-unlock-btn" onclick="handleSingleReport(this,'另一半性格外貌分析')">HKD$68 &nbsp;立 即 解 鎖</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="da-single-grid">
           <div class="da-report-card">
             <div class="da-report-icon">👶</div>
             <div class="da-report-name">子女緣分析</div>
@@ -2902,6 +3099,80 @@ function renderDeepAnalysis(pillars, year) {
     </div>`).join('');
 
   document.getElementById('deepSection').classList.add('visible');
+
+  // ── 另一半性格外貌分析：免費桃花提示 ────────────────────
+  // 緣份桃花屬性：以最缺五行為另一半命格（缺什麼，緣份補什麼）
+  const PARTNER_EL_VIBES = {
+    '金': { life:'金', trait:'颯爽英氣' },
+    '木': { life:'木', trait:'清秀文雅' },
+    '水': { life:'水', trait:'靈動秀麗' },
+    '火': { life:'火', trait:'神采飛揚' },
+    '土': { life:'土', trait:'端莊穩重' },
+  };
+  // Blurred preview content — personalised by weakEl
+  const PARTNER_PREVIEWS = {
+    '金': {
+      face: '輪廓分明，骨骼清秀，鼻樑高挺，眼神銳利而有神，皮膚白皙細膩',
+      body: '身形挺拔俐落，舉止颯爽，自帶一股英氣，氣場強大不失優雅',
+      char: '意志堅定，做事果斷，外冷內熱，對感情忠誠，一旦認定絕不輕易放棄',
+      job:  '金融、法律、醫療、軍警或管理層，事業心強，多有成就',
+      time: '最旺緣份月份：農曆四月、九月；相遇地點多在正式場合或工作環境中',
+    },
+    '木': {
+      face: '眉目清秀，眼睛明亮溫柔，五官精緻細膩，面容清雅如春風',
+      body: '身形修長勻稱，氣質文雅，舉手投足如春風化雨，令人如沐春風',
+      char: '心思細膩，富有同理心，溫柔體貼，待人真誠，感情細水長流',
+      job:  '文教、創作、設計、諮詢或醫護行業，多才多藝，愛好廣泛',
+      time: '最旺緣份月份：農曆三月、八月；相遇多在文化活動或朋友引薦中',
+    },
+    '水': {
+      face: '眼眸靈動有神，面容秀麗，膚質瑩潤，整體給人靈秀飄逸之感',
+      body: '身形纖細柔美，氣質靈動如水，優雅中帶著神秘感，令人心動',
+      char: '聰慧過人，直覺敏銳，感情豐富，善解人意，對愛情富有浪漫情懷',
+      job:  '創意、藝術、學術、旅遊或諮詢行業，思想活躍，充滿創造力',
+      time: '最旺緣份月份：農曆一月、六月；相遇多在旅途或藝文場所',
+    },
+    '火': {
+      face: '神采飛揚，眼神炯炯有神，五官立體，整體給人朝氣蓬勃之感',
+      body: '身形健康有活力，熱情洋溢，氣場感染力強，能量十足',
+      char: '熱情奔放，開朗樂觀，感情直接坦誠，充滿激情，帶動性強',
+      job:  '傳媒、娛樂、銷售、公關或創業，個性鮮明，天生領袖氣質',
+      time: '最旺緣份月份：農曆二月、七月；相遇多在社交場合或共同活動中',
+    },
+    '土': {
+      face: '端莊大方，五官端正，眉宇間透著穩重，笑容真誠令人安心',
+      body: '身形健碩或豐腴有致，氣質沉穩踏實，令人感到可靠與安全感',
+      char: '忠厚老實，踏實負責，感情穩定，重視家庭，是值得託付終身之人',
+      job:  '地產、建築、農業、飲食或傳統行業，腳踏實地，事業穩健',
+      time: '最旺緣份月份：農曆五月、十月；相遇多在日常生活或家人介紹中',
+    },
+  };
+
+  const partnerEl   = weakEl; // 缺什麼，緣份就補什麼
+  const vibe        = PARTNER_EL_VIBES[partnerEl];
+  const preview     = PARTNER_PREVIEWS[partnerEl];
+
+  // Update free teaser line
+  const freeLine = document.getElementById('daPartnerFreeLine');
+  if (freeLine && vibe) {
+    freeLine.innerHTML =
+      `您的緣份桃花屬<span class="da-partner-free-el">【${vibe.life}命】</span>，` +
+      `另一半天生帶<span class="da-partner-free-el">【${vibe.trait}】</span>氣息`;
+  }
+
+  // Update blurred preview content
+  if (preview) {
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set('daPartnerFace', preview.face);
+    set('daPartnerBody', preview.body);
+    set('daPartnerChar', preview.char);
+    set('daPartnerJob',  preview.job);
+    set('daPartnerTime', preview.time);
+  }
+
+  // Show the panel
+  const panel = document.getElementById('daPartnerPanel');
+  if (panel) panel.style.display = 'block';
 }
 
 // ── Profile system ──────────────────────────────────────
