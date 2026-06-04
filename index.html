@@ -1796,6 +1796,163 @@
     @media (max-width: 420px) {
       .ln-month-grid { grid-template-columns: repeat(3, 1fr); }
     }
+
+    /* ── Web Push Notification Banner ──────────────── */
+    .fso-notif-banner {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      width: min(92vw, 480px);
+      background: linear-gradient(135deg, #0e0808 0%, #1a0d0d 100%);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      z-index: 9999;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+      opacity: 0;
+      transition: opacity 0.35s, transform 0.35s;
+      pointer-events: none;
+    }
+    .fso-notif-banner.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .fso-nb-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      line-height: 1;
+      margin-top: 0.1rem;
+    }
+    .fso-nb-content { flex: 1; min-width: 0; }
+    .fso-nb-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.25rem;
+    }
+    .fso-nb-desc {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      line-height: 1.5;
+    }
+    .fso-nb-btns {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.55rem;
+    }
+    .fso-nb-allow {
+      padding: 0.38rem 0.85rem;
+      background: linear-gradient(135deg, #6b1010, #9b2020 50%, #6b1010);
+      border: 1px solid rgba(201,168,76,0.5);
+      color: var(--gold);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.2s;
+    }
+    .fso-nb-allow:hover { border-color: var(--gold); }
+    .fso-nb-deny {
+      padding: 0.38rem 0.65rem;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-dim);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.72rem;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .fso-nb-close {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0 0.15rem;
+      line-height: 1;
+      margin-top: 0.1rem;
+    }
+
+    /* ── Notification Settings Panel (inside settings modal) ── */
+    .fso-notif-settings { padding: 0.4rem 0; }
+    .fso-ns-ios-warn {
+      background: rgba(201,168,76,0.06);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 6px;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .fso-ns-status {
+      font-size: 0.72rem;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.75rem;
+      padding: 0.45rem 0.7rem;
+      border-radius: 5px;
+    }
+    .fso-ns-status.granted { color: #7ecf88; background: rgba(100,200,110,0.07); }
+    .fso-ns-status.denied  { color: #cf7e7e; background: rgba(200,100,100,0.07); }
+    .fso-ns-status.pending { background: transparent; padding: 0; margin-bottom: 0.6rem; }
+    .fso-ns-allow-btn {
+      padding: 0.45rem 1rem;
+      background: linear-gradient(135deg, #6b1010, #9b2020 50%, #6b1010);
+      border: 1px solid rgba(201,168,76,0.45);
+      color: var(--gold);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .fso-ns-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .fso-ns-row:last-child { border-bottom: none; }
+    .fso-ns-row-info { flex: 1; min-width: 0; margin-right: 0.8rem; }
+    .fso-ns-row-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.18rem;
+    }
+    .fso-ns-row-sub {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+    }
+    .fso-ns-locked .fso-ns-row-label { opacity: 0.5; }
+    .fso-ns-locked .fso-ns-row-sub   { opacity: 0.45; }
+    .fso-ns-upgrade-btn {
+      padding: 0.32rem 0.65rem;
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
@@ -3867,6 +4024,7 @@ function showNotifEnabled(btn, status) {
 </div>
 
 <script src="auth.js"></script>
+<script src="notifications.js"></script>
 
 <!-- ── Mobile bottom tab bar ── -->
 <nav class="mob-tab-bar">

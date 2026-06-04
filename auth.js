@@ -299,6 +299,12 @@ function renderSettingsModal(view) {
       <button class="auth-submit" style="margin-top:1.2rem;" onclick="closeSettings()">關 閉</button>`;
   } else {
     const isPrem = user && user.isPremium;
+    const notifSection = (typeof fsoRenderNotifSettings === 'function')
+      ? `<div class="settings-row" style="display:block;padding:0.6rem 0 0;">
+           <div class="settings-row-label" style="margin-bottom:0.55rem;">🔔 通知設定</div>
+           ${fsoRenderNotifSettings()}
+         </div>`
+      : '';
     body.innerHTML = `
       <div class="settings-title">設 定</div>
       <div class="settings-row">
@@ -314,6 +320,7 @@ function renderSettingsModal(view) {
         </div>
         ${!isPrem ? `<button class="nav-auth-btn" style="font-size:0.65rem;" onclick="openSubscriptions()">升 級</button>` : ''}
       </div>
+      ${notifSection}
       <div class="settings-row">
         <div>
           <div class="settings-row-label">⚠️ 示範：切換 Premium</div>
