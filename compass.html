@@ -837,6 +837,7 @@
     <a class="nav-tab" href="qimen.html">奇 門 遁 甲</a>
     <a class="nav-tab active" href="compass.html">風 水 羅 盤</a>
   </div>
+  <div class="nav-auth" id="navAuthArea"></div>
   <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切換淺色模式" aria-label="切換淺色模式">🌙</button>
 </nav>
 
@@ -850,7 +851,7 @@
 <main>
 
   <!-- ── Compass Card ──────────────────────────────── -->
-  <div class="card">
+  <div class="card" id="compassCard">
     <div class="cc tl"></div><div class="cc tr"></div>
     <div class="cc bl"></div><div class="cc br"></div>
     <div class="card-title">真 實 指 南 針</div>
@@ -958,7 +959,7 @@
   </div>
 
   <!-- ── Flying Stars Card ─────────────────────────── -->
-  <div class="card">
+  <div class="card" id="fsCard">
     <div class="cc tl"></div><div class="cc tr"></div>
     <div class="cc bl"></div><div class="cc br"></div>
     <div class="card-title">2026 丙午年　流年飛星佈局</div>
@@ -1316,9 +1317,8 @@
       <div class="paid-tier-row">
         <div class="paid-tier-chip"><span class="lock-icon">🔒</span>$48/月：10 條問答/月</div>
         <div class="paid-tier-chip"><span class="lock-icon">🔒</span>$98/月：無限問答</div>
-        <div class="paid-tier-chip"><span class="lock-icon">🔒</span>單次：風水深度報告（PDF）HKD$98</div>
       </div>
-      <div class="paid-lock-desc" style="font-size:0.7rem;color:var(--text-dim);letter-spacing:0.1em;line-height:1.75;margin-bottom:1rem;">輸入您的家居平面圖問題或具體情況<br>由 Claude AI 即時提供針對性個人化建議<br><span style="font-size:0.62rem;opacity:0.7;">單次PDF報告以電郵發送，可永久保存及列印</span></div>
+      <div class="paid-lock-desc" style="font-size:0.7rem;color:var(--text-dim);letter-spacing:0.1em;line-height:1.75;margin-bottom:1rem;">輸入您的家居問題或具體情況<br>由 Claude AI 即時提供針對性個人化建議</div>
       <button class="btn-unlock" onclick="document.getElementById('registerModal').classList.add('open')">立 即 升 級　解 鎖 AI 諮 詢</button>
       <div class="paid-api-note" style="margin-top:0.6rem;font-size:0.6rem;color:rgba(144,112,80,0.5);letter-spacing:0.1em;">需要：Anthropic Claude API · Phase 4 接入</div>
     </div>
@@ -1350,6 +1350,26 @@
     <div class="detail-text" id="dEffect"></div>
     <div class="detail-section-title">化 煞 ／ 催 旺 建 議</div>
     <div class="detail-tip" id="dTip"></div>
+  </div>
+</div>
+
+<!-- ── Free Q&A Quota Modal ───────────────────────── -->
+<div class="modal-overlay" id="qaQuotaModal">
+  <div class="modal-box" style="text-align:center;">
+    <button class="modal-close" onclick="document.getElementById('qaQuotaModal').classList.remove('open')">✕</button>
+    <div style="font-size:1.6rem;margin-bottom:0.6rem;">🔮</div>
+    <div class="modal-title" style="letter-spacing:0.15em;font-size:0.95rem;">免費問答額度已用完</div>
+    <div style="font-size:0.75rem;color:var(--text-dim);letter-spacing:0.06em;line-height:1.9;margin:0.8rem 0 1.2rem;">
+      你已用完本月免費問答額度。<br>升級 <strong style="color:var(--gold);">$48 會員</strong>，每月享有 <strong style="color:var(--gold);">10 條</strong>專屬問答。
+    </div>
+    <button class="btn-modal-submit" style="background:linear-gradient(135deg,#c9a84c,#a07828);border-color:var(--gold);color:#1a1000;font-weight:900;letter-spacing:0.3em;margin-bottom:0.6rem;"
+      onclick="document.getElementById('qaQuotaModal').classList.remove('open');if(typeof openSubscribeModal==='function')openSubscribeModal('monthly')">
+      立 即 升 級　$48/月
+    </button>
+    <button style="display:block;width:100%;background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--text-dim);font-family:'Noto Serif TC',serif;font-size:0.72rem;letter-spacing:0.2em;padding:0.55rem;border-radius:5px;cursor:pointer;"
+      onclick="document.getElementById('qaQuotaModal').classList.remove('open')">
+      關 閉
+    </button>
   </div>
 </div>
 
@@ -1694,12 +1714,43 @@ function switchQaTab(cat) {
 }
 
 // ── Home FengShui: Q&A Accordion ────────────────────────
+const FREE_QA_LIMIT = 3;
+const QA_STORAGE_KEY = 'compassFreeQaUsed';
+
+function getQaUsed() {
+  return JSON.parse(localStorage.getItem(QA_STORAGE_KEY) || '[]');
+}
+function recordQaUsed(id) {
+  const used = getQaUsed();
+  if (!used.includes(id)) {
+    used.push(id);
+    localStorage.setItem(QA_STORAGE_KEY, JSON.stringify(used));
+  }
+}
+
 function toggleHomeQ(id, cat) {
   const el = document.getElementById(id);
   const isOpen = el.classList.contains('open');
   // Close all questions in this category
   document.querySelectorAll('#cat-' + cat + ' .preset-q').forEach(q => q.classList.remove('open'));
-  if (!isOpen) el.classList.add('open');
+  if (!isOpen) {
+    const usedBefore = getQaUsed();
+    const alreadyCounted = usedBefore.includes(id);
+    recordQaUsed(id);
+    const usedAfter = getQaUsed();
+    if (!alreadyCounted && usedAfter.length > FREE_QA_LIMIT) {
+      // Over quota — show modal instead of opening
+      document.getElementById('qaQuotaModal').classList.add('open');
+      return;
+    }
+    el.classList.add('open');
+    if (!alreadyCounted && usedAfter.length === FREE_QA_LIMIT) {
+      // Used exactly the 3rd — show modal after opening
+      setTimeout(() => {
+        document.getElementById('qaQuotaModal').classList.add('open');
+      }, 800);
+    }
+  }
 }
 
 // ── Mobile More Menu ──────────────────────────────────────

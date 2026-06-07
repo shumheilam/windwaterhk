@@ -2482,13 +2482,6 @@
             <div class="da-report-price">HKD$68</div>
             <button class="da-report-unlock" onclick="handleSingleReport(this,'手相深度報告')">立 即 解 鎖</button>
           </div>
-          <div class="da-report-card">
-            <div class="da-report-icon">🏠</div>
-            <div class="da-report-name">家居/辦公室風水報告（PDF）</div>
-            <div class="da-report-price">HKD$98</div>
-            <div class="da-report-note">以PDF格式發送至您的電郵，可永久保存</div>
-            <button class="da-report-unlock" onclick="handleSingleReport(this,'家居/辦公室風水深度報告')">立 即 解 鎖</button>
-          </div>
         </div>
 
         <!-- Daily notification -->
@@ -2658,10 +2651,24 @@
         <div class="match-paid-section">
           <div class="match-paid-title">✦ 合 婚 配 對 AI 報 告</div>
           <div class="match-paid-preview" id="matchPaidPreview">報告包含：大運流年合婚分析、婚後宮位影響、財帛互動、子嗣緣分、性格深度互補、2026-2030年走勢…</div>
-          <div style="font-size:0.65rem;color:var(--text-dim);letter-spacing:0.07em;margin:0.4rem 0 0.6rem;line-height:1.7;">
-            💡 $48 月費：每月可選「合婚配對」報告（1份配額）<br>$98 月費：每月 3 份配額，可同時分析多對<br>單次購買：HKD$58
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin:0.6rem 0;">
+            <div style="border:1px solid rgba(201,168,76,0.25);border-radius:7px;padding:0.8rem 0.75rem;text-align:center;">
+              <div style="font-size:0.62rem;color:var(--text-dim);letter-spacing:0.2em;margin-bottom:0.3rem;">單次試用</div>
+              <div style="font-size:1rem;font-weight:900;color:var(--gold);margin-bottom:0.4rem;">HKD$38</div>
+              <ul style="list-style:none;font-size:0.6rem;color:var(--text-dim);letter-spacing:0.04em;line-height:1.9;margin-bottom:0.6rem;text-align:left;">
+                <li>✦ 一次性報告</li><li>✦ 永久保存</li><li>✗ 冇問答額度</li><li>✗ 冇求簽加成</li>
+              </ul>
+              <button class="match-unlock-btn" style="font-size:0.72rem;padding:0.5rem;" onclick="if(typeof handleSingleReport==='function')handleSingleReport(this,'合婚配對AI報告')">立 即 購 買</button>
+            </div>
+            <div style="border:1px solid rgba(201,168,76,0.55);border-radius:7px;padding:0.8rem 0.75rem;text-align:center;background:rgba(201,168,76,0.04);">
+              <div style="font-size:0.62rem;color:#e8d080;letter-spacing:0.2em;margin-bottom:0.3rem;">月費會員 ⭐推薦</div>
+              <div style="font-size:1rem;font-weight:900;color:#e8d080;margin-bottom:0.4rem;">HKD$48<span style="font-size:0.65rem;font-weight:400;">/月</span></div>
+              <ul style="list-style:none;font-size:0.6rem;color:var(--text-dim);letter-spacing:0.04em;line-height:1.9;margin-bottom:0.6rem;text-align:left;">
+                <li>✦ 每月1份報告</li><li>✦ 10條問答/月</li><li>✦ 無限求簽</li><li>✦ 報告歷史保存</li>
+              </ul>
+              <button class="match-unlock-btn" style="font-size:0.72rem;padding:0.5rem;border-color:rgba(232,208,128,0.5);color:#e8d080;" onclick="if(typeof openSubscribeModal==='function')openSubscribeModal('monthly')">立 即 訂 閱</button>
+            </div>
           </div>
-          <button class="match-unlock-btn">🔓 升級會員 獲取 AI 合婚報告</button>
         </div>
 
         <p class="match-disclaimer">以上分析僅供參考，完整合婚請諮詢專業命理師<br>結果包含隨機因子，每次推算結果可能略有不同</p>
@@ -3881,27 +3888,32 @@ function renderLiuNian() {
         `).join('')}
       </div>
 
-      <!-- Tier comparison -->
-      <div class="ln-tier-row">
+      <!-- Tier comparison: single $38 vs $48/month -->
+      <div class="ln-tier-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
         <div class="ln-tier-card">
-          <div class="ln-tier-badge">$48 月費</div>
-          <div class="ln-tier-desc">選擇「流年逐月」報告<br><span class="ln-tier-detail">每月整體運勢 · 吉凶提示</span></div>
-          <button class="ln-unlock-btn ln-unlock-48" onclick="if(typeof openSubscribeModal==='function')openSubscribeModal('monthly')">
-            🔓 $48/月 解鎖
-          </button>
-        </div>
-        <div class="ln-tier-card ln-tier-highlight">
-          <div class="ln-tier-badge" style="color:#e8d080;border-color:rgba(232,208,128,0.4)">$98 月費 ✦</div>
-          <div class="ln-tier-desc">每月 3 份任選報告<br><span class="ln-tier-detail">事業/感情/財運/健康詳細</span></div>
-          <button class="ln-unlock-btn ln-unlock-98" onclick="if(typeof openSubscribeModal==='function')openSubscribeModal('monthly')">
-            🔓 $98/月 深度解鎖
-          </button>
-        </div>
-        <div class="ln-tier-card">
-          <div class="ln-tier-badge" style="color:#af8fff;border-color:rgba(175,143,255,0.3)">單次購買</div>
-          <div class="ln-tier-desc">流年逐月報告<br><span class="ln-tier-detail">單次 HKD$58</span></div>
+          <div class="ln-tier-badge">單次試用</div>
+          <div class="ln-tier-desc" style="font-size:1.1rem;font-weight:900;color:var(--gold);letter-spacing:0.05em;margin:0.35rem 0;">HKD$38</div>
+          <ul style="list-style:none;font-size:0.66rem;color:var(--text-dim);letter-spacing:0.06em;line-height:2;margin-bottom:0.75rem;">
+            <li>✦ 一次性報告</li>
+            <li>✦ 永久保存</li>
+            <li>✗ 冇問答額度</li>
+            <li>✗ 冇求簽加成</li>
+          </ul>
           <button class="ln-unlock-btn ln-unlock-single" onclick="if(typeof handleSingleReport==='function')handleSingleReport(this,'流年逐月AI報告')">
-            📅 HKD$58 立即購買
+            立 即 購 買
+          </button>
+        </div>
+        <div class="ln-tier-card ln-tier-highlight" style="border-color:rgba(201,168,76,0.55);background:rgba(201,168,76,0.04);">
+          <div class="ln-tier-badge" style="color:#e8d080;border-color:rgba(232,208,128,0.4)">月費會員 ⭐推薦</div>
+          <div class="ln-tier-desc" style="font-size:1.1rem;font-weight:900;color:#e8d080;letter-spacing:0.05em;margin:0.35rem 0;">HKD$48<span style="font-size:0.72rem;font-weight:400;">/月</span></div>
+          <ul style="list-style:none;font-size:0.66rem;color:var(--text-dim);letter-spacing:0.06em;line-height:2;margin-bottom:0.75rem;">
+            <li>✦ 每月1份報告</li>
+            <li>✦ 10條問答/月</li>
+            <li>✦ 無限求簽</li>
+            <li>✦ 報告歷史保存</li>
+          </ul>
+          <button class="ln-unlock-btn ln-unlock-98" onclick="if(typeof openSubscribeModal==='function')openSubscribeModal('monthly')">
+            立 即 訂 閱
           </button>
         </div>
       </div>
@@ -4035,8 +4047,13 @@ function analyzeMatch() {
 // ── Radar chart ─────────────────────────────────────────
 function drawMatchRadar(aC, bC, aName, bName) {
   const canvas = document.getElementById('matchRadar');
-  const ctx    = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
+  const dpr  = window.devicePixelRatio || 1;
+  const W    = canvas.offsetWidth  || canvas.width  || 240;
+  const H    = canvas.offsetHeight || canvas.height || 240;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
   const cx = W / 2, cy = H / 2;
   const R  = Math.min(W, H) * 0.34;
   const labels = ['木','火','土','金','水'];

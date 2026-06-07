@@ -67,6 +67,11 @@ html.light-mode body {
   background-image: radial-gradient(ellipse 80% 50% at 50% 0%, #f0e8d2 0%, transparent 65%) !important;
 }
 
+/* ── Logo 防換行 ── */
+.nav-brand .brand-name {
+  white-space : nowrap;
+}
+
 /* 淺色模式下某些固定深色元素需要調整 */
 html.light-mode .nav-tab.active {
   color         : #8b6914;
@@ -101,4 +106,51 @@ html.light-mode .mob-tab-item.active {
 html.light-mode [style*="background: rgba(255,255,255,0.04)"],
 html.light-mode [style*="background:rgba(255,255,255,0.04)"] {
   background : rgba(0,0,0,0.04) !important;
+}
+
+/* ── Issue 2: index.html 命盤深度分析鎖定區域 light mode ── */
+html.light-mode .da-locked-card {
+  background : rgba(245,240,230,0.85) !important;
+  border-color : rgba(0,0,0,0.1) !important;
+}
+html.light-mode .da-locked-label {
+  color : rgba(58,42,10,0.45) !important;
+}
+html.light-mode .da-locked-blur {
+  color : rgba(58,42,10,0.3) !important;
+}
+html.light-mode .da-lock-icon {
+  opacity : 0.55;
+}
+
+/* ── Issue 4: calendar.html 擇日吉日卡片 light mode ── */
+html.light-mode .aday-card {
+  background  : rgba(255,255,255,0.9) !important;
+  border-color : rgba(201,168,76,0.5) !important;
+}
+html.light-mode .aday-solar {
+  color : #8a6420 !important;
+}
+html.light-mode .aday-locked-group {
+  background : rgba(240,232,216,0.85) !important;
+}
+html.light-mode .aday-lock-footer {
+  background : linear-gradient(to top, rgba(240,232,216,0.98) 70%, rgba(240,232,216,0.8)) !important;
+}
+
+/* ── Issue 5 & 6: compass.html 羅盤 + 飛星九宮格固定深色 ── */
+html.light-mode #compassCard {
+  background  : #1a1008 !important;
+  border-color : rgba(201,168,76,0.25) !important;
+}
+html.light-mode #fsCard {
+  background  : #2a1808 !important;
+  border-color : rgba(201,168,76,0.25) !important;
+}
+html.light-mode #compassCard .card-title,
+html.light-mode #fsCard .card-title {
+  color : var(--gold) !important;
+}
+html.light-mode #compassCard .compass-facing {
+  color : rgba(144,112,80,0.85) !important;
 }
