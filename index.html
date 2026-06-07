@@ -1349,6 +1349,31 @@
       line-height: 1.4;
       opacity: 0.75;
     }
+    /* Free preview line inside each single report card */
+    .da-report-free-line {
+      font-size: 0.68rem;
+      color: var(--gold);
+      letter-spacing: 0.03em;
+      line-height: 1.55;
+      opacity: 0.88;
+      margin: 0.2rem 0 0.1rem;
+    }
+    .da-report-blur-wrap {
+      position: relative;
+      max-height: 2.5em;
+      overflow: hidden;
+      margin-bottom: 0.2rem;
+    }
+    .da-report-blur-text {
+      font-size: 0.64rem;
+      color: var(--text-dim);
+      line-height: 1.75;
+      filter: blur(3px);
+      user-select: none;
+      pointer-events: none;
+      -webkit-mask-image: linear-gradient(to bottom, black 10%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 10%, transparent 100%);
+    }
     .da-report-unlock {
       margin-top: 0.3rem;
       padding: 0.42rem 0.6rem;
@@ -2455,32 +2480,52 @@
           <div class="da-report-card">
             <div class="da-report-icon">👶</div>
             <div class="da-report-name">子女緣分析</div>
+            <div class="da-report-free-line" id="rptFreeChild">計算命盤後顯示子女緣提示</div>
+            <div class="da-report-blur-wrap">
+              <div class="da-report-blur-text">詳細子女緣份深淺、最佳懷孕時機、改善子女關係具體方法…</div>
+            </div>
             <div class="da-report-price">HKD$58</div>
-            <button class="da-report-unlock" onclick="handleSingleReport(this,'子女緣分析')">立 即 解 鎖</button>
+            <button class="da-report-unlock" onclick="handleSingleReport(this,'子女緣分析')">HKD$58 解 鎖 完 整 報 告</button>
           </div>
           <div class="da-report-card">
             <div class="da-report-icon">👫</div>
             <div class="da-report-name">兄弟姊妹緣分析</div>
+            <div class="da-report-free-line" id="rptFreeSib">計算命盤後顯示手足緣提示</div>
+            <div class="da-report-blur-wrap">
+              <div class="da-report-blur-text">手足緣份深淺分析、兄弟姊妹關係調和建議、互助吉凶月份…</div>
+            </div>
             <div class="da-report-price">HKD$58</div>
-            <button class="da-report-unlock" onclick="handleSingleReport(this,'兄弟姊妹緣分析')">立 即 解 鎖</button>
+            <button class="da-report-unlock" onclick="handleSingleReport(this,'兄弟姊妹緣分析')">HKD$58 解 鎖 完 整 報 告</button>
           </div>
           <div class="da-report-card">
             <div class="da-report-icon">🩸</div>
             <div class="da-report-name">血光之災提示</div>
+            <div class="da-report-free-line" id="rptFreeBlood">計算命盤後顯示流年血光信號</div>
+            <div class="da-report-blur-wrap">
+              <div class="da-report-blur-text">具體危險月份、血光類型分析、化解方法、宜忌出行及手術時機…</div>
+            </div>
             <div class="da-report-price">HKD$58</div>
-            <button class="da-report-unlock" onclick="handleSingleReport(this,'血光之災提示')">立 即 解 鎖</button>
+            <button class="da-report-unlock" onclick="handleSingleReport(this,'血光之災提示')">HKD$58 解 鎖 完 整 報 告</button>
           </div>
           <div class="da-report-card">
             <div class="da-report-icon">👁</div>
             <div class="da-report-name">面相深度報告</div>
-            <div class="da-report-price">HKD$68</div>
-            <button class="da-report-unlock" onclick="handleSingleReport(this,'面相深度報告')">立 即 解 鎖</button>
+            <div class="da-report-free-line" id="rptFreeFace">計算命盤後顯示面相格局</div>
+            <div class="da-report-blur-wrap">
+              <div class="da-report-blur-text">詳細五官解讀、面部氣色分析、財運福氣部位、流年面相變化…</div>
+            </div>
+            <div class="da-report-price">HKD$58</div>
+            <button class="da-report-unlock" onclick="handleSingleReport(this,'面相深度報告')">HKD$58 解 鎖 完 整 報 告</button>
           </div>
           <div class="da-report-card">
             <div class="da-report-icon">🖐</div>
             <div class="da-report-name">手相深度報告</div>
-            <div class="da-report-price">HKD$68</div>
-            <button class="da-report-unlock" onclick="handleSingleReport(this,'手相深度報告')">立 即 解 鎖</button>
+            <div class="da-report-free-line" id="rptFreeHand">計算命盤後顯示生命線提示</div>
+            <div class="da-report-blur-wrap">
+              <div class="da-report-blur-text">生命線、感情線、事業線詳細解讀，手紋吉凶月份及改運建議…</div>
+            </div>
+            <div class="da-report-price">HKD$58</div>
+            <button class="da-report-unlock" onclick="handleSingleReport(this,'手相深度報告')">HKD$58 解 鎖 完 整 報 告</button>
           </div>
         </div>
 
@@ -2864,6 +2909,7 @@
         <!-- Paid section -->
         <div class="rn-paid-section">
           <div class="rn-paid-title" id="rnPaidTitle">✦ 完 整 改 名 AI 報 告</div>
+          <div class="da-report-free-line" id="rnFreeLine" style="margin-bottom:0.5rem;">輸入姓名後顯示五行評分提示</div>
           <div class="rn-paid-preview" id="rnPaidPreview">完整報告包含10個推薦名字，每個名字附筆劃五行分析、音義解說、與命格配合度評分…</div>
           <div style="font-size:0.62rem;color:var(--text-dim);letter-spacing:0.07em;margin:0.35rem 0 0.5rem;line-height:1.7;">
             💡 深度改名報告：HKD$128 · 10個推薦名字+康熙筆劃+五行評分
@@ -3318,6 +3364,49 @@ function renderDeepAnalysis(pillars, year) {
   // Show the panel
   const panel = document.getElementById('daPartnerPanel');
   if (panel) panel.style.display = 'block';
+
+  // ── 單次報告：免費預覽文字 ────────────────────────────
+  const dBranch = pillars[2].branch;
+  const mBranch = pillars[1].branch;
+  const dStemChar = STEMS[dStem];
+
+  // 子女緣：日支五行判斷
+  const childBrEl = BRAN_EL[dBranch];
+  const childDeep = ['木','水'].includes(childBrEl) ? '深厚' :
+                    ['金','火'].includes(childBrEl)  ? '需要經營' : '平穩';
+  const childEl_n = setFree('rptFreeChild',
+    `您的命盤顯示與子女緣分【${childDeep}】，日支${BRANCHES[dBranch]}宮透露子女訊息`);
+
+  // 兄弟姊妹緣：月支五行判斷
+  const sibBrEl = BRAN_EL[mBranch];
+  const SIB_DESC = { '木':'中等，有助力', '火':'熱情但易口角', '土':'穩定，可依靠',
+                     '金':'強，各有成就',  '水':'深，互助互利' };
+  setFree('rptFreeSib',
+    `您的手足宮顯示兄弟姊妹緣分【${SIB_DESC[sibBrEl]}】，月支${BRANCHES[mBranch]}宮透露手足情緣`);
+
+  // 血光之災：日主五行 × 2026丙午年
+  const BLOOD_MONTHS = { '木':'農曆七月', '火':'農曆十一月', '土':'農曆正月',
+                         '金':'農曆五月至六月', '水':'農曆四月' };
+  setFree('rptFreeBlood',
+    `您${BLOOD_MONTHS[dayEl]}需特別注意，命盤顯示2026丙午年有血光信號`);
+
+  // 面相：日主五行格局
+  const FACE_TRAIT = { '木':'清秀文雅', '火':'神采飛揚', '土':'端莊穩重',
+                       '金':'輪廓分明', '水':'靈秀飄逸' };
+  setFree('rptFreeFace',
+    `您的面相屬【${dayEl}】格局，主${FACE_TRAIT[dayEl]}，面部特徵透露命運密碼`);
+
+  // 手相：日干判斷生命力
+  const HAND_VIT = { '甲':'強','乙':'強','丙':'強','丁':'強',
+                     '戊':'中等，需保養','己':'中等，需保養',
+                     '庚':'強','辛':'強','壬':'需調養','癸':'需調養' };
+  setFree('rptFreeHand',
+    `您的生命線顯示生命力【${HAND_VIT[dStemChar]}】，手掌紋路透露健康玄機`);
+
+  function setFree(id, txt) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = txt;
+  }
 }
 
 // ── Profile system ──────────────────────────────────────
@@ -4347,6 +4436,19 @@ function analyzeRename(scene) {
   document.getElementById('rnPaidTitle').textContent   = paidTitle;
   document.getElementById('rnPaidPreview').textContent = paidPreview;
   document.getElementById('rnUnlockBtn').textContent   = unlockLabel;
+
+  // ── 深度改名：免費預覽一句話 ──
+  const rnFreeEl = document.getElementById('rnFreeLine');
+  if (rnFreeEl) {
+    if (scene === 'adult' && name) {
+      const compatLabel2 = compat >= 75 ? '高' : compat >= 55 ? '中' : '低';
+      rnFreeEl.textContent = `您現有名字五行評分【${compat}分】，與命格配合度【${compatLabel2}】`;
+    } else if (scene === 'baby') {
+      rnFreeEl.textContent = `您的寶寶命格屬【${dayEl}】，深度命名將以補${lackEl}氣為方向`;
+    } else {
+      rnFreeEl.textContent = `公司命格日主屬【${dayEl}】，與行業五行關係影響生意興衰`;
+    }
+  }
 
   const res = document.getElementById('renameResult');
   res.classList.add('visible');
