@@ -211,6 +211,15 @@ html.light-mode .ai-card {
 /* ── oracle.html 古卷軸底部棕色橫條 + 橋接條 light mode ── */
 /* 底部 roller 保持同 dark mode 完全一樣（唔覆蓋） */
 
+/* 卷軸 wrapper 底部漸變融入頁面背景，消除米黃長方形 */
+html.light-mode .scroll-outer {
+  background: linear-gradient(
+    to bottom,
+    #F8EECE 0%,
+    #f5efe2 85%
+  );
+}
+
 /* 橋接條：由棕色 roller 過渡到 AI section 暖米色背景 */
 html.light-mode .scroll-to-ai-bridge {
   background : linear-gradient(to bottom,
