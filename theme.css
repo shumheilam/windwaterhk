@@ -209,16 +209,18 @@ html.light-mode .ai-card {
 }
 
 /* ── oracle.html 古卷軸底部棕色橫條 + 橋接條 light mode ── */
+/* 底部 roller 保持同 dark mode 完全一樣（唔覆蓋） */
+
+/* 橋接條：由棕色 roller 過渡到 AI section 暖米色背景 */
 html.light-mode .scroll-to-ai-bridge {
-  background : transparent !important;
+  background : linear-gradient(to bottom,
+    rgba(61,30,6,0.55) 0%,
+    #fdf3e3 100%
+  ) !important;
 }
-/* 底部 roller（scroll-outer 最後一個 .scroll-roller）在 light mode 隱藏 */
-html.light-mode .scroll-outer .scroll-roller:last-child {
-  display : none !important;
-}
-/* 橋接區域以下確保同頁面背景一致 */
+/* AI footer 區域背景同 ai-section-wrap 一致，消除空白 */
 html.light-mode .scroll-dark-footer {
-  background : transparent;
+  background : #fdf3e3;
 }
 
 /* ── oracle.html AI深度解籤 light mode 文字顏色修正 ── */
