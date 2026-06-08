@@ -83,7 +83,7 @@ function renderAuthNav() {
 
   if (!user) {
     wrap.innerHTML = `
-      <div style="display:flex;gap:0.5rem;align-items:center;">
+      <div style="display:flex;gap:6px;align-items:center;">
         <button class="nav-upgrade-btn" onclick="openSubscribeModal('monthly')">✦ $48/月起</button>
         <button class="nav-auth-btn" onclick="openAuthModal()">登 入 ／ 註 冊</button>
       </div>`;
@@ -508,53 +508,53 @@ function injectSubscribeModal() {
           <div class="subs-safe-note" style="margin-top:0.8rem">🔒 安全付款 · Mock 示範模式 · 不會扣款</div>
         </div>
         <div class="subs-panel" id="subsTabSingle">
-          <!-- Type A: 月費報告單次購買 $58 -->
+          <!-- Type A: 月費報告單次試用 $38 -->
           <div style="font-size:0.63rem;color:var(--gold);letter-spacing:0.12em;margin:0 0 0.4rem;padding:0.3rem 0.5rem 0.1rem;border-bottom:1px solid rgba(201,168,76,0.15);">
-            ▸ 月費報告單次購買
+            ▸ 月費報告單次試用（HKD$38）
           </div>
-          <div style="font-size:0.6rem;color:var(--text-dim);letter-spacing:0.07em;margin-bottom:0.5rem;">各類 AI 月費報告，非訂閱用戶可單次購買</div>
+          <div style="font-size:0.6rem;color:var(--text-dim);letter-spacing:0.07em;margin-bottom:0.5rem;">一次性報告 · 永久保存 · 冇問答額度 · 冇求簽加成</div>
           <div class="subs-report-list">
-            <div class="subs-report-item" onclick="selectReport(this,'感情運勢AI報告','HKD$58')">
+            <div class="subs-report-item" onclick="selectReport(this,'感情運勢AI報告','HKD$38')">
               <div class="subs-report-left">
                 <div class="subs-report-icon">💕</div>
                 <div><div class="subs-report-name">感情運勢</div><div class="subs-report-desc">本月感情發展 · 桃花運 · 注意事項</div></div>
               </div>
-              <div class="subs-report-price">HKD$58</div>
+              <div class="subs-report-price">HKD$38</div>
             </div>
-            <div class="subs-report-item" onclick="selectReport(this,'事業財運AI報告','HKD$58')">
+            <div class="subs-report-item" onclick="selectReport(this,'事業財運AI報告','HKD$38')">
               <div class="subs-report-left">
                 <div class="subs-report-icon">💼</div>
                 <div><div class="subs-report-name">事業財運</div><div class="subs-report-desc">本月事業機遇 · 財運走向 · 投資建議</div></div>
               </div>
-              <div class="subs-report-price">HKD$58</div>
+              <div class="subs-report-price">HKD$38</div>
             </div>
-            <div class="subs-report-item" onclick="selectReport(this,'健康運勢AI報告','HKD$58')">
+            <div class="subs-report-item" onclick="selectReport(this,'健康運勢AI報告','HKD$38')">
               <div class="subs-report-left">
                 <div class="subs-report-icon">🌿</div>
                 <div><div class="subs-report-name">健康運勢</div><div class="subs-report-desc">本月健康注意部位 · 養生建議</div></div>
               </div>
-              <div class="subs-report-price">HKD$58</div>
+              <div class="subs-report-price">HKD$38</div>
             </div>
-            <div class="subs-report-item" onclick="selectReport(this,'流年逐月AI報告','HKD$58')">
+            <div class="subs-report-item" onclick="selectReport(this,'流年逐月AI報告','HKD$38')">
               <div class="subs-report-left">
                 <div class="subs-report-icon">📅</div>
                 <div><div class="subs-report-name">流年逐月</div><div class="subs-report-desc">本月整體運勢 · 吉凶提示</div></div>
               </div>
-              <div class="subs-report-price">HKD$58</div>
+              <div class="subs-report-price">HKD$38</div>
             </div>
-            <div class="subs-report-item" onclick="selectReport(this,'合婚配對AI報告','HKD$58')">
+            <div class="subs-report-item" onclick="selectReport(this,'合婚配對AI報告','HKD$38')">
               <div class="subs-report-left">
                 <div class="subs-report-icon">💑</div>
                 <div><div class="subs-report-name">合婚配對</div><div class="subs-report-desc">兩人本月相處運勢 · 溝通建議</div></div>
               </div>
-              <div class="subs-report-price">HKD$58</div>
+              <div class="subs-report-price">HKD$38</div>
             </div>
-            <div class="subs-report-item" onclick="selectReport(this,'擇日建議AI報告','HKD$58')">
+            <div class="subs-report-item" onclick="selectReport(this,'擇日建議AI報告','HKD$38')">
               <div class="subs-report-left">
                 <div class="subs-report-icon">📆</div>
                 <div><div class="subs-report-name">擇日建議</div><div class="subs-report-desc">本月最佳行事吉日推薦</div></div>
               </div>
-              <div class="subs-report-price">HKD$58</div>
+              <div class="subs-report-price">HKD$38</div>
             </div>
           </div>
 
@@ -605,24 +605,17 @@ function injectSubscribeModal() {
               </div>
               <div class="subs-report-price">HKD$68</div>
             </div>
-            <div class="subs-report-item" onclick="selectReport(this,'家居/辦公室風水深度報告（PDF）','HKD$98')">
-              <div class="subs-report-left">
-                <div class="subs-report-icon">🏠</div>
-                <div><div class="subs-report-name">家居/辦公室風水報告（PDF）</div><div class="subs-report-desc">以PDF發送電郵 · 可永久保存</div></div>
-              </div>
-              <div class="subs-report-price">HKD$98</div>
-            </div>
             <div class="subs-report-item" onclick="selectReport(this,'深度改名報告','HKD$128')">
               <div class="subs-report-left">
                 <div class="subs-report-icon">✍️</div>
-                <div><div class="subs-report-name">深度改名報告</div><div class="subs-report-desc">五行補缺 · 康熙筆劃分析</div></div>
+                <div><div class="subs-report-name">深度改名報告</div><div class="subs-report-desc">五行補缺 · 康熙筆劃分析<br><span style="color:rgba(201,168,76,0.7);">$98 會員：HKD$90（7折）</span></div></div>
               </div>
               <div class="subs-report-price">HKD$128</div>
             </div>
             <div class="subs-report-item" onclick="selectReport(this,'奇門遁甲完整盤','HKD$198')">
               <div class="subs-report-left">
                 <div class="subs-report-icon">☰</div>
-                <div><div class="subs-report-name">奇門遁甲完整盤 ★豁免折扣</div><div class="subs-report-desc">八門九星完整時盤分析</div></div>
+                <div><div class="subs-report-name">奇門遁甲完整盤</div><div class="subs-report-desc">八門九星完整時盤分析<br><span style="color:rgba(201,168,76,0.7);">$98 會員：HKD$139（7折）</span></div></div>
               </div>
               <div class="subs-report-price">HKD$198</div>
             </div>

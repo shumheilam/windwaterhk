@@ -954,11 +954,10 @@
       max-width: 620px;
       margin: 0 auto;
       height: 56px;
-      /* Fade from dark-brown bottom roller edge → deep dark matching AI section */
+      /* Fade from roller edge → transparent (page bg shows through) */
       background: linear-gradient(to bottom,
-        #160804 0%,
-        #100610 60%,
-        #0e0818 100%
+        rgba(61,30,6,0.55) 0%,
+        transparent 100%
       );
       position: relative;
     }
@@ -1153,8 +1152,10 @@
     <a class="nav-tab" href="qimen.html">奇 門 遁 甲</a>
     <a class="nav-tab" href="compass.html">風 水 羅 盤</a>
   </div>
-  <div class="nav-auth" id="navAuthArea"></div>
-  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切換淺色模式" aria-label="切換淺色模式">🌙</button>
+  <div class="header-right">
+    <div class="nav-auth" id="navAuthArea"></div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切換淺色模式" aria-label="切換淺色模式">🌙</button>
+  </div>
 </nav>
 
 <header>

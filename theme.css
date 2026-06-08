@@ -67,9 +67,25 @@ html.light-mode body {
   background-image: radial-gradient(ellipse 80% 50% at 50% 0%, #f0e8d2 0%, transparent 65%) !important;
 }
 
-/* ── Logo 防換行 ── */
+/* ── Logo 防換行 + 字體放大 ── */
 .logo-text {
   white-space : nowrap;
+  font-size   : 1rem !important;
+  width       : 2.8rem !important;
+  height      : 2.8rem !important;
+}
+
+/* ── Header right area ── */
+.header-right {
+  display     : flex;
+  align-items : center;
+  gap         : 6px;
+  flex-shrink : 0;
+}
+
+/* theme-toggle 不再需要 margin-left，由 header-right gap 控制 */
+.theme-toggle {
+  margin-left : 0 !important;
 }
 
 /* 淺色模式下某些固定深色元素需要調整 */

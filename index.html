@@ -1358,13 +1358,16 @@
     }
     /* Free preview line inside each single report card */
     .da-report-free-line {
-      font-size: 0.68rem;
+      font-size: 0.95rem;
       color: var(--gold);
       letter-spacing: 0.03em;
       line-height: 1.55;
       opacity: 0.88;
       margin: 0.2rem 0 0.1rem;
     }
+    /* 【】bracket keywords — deep gold in light mode, standard gold in dark */
+    .da-kw { color: var(--gold); }
+    html.light-mode .da-kw { color: #8a6420 !important; }
     .da-report-blur-wrap {
       position: relative;
       max-height: 2.5em;
@@ -2256,8 +2259,10 @@
     <a class="nav-tab"        href="qimen.html">奇 門 遁 甲</a>
     <a class="nav-tab"        href="compass.html">風 水 羅 盤</a>
   </div>
-  <div class="nav-auth" id="navAuthArea"></div>
-  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切換淺色模式" aria-label="切換淺色模式">🌙</button>
+  <div class="header-right">
+    <div class="nav-auth" id="navAuthArea"></div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切換淺色模式" aria-label="切換淺色模式">🌙</button>
+  </div>
 </nav>
 
 <header>
@@ -3312,8 +3317,8 @@ function renderDeepAnalysis(pillars, year) {
   const freeLine = document.getElementById('daPartnerFreeLine');
   if (freeLine && vibe) {
     freeLine.innerHTML =
-      `您的緣份桃花屬<span class="da-partner-free-el">【${vibe.life}命】</span>，` +
-      `另一半天生帶<span class="da-partner-free-el">【${vibe.trait}】</span>氣息`;
+      `您的緣份桃花屬<span class="da-kw">【${vibe.life}命】</span>，` +
+      `另一半天生帶<span class="da-kw">【${vibe.trait}】</span>氣息`;
   }
 
   // ── 單次報告：免費預覽文字 ────────────────────────────
@@ -3356,7 +3361,7 @@ function renderDeepAnalysis(pillars, year) {
 
   function setFree(id, txt) {
     const el = document.getElementById(id);
-    if (el) el.textContent = txt;
+    if (el) el.innerHTML = txt.replace(/【([^】]*)】/g, '<span class="da-kw">【$1】</span>');
   }
 }
 
