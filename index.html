@@ -2245,7 +2245,7 @@
 <body>
 
 <nav>
-  <a class="nav-brand" href="index.html"><span class="logo-text"><span>風</span><span>水</span><span>生</span><span>起</span></span><span class="brand-sub">FengShui Oracle</span></a>
+  <a class="nav-brand" href="index.html"><span class="logo-text"><span>風</span><span>水</span><span>生</span><span>起</span></span></a>
   <div class="nav-tabs">
     <a class="nav-tab active" id="tab-bazi"     href="#" onclick="switchMainTab('bazi');return false">八 字 命 盤</a>
     <a class="nav-tab"        id="tab-liuNian" href="#" onclick="switchMainTab('liuNian');return false">流 年 運 程</a>
@@ -2431,61 +2431,17 @@
           <span class="da-single-title">單 次 深 度 報 告</span>
           <span class="da-single-badge">一次過解鎖・永久保存</span>
         </div>
-        <!-- 另一半性格外貌分析 expanded panel -->
-        <div class="da-partner-panel" id="daPartnerPanel">
-          <!-- Free teaser -->
-          <div class="da-partner-teaser">
-            <div class="da-partner-top">
-              <span class="da-partner-top-icon">💑</span>
-              <span class="da-partner-top-title">另一半性格外貌分析</span>
-            </div>
-            <div class="da-partner-free-line" id="daPartnerFreeLine">計算命盤後顯示您的緣份桃花提示</div>
-          </div>
-          <!-- Blurred preview + lock overlay -->
-          <div class="da-partner-locked">
-            <div class="da-partner-preview-list" id="daPartnerPreview">
-              <div class="da-partner-preview-item">
-                <span class="da-pp-label">詳細五官外貌</span>
-                <span class="da-pp-value" id="daPartnerFace">眼睛明亮有神，鼻樑高挺秀氣，雙唇豐潤，面容清秀耐看，輪廓分明</span>
-              </div>
-              <div class="da-partner-preview-item">
-                <span class="da-pp-label">身材氣質</span>
-                <span class="da-pp-value" id="daPartnerBody">身形修長勻稱，舉手投足自帶氣質，給人優雅從容之感</span>
-              </div>
-              <div class="da-partner-preview-item">
-                <span class="da-pp-label">性格特質</span>
-                <span class="da-pp-value" id="daPartnerChar">理性智慧兼具，溫柔體貼，做事認真負責，對感情專一忠誠</span>
-              </div>
-              <div class="da-partner-preview-item">
-                <span class="da-pp-label">職業傾向</span>
-                <span class="da-pp-value" id="daPartnerJob">文教、藝術、創意設計或科技行業，多有一技之長</span>
-              </div>
-              <div class="da-partner-preview-item">
-                <span class="da-pp-label">相遇時機</span>
-                <span class="da-pp-value" id="daPartnerTime">最旺緣份月份：農曆三月、八月；相遇地點多在文化場所或朋友介紹</span>
-              </div>
-            </div>
-            <div class="da-partner-ai-row">
-              <span class="da-partner-ai-badge">🎨 AI 生成專屬樣貌圖</span>
-              <span style="font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;">Phase 4 推出・Coming Soon</span>
-            </div>
-            <!-- Lock CTA overlay -->
-            <div class="da-partner-lock-overlay">
-              <div class="da-partner-cta">
-                <div class="da-partner-cta-head">🔮 緣份已定，樣貌可知<br><span style="opacity:0.7;font-weight:400;font-size:0.72rem;">🔒 解鎖完整緣份報告</span></div>
-                <ul class="da-partner-cta-list">
-                  <li>詳細外貌特徵描述</li>
-                  <li>性格與職業傾向</li>
-                  <li>相遇時機與地點</li>
-                  <li>Phase 4：AI 生成專屬樣貌圖</li>
-                </ul>
-                <button class="da-partner-unlock-btn" onclick="handleSingleReport(this,'另一半性格外貌分析')">HKD$58 &nbsp;立 即 解 鎖</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="da-single-grid">
+          <div class="da-report-card">
+            <div class="da-report-icon">💑</div>
+            <div class="da-report-name">另一半性格外貌分析</div>
+            <div class="da-report-free-line" id="daPartnerFreeLine">計算命盤後顯示您的緣份桃花提示</div>
+            <div class="da-report-blur-wrap">
+              <div class="da-report-blur-text">詳細外貌特徵描述、性格與職業傾向、相遇時機與地點、AI 生成專屬樣貌圖…</div>
+            </div>
+            <div class="da-report-price">HKD$58</div>
+            <button class="da-report-unlock" onclick="handleSingleReport(this,'另一半性格外貌分析')">HKD$58 解 鎖 完 整 報 告</button>
+          </div>
           <div class="da-report-card">
             <div class="da-report-icon">👶</div>
             <div class="da-report-name">子女緣分析</div>
@@ -3359,20 +3315,6 @@ function renderDeepAnalysis(pillars, year) {
       `您的緣份桃花屬<span class="da-partner-free-el">【${vibe.life}命】</span>，` +
       `另一半天生帶<span class="da-partner-free-el">【${vibe.trait}】</span>氣息`;
   }
-
-  // Update blurred preview content
-  if (preview) {
-    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-    set('daPartnerFace', preview.face);
-    set('daPartnerBody', preview.body);
-    set('daPartnerChar', preview.char);
-    set('daPartnerJob',  preview.job);
-    set('daPartnerTime', preview.time);
-  }
-
-  // Show the panel
-  const panel = document.getElementById('daPartnerPanel');
-  if (panel) panel.style.display = 'block';
 
   // ── 單次報告：免費預覽文字 ────────────────────────────
   const dBranch = pillars[2].branch;

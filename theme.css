@@ -191,3 +191,8 @@ html.light-mode .ai-card {
   background   : rgba(255,255,255,0.7) !important;
   border-color : rgba(139,105,20,0.2) !important;
 }
+
+/* ── oracle.html 古卷軸底部黑色漸層橋接條 light mode ── */
+html.light-mode .scroll-to-ai-bridge {
+  background : transparent !important;
+}
