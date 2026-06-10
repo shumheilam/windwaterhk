@@ -2,9 +2,18 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#c9a84c">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="風生水起">
+  <!-- Icons -->
   <link rel="apple-touch-icon" href="/icon-bagua.png">
   <link rel="icon" type="image/png" href="/icon-bagua.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>風生水起 · 奇門遁甲</title>
   <meta property="og:title" content="風生水起 · FengShui Oracle">
   <meta property="og:description" content="奇門遁甲九宮排盤，根據出生年推算宮位，探索命盤玄機">
@@ -1033,6 +1042,17 @@ function closeMobMore() {
 document.getElementById('registerModal').addEventListener('click', function(e) {
   if (e.target === this) closeRegisterModal();
 });
+</script>
+
+<!-- Service Worker Registration -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW error:', err));
+  });
+}
 </script>
 </body>
 </html>

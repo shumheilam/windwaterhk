@@ -2,9 +2,18 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#c9a84c">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="風生水起">
+  <!-- Icons -->
   <link rel="apple-touch-icon" href="/icon-bagua.png">
   <link rel="icon" type="image/png" href="/icon-bagua.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>風生水起 · FengShui Oracle</title>
   <meta property="og:title" content="風生水起 · FengShui Oracle">
   <meta property="og:description" content="最易用嘅中式命理 App，八字命盤、求簽問事、合婚配對、神明曆">
@@ -4577,5 +4586,16 @@ function showNotifEnabled(btn, status) {
     <span class="mob-more-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="1.5" fill="#c9a84c"/><polygon points="12,4 10.5,12 12,11 13.5,12" fill="#c9a84c" stroke="#c9a84c" stroke-width="1"/><polygon points="12,20 10.5,12 12,13 13.5,12" fill="none" stroke="#c9a84c" stroke-width="1"/><text x="12" y="3" text-anchor="middle" font-size="2.5" fill="#c9a84c" stroke="none" font-family="serif">北</text><text x="12" y="23" text-anchor="middle" font-size="2.5" fill="#c9a84c" stroke="none" font-family="serif">南</text><text x="2.5" y="12.8" text-anchor="middle" font-size="2.5" fill="#c9a84c" stroke="none" font-family="serif">西</text><text x="21.5" y="12.8" text-anchor="middle" font-size="2.5" fill="#c9a84c" stroke="none" font-family="serif">東</text></svg></span>風 水 羅 盤
   </a>
 </nav>
+
+<!-- Service Worker Registration -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW error:', err));
+  });
+}
+</script>
 </body>
 </html>

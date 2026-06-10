@@ -1,0 +1,50 @@
+{
+  "name": "風生水起 FengShui Oracle",
+  "short_name": "風生水起",
+  "description": "最易用嘅中式命理 App，八字命盤、求簽問事、合婚配對、風水羅盤",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0a1a",
+  "theme_color": "#c9a84c",
+  "lang": "zh-HK",
+  "icons": [
+    {
+      "src": "/icon-bagua.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-bagua.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-bagua.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["lifestyle", "utilities"],
+  "shortcuts": [
+    {
+      "name": "八字命盤",
+      "url": "/index.html",
+      "description": "查看八字四柱命盤"
+    },
+    {
+      "name": "求簽",
+      "url": "/oracle.html",
+      "description": "向神明求簽問事"
+    },
+    {
+      "name": "神明曆",
+      "url": "/calendar.html",
+      "description": "農曆吉凶日曆"
+    }
+  ]
+}
