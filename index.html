@@ -2252,6 +2252,83 @@
       border-radius: 4px;
       white-space: nowrap;
     }
+
+  /* ── Add to Home Screen Banner ── */
+  #a2hsBanner {
+    position: fixed;
+    bottom: 70px;
+    left: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #1a0e2e, #2a1808);
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 16px;
+    padding: 14px 16px;
+    z-index: 9999;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    animation: slideUp 0.4s ease-out;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .a2hs-content { display: flex; align-items: center; gap: 12px; }
+  .a2hs-icon { font-size: 2rem; flex-shrink: 0; }
+  .a2hs-text { flex: 1; }
+  .a2hs-title {
+    color: #c9a84c;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .a2hs-desc {
+    color: rgba(201,168,76,0.7);
+    font-size: 0.75rem;
+    margin-top: 2px;
+    letter-spacing: 0.03em;
+  }
+  .a2hs-btn-install {
+    background: linear-gradient(135deg, #c9a84c, #8a6420);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.82rem;
+    font-family: 'Noto Serif TC', serif;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .a2hs-btn-close {
+    background: none;
+    border: none;
+    color: rgba(201,168,76,0.5);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 4px;
+    flex-shrink: 0;
+  }
+  .a2hs-ios-hint {
+    margin-top: 10px;
+    text-align: center;
+    color: rgba(201,168,76,0.8);
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    border-top: 1px solid rgba(201,168,76,0.2);
+    padding-top: 10px;
+  }
+  .a2hs-ios-hint span {
+    display: inline-block;
+    border: 1px solid #c9a84c;
+    border-radius: 4px;
+    padding: 0 4px;
+    margin: 0 2px;
+    font-size: 0.85rem;
+  }
+  [data-theme="light"] #a2hsBanner {
+    background: linear-gradient(135deg, #fdf3e3, #f5e6c8);
+    border-color: rgba(138,100,32,0.3);
+  }
   </style>
 </head>
 <body>
@@ -4596,6 +4673,67 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.log('SW error:', err));
   });
 }
+</script>
+
+<div id="a2hsBanner" style="display:none">
+  <div class="a2hs-content">
+    <div class="a2hs-icon">🏮</div>
+    <div class="a2hs-text">
+      <div class="a2hs-title">加到主畫面</div>
+      <div class="a2hs-desc">體驗如真實 App，隨時使用</div>
+    </div>
+    <button id="a2hsInstall" class="a2hs-btn-install">安裝</button>
+    <button id="a2hsClose" class="a2hs-btn-close">✕</button>
+  </div>
+  <div id="a2hsIosHint" style="display:none" class="a2hs-ios-hint">
+    點擊下方 <span>□↑</span> 分享按鈕，再選「加入主畫面」
+  </div>
+</div>
+
+<script>
+// ── Add to Home Screen ──────────────────
+(function() {
+  const STORAGE_KEY = 'a2hs_dismissed';
+  const banner = document.getElementById('a2hsBanner');
+  const installBtn = document.getElementById('a2hsInstall');
+  const closeBtn = document.getElementById('a2hsClose');
+  const iosHint = document.getElementById('a2hsIosHint');
+  if (!banner) return;
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true;
+  const dismissedVal = localStorage.getItem(STORAGE_KEY);
+  const dismissedTime = parseInt(dismissedVal);
+  if (dismissedTime && Date.now() > dismissedTime) {
+    localStorage.removeItem(STORAGE_KEY);
+  } else if (dismissedVal || isStandalone) return;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    setTimeout(() => { banner.style.display = 'block'; }, 3000);
+  });
+  if (isIOS && !isStandalone) {
+    setTimeout(() => {
+      banner.style.display = 'block';
+      iosHint.style.display = 'block';
+      installBtn.style.display = 'none';
+    }, 3000);
+  }
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const result = await deferredPrompt.userChoice;
+      if (result.outcome === 'accepted') localStorage.setItem(STORAGE_KEY, 'installed');
+      deferredPrompt = null;
+      banner.style.display = 'none';
+    }
+  });
+  closeBtn.addEventListener('click', () => {
+    banner.style.display = 'none';
+    localStorage.setItem(STORAGE_KEY, (Date.now() + 7 * 24 * 60 * 60 * 1000).toString());
+  });
+})();
 </script>
 </body>
 </html>
