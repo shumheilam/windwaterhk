@@ -1643,16 +1643,21 @@ function handleOrientation(e) {
   if (e.webkitCompassHeading !== undefined) {
     heading = e.webkitCompassHeading;
   }
-  // Android absolute: alpha 係裝置相對地理北極旋轉角，直接用作 heading
-  else if (e.absolute === true && e.alpha !== null) {
-    heading = e.alpha;
-  }
-  // Fallback
-  else if (e.alpha !== null) {
-    heading = e.alpha;
-  }
+  // Android: 用完整旋轉矩陣計算，修正垂直拿機時方位錯誤
+  else {
+    const alpha = e.alpha ? e.alpha * (Math.PI / 180) : 0;
+    const beta  = e.beta  ? e.beta  * (Math.PI / 180) : 0;
+    const gamma = e.gamma ? e.gamma * (Math.PI / 180) : 0;
 
-  heading = ((heading % 360) + 360) % 360;
+    // 計算旋轉矩陣投影，得出正確方位角
+    const x = Math.sin(beta) * Math.cos(alpha)
+            - Math.sin(gamma) * Math.cos(beta) * Math.sin(alpha);
+    const y = Math.sin(beta) * Math.sin(alpha)
+            + Math.sin(gamma) * Math.cos(beta) * Math.cos(alpha);
+
+    heading = Math.atan2(y, x) * (180 / Math.PI);
+    heading = ((heading % 360) + 360) % 360;
+  }
 
   // 低通濾波：處理角度跨越 0/360 邊界，防止抽筋
   let diff = heading - smoothedHeading;
