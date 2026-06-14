@@ -173,12 +173,18 @@ const KANGXI_STROKES = {
   '岑':7,'芩':10
 };
 
-// 查筆劃（優先查表，未收錄則估算）
+// 查筆劃（優先手動驗證表 > Unihan 完整庫 > 估算 fallback）
 function getKangxiStrokes(ch) {
+  // 1. 手動驗證（最高優先，已人工確認）
   if (KANGXI_STROKES[ch] !== undefined) return { strokes: KANGXI_STROKES[ch], estimated: false };
-  // 估算：取 Unicode 碼點最後兩位作基數，映射到合理筆劃範圍（5–20）
+  // 2. Unihan 完整庫（kangxi-strokes-full.js 載入後可用）
+  if (typeof KANGXI_STROKES_FULL !== 'undefined' && KANGXI_STROKES_FULL[ch] !== undefined) {
+    return { strokes: KANGXI_STROKES_FULL[ch], estimated: false };
+  }
+  // 3. Fallback 估算（準確度低，記錄以便追蹤）
   const code = ch.charCodeAt(0);
   const est = 5 + (code % 16);
+  console.warn(`[康熙筆劃] 未收錄字：「${ch}」(U+${code.toString(16).toUpperCase().padStart(4,'0')})，使用估算值 ${est} 劃`);
   return { strokes: est, estimated: true };
 }
 
