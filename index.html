@@ -3846,14 +3846,12 @@ const YEAR_SUMMARIES = {
 };
 const SHENSHAS = ['文昌貴人','天乙貴人','祿神','將星','驛馬','桃花','華蓋','羊刃','天德','月德','金輿','天喜'];
 
-function calcYearStars(dayEl, yearStem) {
+function calcYearStars(yongShenResult, yearStem) {
   const yearEl = STEM_EL_MAP2[yearStem] || '土';
-  if (EL_GEN2[yearEl] === dayEl) return Math.random() < 0.5 ? 4 : 5;
-  if (yearEl === dayEl) return 3;
-  if (EL_GEN2[dayEl] === yearEl) return Math.random() < 0.5 ? 3 : 4;
-  if (EL_RES2[yearEl] === dayEl) return Math.random() < 0.5 ? 1 : 2;
-  if (EL_RES2[dayEl] === yearEl) return Math.random() < 0.5 ? 2 : 3;
-  return 3;
+  const { yongEls, jiEl } = yongShenResult;
+  if (yongEls.includes(yearEl)) return Math.random() < 0.5 ? 4 : 5;  // 流年=用神
+  if (yearEl === jiEl)          return Math.random() < 0.5 ? 1 : 2;  // 流年=忌神
+  return 3;                                                             // 中性
 }
 
 function starsHtml(n) {
@@ -3871,16 +3869,17 @@ function randomShenshas(seed, count) {
 }
 
 function renderYearlyFortune(pillars) {
-  const dayEl = STEM_EL[pillars[2].stem];
+  const yongShenResult = calcYongShen(pillars);
+  const dayEl   = yongShenResult.dayEl;
   const dayStem = STEMS[pillars[2].stem];
   const currentYear = 2026;
   const years = [];
   for (let y = currentYear - 4; y <= currentYear + 4; y++) years.push(y);
 
-  // 計算各年評分
+  // 計算各年評分（基於用神忌神）
   const yearData = years.map(y => {
     const yStem = YEAR_STEMS_MAP[y] || '甲';
-    const stars = calcYearStars(dayEl, yStem);
+    const stars = calcYearStars(yongShenResult, yStem);
     const themes = YEAR_THEMES[stars];
     const theme = themes[(y * 3 + pillars[2].stem) % themes.length];
     const summary = YEAR_SUMMARIES[stars];
@@ -4030,22 +4029,27 @@ function renderDeepAnalysis(pillars, year) {
   const yBranch = pillars[0].branch;
   const dayEl   = STEM_EL[dStem];
 
-  // Weakest element — includes all four pillars (year/month/day/hour)
+  // 用神忌神結果（幸運顏色基準）
+  const ys       = calcYongShen(pillars);
+  const yongEls  = ys.yongEls;
+  const yongLabel = yongEls.join('＋');
+
+  // 幸運顏色：用神五行對應顏色（並列）
+  const colorMains = yongEls.flatMap(el => DA_LUCKY_COLORS[el].main);
+  const colorAvoid = DA_LUCKY_COLORS[ys.jiEl].main.join('、');  // 忌神顏色
+
+  // Weakest element — for direction / body / yiji / nums（補缺邏輯保留）
   const cnt = { '木':0,'火':0,'土':0,'金':0,'水':0 };
   pillars.forEach(p => { cnt[STEM_EL[p.stem]]++; cnt[BRAN_EL[p.branch]]++; });
 
-  // Find minimum count
   const minCnt = Math.min(...EL_LIST.map(e => cnt[e]));
   const weakEls = EL_LIST.filter(e => cnt[e] === minCnt);
-  // When tied, use hour stem's element to break the tie (makes hour meaningful)
   const hStem  = pillars[3].stem;
   const hEl    = STEM_EL[hStem];
   const weakEl = weakEls.includes(hEl) ? hEl : weakEls[0];
 
-  // Use the most lacking element for colours / nums / direction / yiji
   const isMissing  = cnt[weakEl] === 0;
   const lackLabel  = isMissing ? `命盤缺${weakEl}` : `${weakEl}氣最弱`;
-  const colors  = DA_LUCKY_COLORS[weakEl];
   const nums    = DA_LUCKY_NUMS[weakEl];
 
   // 貴人生肖：合併日干 + 時干的天乙貴人，確保唔同時辰有唔同結果
@@ -4096,7 +4100,7 @@ function renderDeepAnalysis(pillars, year) {
   }
 
   const freeCards = [
-    { icon:'🎨', label:'幸運顏色', value: colors.main.join('　'), sub:`補${weakEl}氣・忌：${colors.avoid}` },
+    { icon:'🎨', label:'幸運顏色', value: colorMains.join('　'), sub:`用神${yongLabel}・忌：${colorAvoid}` },
     { icon:'🔢', label:'幸運數字', value: nums.map(n=>n===0?'0/10':n).join('　　'), sub:`補${weakEl}・${lackLabel}` },
     { icon:'🐾', label:'貴人生肖', value: guiZod.join('、'), sub:'與此生肖合作行事更順' },
     { icon:'☯️', label:'五行宜忌（基本）', value: yiji.yi, sub: yiji.ji },
