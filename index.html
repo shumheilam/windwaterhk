@@ -3987,6 +3987,15 @@ const DA_YIJI = {
   '金':{ yi:'宜穿白銀金色；宜向西方部署；宜守規守法行事', ji:'忌穿紅橙服裝；忌衝動行事；忌南方冒進' },
   '水':{ yi:'宜穿黑深藍灰；宜向北方求學；宜增廣見識', ji:'忌穿黃咖色；忌原地踏步；忌輕信謠言' },
 };
+// 忌神語境下的「忌」文句：顏色取DA_LUCKY_COLORS[jiEl].main，方位/行為取此表
+// 原理：忌神之「宜」正是命主需要迴避之方向，動詞調整令文句通順
+const DA_YIJI_JI = {
+  '木': '忌向東分散精力；忌流於散漫隨性',
+  '火': '忌南方過度張揚；忌浮誇高調行事',
+  '土': '忌居中守舊；忌過於保守被動',
+  '金': '忌西方固守不進；忌過度拘謹守成',
+  '水': '忌北方逃避退縮；忌流於空想不落實',
+};
 
 // Paid data (blurred mock)
 const DA_SURNAMES = {
@@ -4048,16 +4057,18 @@ function renderDeepAnalysis(pillars, year) {
   const hEl    = STEM_EL[hStem];
   const weakEl = weakEls.includes(hEl) ? hEl : weakEls[0];
 
-  const isMissing  = cnt[weakEl] === 0;
-  const lackLabel  = isMissing ? `命盤缺${weakEl}` : `${weakEl}氣最弱`;
-  const nums    = DA_LUCKY_NUMS[weakEl];
+  // 幸運數字：用神五行對應數字（並列）
+  const numsArr = yongEls.flatMap(el => DA_LUCKY_NUMS[el]);
 
   // 貴人生肖：合併日干 + 時干的天乙貴人，確保唔同時辰有唔同結果
   const dGuirenBranches = DA_GUIREN[dStem] || [];
   const hGuirenBranches = DA_GUIREN[hStem] || [];
   const allGuirenBranches = [...new Set([...dGuirenBranches, ...hGuirenBranches])];
   const guiZod = allGuirenBranches.slice(0, 3).map(b => ANIMALS[b]);
-  const yiji    = DA_YIJI[weakEl];
+
+  // 五行宜忌：宜=用神各五行合併，忌=忌神顏色+方位/行為
+  const yijiYi = yongEls.map(el => DA_YIJI[el].yi).join('；');
+  const yijiJi = `忌穿${DA_LUCKY_COLORS[ys.jiEl].main.join('、')}；${DA_YIJI_JI[ys.jiEl]}`;
 
   // 犯太歲 card — 帶免費簡介 + 付費鎖定詳細分析
   const taiType = TAISUI_2026.conflicts[yBranch];
@@ -4101,9 +4112,9 @@ function renderDeepAnalysis(pillars, year) {
 
   const freeCards = [
     { icon:'🎨', label:'幸運顏色', value: colorMains.join('　'), sub:`用神${yongLabel}・忌：${colorAvoid}` },
-    { icon:'🔢', label:'幸運數字', value: nums.map(n=>n===0?'0/10':n).join('　　'), sub:`補${weakEl}・${lackLabel}` },
+    { icon:'🔢', label:'幸運數字', value: numsArr.map(n=>n===0?'0/10':n).join('　　'), sub:`用神${yongLabel}` },
     { icon:'🐾', label:'貴人生肖', value: guiZod.join('、'), sub:'與此生肖合作行事更順' },
-    { icon:'☯️', label:'五行宜忌（基本）', value: yiji.yi, sub: yiji.ji },
+    { icon:'☯️', label:'五行宜忌（基本）', value: yijiYi, sub: yijiJi },
   ];
 
   document.getElementById('daFreeGrid').innerHTML =
