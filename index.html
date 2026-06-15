@@ -1259,6 +1259,16 @@
     .da-card-value { font-size: 0.88rem; font-weight: 700; color: var(--text); letter-spacing: 0.04em; line-height: 1.7; }
     .da-card-sub   { font-size: 0.67rem; color: var(--text-dim); letter-spacing: 0.04em; margin-top: 0.28rem; line-height: 1.7; }
 
+    /* 用神忌神 section */
+    .ys-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin: 1rem 0 0.5rem; }
+    @media (max-width: 480px) { .ys-grid { grid-template-columns: 1fr; } }
+    .ys-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; padding: 0.9rem 0.8rem; text-align: center; }
+    .ys-card-label { font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.28em; margin-bottom: 0.4rem; }
+    .ys-card-val   { font-size: 1.05rem; font-weight: 800; letter-spacing: 0.05em; }
+    .ys-card-sub   { font-size: 0.65rem; color: var(--text-dim); margin-top: 0.28rem; line-height: 1.6; }
+    .ys-score-row  { font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.04em; margin: 0.6rem 0 0; line-height: 2; text-align: center; }
+    .ys-disclaimer { font-size: 0.6rem; color: var(--text-dim); line-height: 1.9; letter-spacing: 0.04em; margin-top: 1rem; padding-top: 0.7rem; border-top: 1px solid rgba(255,255,255,0.07); }
+
     /* Paid locked section */
     .da-paid-header {
       display: flex;
@@ -2867,6 +2877,18 @@
       <div id="aiResult"></div>
     </div>
 
+    <!-- ── 用神忌神 Section ──────────────────── -->
+    <div id="yongShenSection" style="display:none;animation:fadeIn 0.55s ease">
+      <div class="card">
+        <div class="cc tl"></div><div class="cc tr"></div>
+        <div class="cc bl"></div><div class="cc br"></div>
+        <p class="card-title">日 主 強 弱 · 用 神 忌 神</p>
+        <p class="da-section-sub">扶抑法 · 月令權重×2 · 量化命理標準</p>
+        <div id="yongShenContent"></div>
+        <p class="ys-disclaimer">※ 本系統採用扶抑法計算日主強弱，月令權重參考量化命理常見比例（×2）。不同命理流派（如旺相休囚死定令法、月令權重50%以上等）對強弱判斷可能有不同結論，尤其對接近中和嘅命格更為明顯，僅供參考。</p>
+      </div>
+    </div>
+
     <!-- ── Deep Analysis Section ──────────────── -->
     <div id="deepSection">
       <div class="card">
@@ -3545,6 +3567,9 @@ function renderResult(pillars, year, month, day, shichen, name) {
   // Deep analysis (rendered after a brief delay for better UX)
   setTimeout(() => renderDeepAnalysis(pillars, year), 120);
 
+  // 用神忌神
+  setTimeout(() => renderYongShen(pillars), 150);
+
   // 十神分析
   setTimeout(() => renderShiShen(pillars), 180);
 }
@@ -3602,6 +3627,150 @@ function calcShiShen(pillars) {
 
   const total = SS_ALL.reduce((s, k) => s + cnt[k], 0) || 1;
   return { dayStem, cnt, total };
+}
+
+// ── 用神忌神 (扶抑法，月令×2) ────────────────────────────────
+const HIDDEN_STEMS_POS = {
+  '子':{main:'癸'},
+  '丑':{main:'己',mid:'癸',rest:'辛'},
+  '寅':{main:'甲',mid:'丙',rest:'戊'},
+  '卯':{main:'乙'},
+  '辰':{main:'戊',mid:'乙',rest:'癸'},
+  '巳':{main:'丙',mid:'庚',rest:'戊'},
+  '午':{main:'丁',mid:'己'},
+  '未':{main:'己',mid:'丁',rest:'乙'},
+  '申':{main:'庚',mid:'壬',rest:'戊'},
+  '酉':{main:'辛'},
+  '戌':{main:'戊',mid:'辛',rest:'丁'},
+  '亥':{main:'壬',mid:'甲'},
+};
+
+function calcYongShen(pillars) {
+  const dayStemChar = STEMS[pillars[2].stem];
+  const ssMap = SHISHEN_MAP[dayStemChar];
+  if (!ssMap) return null;
+
+  const BANG_SS = new Set(['比肩','劫財','偏印','正印']);
+  const YIN_SS  = new Set(['偏印','正印']);
+  const BJ_SS   = new Set(['比肩','劫財']);
+  const CS_SS   = new Set(['食神','傷官']);
+  const CAI_SS  = new Set(['偏財','正財']);
+  const GS_SS   = new Set(['七殺','正官']);
+
+  let bangScore = 0, xieScore = 0;
+  let bangYin = 0, bangBJ = 0;         // 印 vs 比劫
+  let xieCS = 0, xieCai = 0, xieGS = 0; // 食傷 vs 財 vs 官殺
+
+  function addScore(ss, w) {
+    if (!ss) return;
+    if (BANG_SS.has(ss)) {
+      bangScore += w;
+      if (YIN_SS.has(ss)) bangYin += w; else bangBJ += w;
+    } else {
+      xieScore += w;
+      if (CS_SS.has(ss)) xieCS += w;
+      else if (CAI_SS.has(ss)) xieCai += w;
+      else if (GS_SS.has(ss)) xieGS += w;
+    }
+  }
+
+  // 天干 (年月時，排除日主)
+  [0,1,3].forEach(i => addScore(ssMap[STEMS[pillars[i].stem]], 1.0));
+
+  // 地支藏干：月支×2，其餘正常
+  const W_NORMAL = {main:1.0, mid:0.5, rest:0.3};
+  const W_MONTH  = {main:2.0, mid:1.0, rest:0.6};
+
+  pillars.forEach((p, idx) => {
+    const pos = HIDDEN_STEMS_POS[BRANCHES[p.branch]];
+    if (!pos) return;
+    const w = (idx === 1) ? W_MONTH : W_NORMAL;
+    Object.entries(pos).forEach(([type, stemChar]) => addScore(ssMap[stemChar], w[type]));
+  });
+
+  const diff = xieScore - bangScore;
+  let strength;
+  if (diff >= 1)       strength = '身弱';
+  else if (diff <= -1) strength = '身強';
+  else                 strength = '身中和';
+
+  const dayEl = STEM_EL[pillars[2].stem];
+  const EL_SHANG = {'木':'火','火':'土','土':'金','金':'水','水':'木'};
+  const EL_YIN   = {'木':'水','火':'木','土':'火','金':'土','水':'金'};
+  const EL_KE_ME = {'木':'金','火':'水','土':'木','金':'火','水':'土'};
+  const EL_KE    = {'木':'土','火':'金','土':'水','金':'木','水':'火'};
+
+  // 忌神：造成失衡嘅主導五行
+  // 身強/身中和：幫身中印 vs 比劫，哪個高 → 對應五行
+  // 身弱：洩耗剋中食傷/財/官殺，哪個高 → 對應五行
+  function dominantBang() {
+    return bangYin >= bangBJ ? EL_YIN[dayEl] : dayEl;
+  }
+  function dominantXie() {
+    if (xieCS >= xieCai && xieCS >= xieGS) return EL_SHANG[dayEl];
+    if (xieCai >= xieCS && xieCai >= xieGS) return EL_KE[dayEl];
+    return EL_KE_ME[dayEl];
+  }
+
+  let yongEl, yongName, jiEl, jiName;
+  if (strength === '身弱') {
+    yongEl  = EL_YIN[dayEl];
+    yongName = `印星（${yongEl}，生扶日主）`;
+    jiEl    = dominantXie();
+    const jiCat = jiEl === EL_SHANG[dayEl] ? '食傷' : jiEl === EL_KE[dayEl] ? '財星' : '官殺';
+    jiName  = `${jiCat}（${jiEl}，主導洩耗）`;
+  } else if (strength === '身強') {
+    yongEl  = EL_KE_ME[dayEl];
+    yongName = `官殺（${yongEl}，制衡日主）`;
+    jiEl    = dominantBang();
+    const jiCat = jiEl === EL_YIN[dayEl] ? '印星' : '比劫';
+    jiName  = `${jiCat}（${jiEl}，主導幫身）`;
+  } else {
+    // 身中和：食傷洩秀；忌神=幫身中主導五行
+    yongEl  = EL_SHANG[dayEl];
+    yongName = `食傷（${yongEl}，洩秀調和）`;
+    jiEl    = dominantBang();
+    const jiCat = jiEl === EL_YIN[dayEl] ? '印星' : '比劫';
+    jiName  = `${jiCat}（${jiEl}，主導幫身）`;
+  }
+
+  return { bangScore, xieScore, diff, strength, yongEl, yongName, jiEl, jiName, dayEl,
+           bangYin, bangBJ, xieCS, xieCai, xieGS };
+}
+
+function renderYongShen(pillars) {
+  const data = calcYongShen(pillars);
+  const sec = document.getElementById('yongShenSection');
+  if (!data || !sec) return;
+
+  const strengthColor = data.strength === '身弱'   ? 'var(--water)'
+                      : data.strength === '身強'    ? 'var(--fire)'
+                      : 'var(--earth)';
+
+  const yongColor = EL_COL[data.yongEl] || 'var(--text)';
+  const jiColor   = EL_COL[data.jiEl]   || 'var(--text)';
+
+  document.getElementById('yongShenContent').innerHTML = `
+    <div class="ys-grid">
+      <div class="ys-card">
+        <div class="ys-card-label">日 主 強 弱</div>
+        <div class="ys-card-val" style="color:${strengthColor}">${data.strength}</div>
+        <div class="ys-card-sub">幫身 ${data.bangScore.toFixed(1)}　洩耗 ${data.xieScore.toFixed(1)}<br>差距 ${Math.abs(data.diff).toFixed(1)}</div>
+      </div>
+      <div class="ys-card">
+        <div class="ys-card-label">用 神</div>
+        <div class="ys-card-val" style="color:${yongColor}">${data.yongEl}</div>
+        <div class="ys-card-sub">${data.yongName}</div>
+      </div>
+      <div class="ys-card">
+        <div class="ys-card-label">忌 神</div>
+        <div class="ys-card-val" style="color:${jiColor}">${data.jiEl}</div>
+        <div class="ys-card-sub">${data.jiName}</div>
+      </div>
+    </div>
+    <div class="ys-score-row">扶抑法計分 · 月令×2 · 幫身：比劫印 · 洩耗剋：食傷財官殺</div>`;
+
+  sec.style.display = '';
 }
 
 function renderShiShen(pillars) {
@@ -4142,7 +4311,8 @@ function deleteProfile(id) {
     activeId = null;
     clearForm();
     document.getElementById('resultSection').classList.remove('visible');
-  document.getElementById('deepSection').classList.remove('visible');
+    document.getElementById('deepSection').classList.remove('visible');
+    document.getElementById('yongShenSection').style.display = 'none';
   }
   if (editingId === id) exitEditMode();
   renderProfileList();
@@ -4219,6 +4389,7 @@ function startNewUser() {
   renderProfileList();
   document.getElementById('resultSection').classList.remove('visible');
   document.getElementById('deepSection').classList.remove('visible');
+  document.getElementById('yongShenSection').style.display = 'none';
   document.getElementById('profileName').scrollIntoView({ behavior: 'smooth', block: 'center' });
   setTimeout(() => document.getElementById('profileName').focus(), 400);
 }
