@@ -415,24 +415,24 @@ html.light-mode #ss-water-circle { fill: #e3eef8 !important; }
 html.light-mode #ss-metal-circle { fill: #f5ede0 !important; }
 
 /* ── Issue 1: 紅色按鈕 (btn-primary / auth-submit / subs-subscribe-btn) 文字改白 ── */
-html.light-mode .btn-primary {
-  color : #ffffff !important;
-}
-html.light-mode .btn-primary:hover {
-  color : #f5e6c8 !important;
-}
-html.light-mode .auth-submit {
-  color : #ffffff !important;
-}
-html.light-mode .auth-submit:hover {
-  color : #f5e6c8 !important;
-}
+/* 紅底按鈕統一用 #d4af5a（深金），light/dark 兩模式通用 */
+html.light-mode .btn-primary,
+html.light-mode .auth-submit,
 html.light-mode .subs-subscribe-btn {
-  color : #ffffff !important;
+  color : #d4af5a !important;
+}
+html.light-mode .btn-primary:hover,
+html.light-mode .auth-submit:hover {
+  color : #e8c870 !important;
 }
 html.light-mode .subs-subscribe-btn:hover {
-  color : #f5e6c8 !important;
+  color : #e8c870 !important;
   border-color : rgba(245,230,200,0.7) !important;
+}
+
+/* ── Issue 3: 推薦標籤 light mode 加深 ── */
+html.light-mode .promo-tag {
+  color : #7a4e10 !important;
 }
 
 /* ── Issue 2: 登入/註冊 modal 改淺色背景 ── */
