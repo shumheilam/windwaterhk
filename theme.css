@@ -445,6 +445,11 @@ html.light-mode .grid-hint {
   color : #5a3a10 !important;
 }
 
+/* ── 價錢文字 light mode 加深 ── */
+html.light-mode .price-highlight {
+  color : #5a3a10 !important;
+}
+
 /* ── Issue 2: 登入/註冊 modal 改淺色背景 ── */
 html.light-mode .auth-modal {
   background : #fffdf6 !important;
