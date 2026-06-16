@@ -1144,6 +1144,8 @@
       <div class="compass-svg-wrap">
         <svg viewBox="0 0 280 280" width="280" height="280" xmlns="http://www.w3.org/2000/svg"
              style="width:100%;height:auto;display:block;max-width:280px">
+          <!-- Dark base layer: ensures compass face is always dark in both light/dark mode -->
+          <circle cx="140" cy="140" r="139" fill="#080505" opacity="0.95"/>
           <!-- Static outer ring -->
           <circle cx="140" cy="140" r="136" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="1.5"/>
           <circle cx="140" cy="140" r="128" fill="none" stroke="rgba(201,168,76,0.12)" stroke-width="0.8"/>
@@ -1154,7 +1156,7 @@
           <!-- Rotating ring -->
           <g id="compassRing">
             <!-- Compass face background -->
-            <circle cx="140" cy="140" r="130" fill="#080505" opacity="0.9"/>
+            <circle cx="140" cy="140" r="124" fill="#080505" opacity="0.9"/>
             <!-- Concentric rings -->
             <circle cx="140" cy="140" r="120" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.8"/>
             <circle cx="140" cy="140" r="90"  fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="0.6"/>
@@ -2198,7 +2200,9 @@ function initFsYearSelector() {
     const opt = document.createElement('option');
     opt.value = y;
     opt.textContent = `${y}年`;
-    if (y === 2026) opt.selected = true;
+    const currentYear = new Date().getFullYear();
+    const defaultYear = (currentYear >= 2024 && currentYear <= 2034) ? currentYear : 2026;
+    if (y === defaultYear) opt.selected = true;
     sel.appendChild(opt);
   }
 }
@@ -2353,7 +2357,7 @@ const AUSPICIOUS_LABELS = new Set(['生氣','天醫','延年','伏位']);
 const BAZHAI_GRID_ORDER = ['西北','北','東北','西',null,'東','西南','南','東南'];
 
 // 每個吉凶位的說明和建議
-const STAR_INFO = {
+const BAZHAI_STAR_INFO = {
   '生氣': {
     icon: '🌟', label: '生氣（貪狼）', type: 'ji', rank: '四吉之首',
     effect: '生氣為最旺吉氣，主財運豐盛、事業騰飛、子孫繁榮。此方氣場最為旺盛，利一切積極向上之事。',
@@ -2523,7 +2527,7 @@ function buildBazhaiGrid(trigram, currentFacingDir) {
     const isFacing = (dir === currentFacingDir);
     const dirTrigram = DIR_TO_TRIGRAM[dir] || '';
     const guaSym = TRIGRAM_TO_GUA[dirTrigram] || '';
-    const info = STAR_INFO[label] || {};
+    const info = BAZHAI_STAR_INFO[label] || {};
 
     cell.className = 'bazhai-cell ' + (isJi ? 'ji' : 'xiong') + (isFacing ? ' glow' : '');
     if (isFacing) cell.style.boxShadow = '0 0 14px rgba(201,168,76,0.35)';
@@ -2538,7 +2542,7 @@ function buildBazhaiGrid(trigram, currentFacingDir) {
 }
 
 function openBazhaiDetail(dir, label, trigram) {
-  const info = STAR_INFO[label];
+  const info = BAZHAI_STAR_INFO[label];
   if (!info) return;
   const isJi = AUSPICIOUS_LABELS.has(label);
   document.getElementById('bdIcon').textContent = info.icon;
@@ -2572,7 +2576,8 @@ function bazhaiAutoFill() {
 // ── Init ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initFsYearSelector();
-  buildFsGrid(2026);
+  const _fsInitYear = (() => { const y = new Date().getFullYear(); return (y >= 2024 && y <= 2034) ? y : 2026; })();
+  buildFsGrid(_fsInitYear);
   build24MtnRing();
   bazhaiAutoFill();
   const count = parseInt(localStorage.getItem('compassRegCount') || '66');

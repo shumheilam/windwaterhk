@@ -2668,6 +2668,13 @@
     background: linear-gradient(135deg, #fdf3e3, #f5e6c8);
     border-color: rgba(138,100,32,0.3);
   }
+
+  /* 五行相生相剋圖：light mode 淺色底 */
+  html.light-mode #ss-wood-circle  { fill: #e6f5ea; }
+  html.light-mode #ss-fire-circle  { fill: #fce8e6; }
+  html.light-mode #ss-earth-circle { fill: #fef9e0; }
+  html.light-mode #ss-water-circle { fill: #e3eef8; }
+  html.light-mode #ss-metal-circle { fill: #f5ede0; }
   </style>
 </head>
 <body>
@@ -2831,19 +2838,19 @@
               <line x1="30" y1="130" x2="150" y2="30" stroke="#c44" stroke-width="0.8" opacity="0.28"/>
               <line x1="100" y1="170" x2="50" y2="30" stroke="#c44" stroke-width="0.8" opacity="0.28"/>
               <!-- 五個圓 -->
-              <circle cx="50" cy="30" r="18" fill="#0a1a08" stroke="#38a86e" stroke-width="1.5"/>
+              <circle id="ss-wood-circle"  cx="50" cy="30" r="18" fill="#0a1a08" stroke="#38a86e" stroke-width="1.5"/>
               <text x="50" y="26" text-anchor="middle" fill="#38a86e" font-size="10" font-family="serif">木</text>
               <text x="50" y="38" text-anchor="middle" fill="#38a86e" font-size="7" font-family="sans-serif" id="ss-wood-pct"></text>
-              <circle cx="150" cy="30" r="18" fill="#1a0a08" stroke="#c44" stroke-width="1.5"/>
+              <circle id="ss-fire-circle"  cx="150" cy="30" r="18" fill="#1a0a08" stroke="#c44" stroke-width="1.5"/>
               <text x="150" y="26" text-anchor="middle" fill="#c44" font-size="10" font-family="serif">火</text>
               <text x="150" y="38" text-anchor="middle" fill="#c44" font-size="7" font-family="sans-serif" id="ss-fire-pct"></text>
-              <circle cx="170" cy="130" r="18" fill="#1a1200" stroke="#c8a820" stroke-width="1.5"/>
+              <circle id="ss-earth-circle" cx="170" cy="130" r="18" fill="#1a1200" stroke="#c8a820" stroke-width="1.5"/>
               <text x="170" y="126" text-anchor="middle" fill="#c8a820" font-size="10" font-family="serif">土</text>
               <text x="170" y="138" text-anchor="middle" fill="#c8a820" font-size="7" font-family="sans-serif" id="ss-earth-pct"></text>
-              <circle cx="100" cy="170" r="18" fill="#0a0f1a" stroke="#3a80c8" stroke-width="1.5"/>
+              <circle id="ss-water-circle" cx="100" cy="170" r="18" fill="#0a0f1a" stroke="#3a80c8" stroke-width="1.5"/>
               <text x="100" y="166" text-anchor="middle" fill="#3a80c8" font-size="10" font-family="serif">水</text>
               <text x="100" y="178" text-anchor="middle" fill="#3a80c8" font-size="7" font-family="sans-serif" id="ss-water-pct"></text>
-              <circle cx="30" cy="130" r="18" fill="#12100a" stroke="#d4883a" stroke-width="1.5"/>
+              <circle id="ss-metal-circle" cx="30" cy="130" r="18" fill="#12100a" stroke="#d4883a" stroke-width="1.5"/>
               <text x="30" y="126" text-anchor="middle" fill="#d4883a" font-size="10" font-family="serif">金</text>
               <text x="30" y="138" text-anchor="middle" fill="#d4883a" font-size="7" font-family="sans-serif" id="ss-metal-pct"></text>
             </svg>

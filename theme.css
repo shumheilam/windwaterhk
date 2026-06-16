@@ -208,6 +208,8 @@ html.light-mode .fs-cell.glow {
 html.light-mode .fs-dir  { color : #8a6420 !important; }
 html.light-mode .fs-name { color : #2a1205 !important; }
 html.light-mode .fs-badge { color : #2a1205 !important; }
+html.light-mode #fsSubtitle { color : rgba(138,100,32,0.85) !important; }
+html.light-mode #fsYearSel  { background : #ffffff !important; color : #5a3a10 !important; border-color : rgba(138,100,32,0.5) !important; }
 
 /* 卡片標題金色加深 */
 html.light-mode .card-title {
@@ -402,6 +404,13 @@ html.light-mode .ai-unlock-btn:hover {
   box-shadow   : 0 0 22px rgba(201,168,76,0.35) !important;
   border-color : rgba(201,168,76,0.75) !important;
 }
+
+/* ── index.html 五行相生相剋圖圓圈 light mode ── */
+html.light-mode #ss-wood-circle  { fill: #e6f5ea !important; }
+html.light-mode #ss-fire-circle  { fill: #fce8e6 !important; }
+html.light-mode #ss-earth-circle { fill: #fef9e0 !important; }
+html.light-mode #ss-water-circle { fill: #e3eef8 !important; }
+html.light-mode #ss-metal-circle { fill: #f5ede0 !important; }
 
 /* ── qimen.html 表單 light mode ── */
 html.light-mode .form-group input,
