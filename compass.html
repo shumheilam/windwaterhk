@@ -1293,7 +1293,6 @@
           <li>各方位詳細催旺化煞建議</li>
           <li>配合流年飛星個人化分析</li>
         </ul>
-        <div style="font-size:0.65rem;color:rgba(201,168,76,0.7);letter-spacing:0.08em;margin-bottom:0.7rem;">單次八宅報告 HKD$98 · $98/月會員無限次</div>
         <button class="btn-unlock" onclick="if(typeof openSubscribeModal==='function')openSubscribeModal('monthly')">解 鎖 完 整 分 析</button>
       </div>
 
@@ -1328,7 +1327,7 @@
         <li>個人化化煞催旺方案</li>
       </ul>
       <div style="font-size:0.65rem;color:rgba(201,168,76,0.7);letter-spacing:0.08em;line-height:1.85;margin:0.4rem 0 0.6rem;text-align:center;">
-        免費：3 條風水問答 &nbsp;·&nbsp; $48/月：10 條/月 &nbsp;·&nbsp; $98/月：無限問答
+        免費：3 條風水問答 &nbsp;·&nbsp; $48/月：10 條/月 &nbsp;·&nbsp; $98/月：每月50條
       </div>
       <button class="btn-unlock" onclick="if(typeof openSubscribeModal==='function')openSubscribeModal('monthly')">升 級 會 員　解 鎖 完 整 分 析</button>
     </div>
@@ -1661,13 +1660,55 @@
       </div>
     </div>
 
+    <!-- ── 風水急問 $18 (即將推出) ── -->
+    <div id="fsqCard" style="margin-top:1rem;border:1px solid rgba(201,168,76,0.35);border-radius:10px;padding:1rem;background:rgba(201,168,76,0.04);">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+        <span style="font-size:1rem;">⚡</span>
+        <div style="font-size:0.8rem;font-weight:700;color:var(--gold);letter-spacing:0.12em;">風 水 急 問</div>
+        <span style="font-size:0.6rem;color:rgba(201,168,76,0.6);letter-spacing:0.08em;margin-left:auto;">即 將 推 出</span>
+      </div>
+      <div style="font-size:0.62rem;color:var(--text-dim);letter-spacing:0.06em;line-height:1.75;margin-bottom:0.75rem;">輸入任何風水問題，由 AI 即時解答一條。</div>
+      <textarea disabled placeholder="例：廁所門對著大門點化解？（即將推出）"
+        style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.25);border-radius:6px;color:var(--text-dim);font-family:'Noto Serif TC',serif;font-size:0.7rem;letter-spacing:0.05em;padding:0.6rem;resize:none;height:4rem;cursor:not-allowed;margin-bottom:0.5rem;"></textarea>
+      <button disabled style="width:100%;background:linear-gradient(135deg,rgba(201,168,76,0.3),rgba(160,120,40,0.3));border:1px solid rgba(201,168,76,0.4);border-radius:6px;color:rgba(201,168,76,0.5);font-family:'Noto Serif TC',serif;font-size:0.75rem;font-weight:700;letter-spacing:0.2em;padding:0.6rem;cursor:not-allowed;">
+        HKD$18　即時解答（即將推出）
+      </button>
+    </div>
+
+    <!-- ── 單一空間風水快測 $28 (即將推出) ── -->
+    <div style="margin-top:0.75rem;border:1px solid rgba(201,168,76,0.35);border-radius:10px;padding:1rem;background:rgba(201,168,76,0.04);">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+        <span style="font-size:1rem;">🏠</span>
+        <div style="font-size:0.8rem;font-weight:700;color:var(--gold);letter-spacing:0.12em;">單 一 空 間 風 水 快 測</div>
+        <span style="font-size:0.6rem;color:rgba(201,168,76,0.6);letter-spacing:0.08em;margin-left:auto;">即 將 推 出</span>
+      </div>
+      <div style="font-size:0.62rem;color:var(--text-dim);letter-spacing:0.06em;line-height:1.75;margin-bottom:0.75rem;">選擇空間，AI 即時生成針對性風水建議報告。</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-bottom:0.75rem;">
+        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
+          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 🛏️ 睡房
+        </label>
+        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
+          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 📚 書房
+        </label>
+        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
+          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 🚪 大門
+        </label>
+        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
+          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 💼 辦公桌
+        </label>
+      </div>
+      <button disabled style="width:100%;background:linear-gradient(135deg,rgba(201,168,76,0.3),rgba(160,120,40,0.3));border:1px solid rgba(201,168,76,0.4);border-radius:6px;color:rgba(201,168,76,0.5);font-family:'Noto Serif TC',serif;font-size:0.75rem;font-weight:700;letter-spacing:0.2em;padding:0.6rem;cursor:not-allowed;">
+        HKD$28　開始測算（即將推出）
+      </button>
+    </div>
+
     <!-- ── AI 個人化風水諮詢 (Paid Lock) ── -->
     <div class="paid-consult-v2">
       <div class="paid-lock-sym">🔒</div>
       <div class="paid-lock-title">AI 個 人 化 風 水 諮 詢</div>
       <div class="paid-tier-row">
         <div class="paid-tier-chip"><span class="lock-icon">🔒</span>$48/月：10 條問答/月</div>
-        <div class="paid-tier-chip"><span class="lock-icon">🔒</span>$98/月：無限問答</div>
+        <div class="paid-tier-chip"><span class="lock-icon">🔒</span>$98/月：每月50條問答</div>
       </div>
       <div class="paid-lock-desc" style="font-size:0.7rem;color:var(--text-dim);letter-spacing:0.1em;line-height:1.75;margin-bottom:1rem;">輸入您的家居問題或具體情況<br>由 Claude AI 即時提供針對性個人化建議</div>
       <button class="btn-unlock" onclick="document.getElementById('registerModal').classList.add('open')">立 即 升 級　解 鎖 AI 諮 詢</button>
@@ -1736,14 +1777,20 @@
   <div class="modal-box" style="text-align:center;">
     <button class="modal-close" aria-label="關閉" onclick="document.getElementById('qaQuotaModal').classList.remove('open')">✕</button>
     <div style="font-size:1.6rem;margin-bottom:0.6rem;">🔮</div>
-    <div class="modal-title" style="letter-spacing:0.15em;font-size:0.95rem;">免費問答額度已用完</div>
+    <div class="modal-title" style="letter-spacing:0.15em;font-size:0.95rem;">免費額度已用完</div>
     <div style="font-size:0.75rem;color:var(--text-dim);letter-spacing:0.06em;line-height:1.9;margin:0.8rem 0 1.2rem;">
-      你已用完本月免費問答額度。<br>升級 <strong style="color:var(--gold);">$48 會員</strong>，每月享有 <strong style="color:var(--gold);">10 條</strong>專屬問答。
+      升級 <strong style="color:var(--gold);">$48/$98 會員</strong>享每月問答額度，<br>或 <strong style="color:var(--gold);">$18</strong> 單次再問一條。
     </div>
-    <button class="btn-modal-submit" style="background:linear-gradient(135deg,#c9a84c,#a07828);border-color:var(--gold);color:#1a1000;font-weight:900;letter-spacing:0.3em;margin-bottom:0.6rem;"
-      onclick="document.getElementById('qaQuotaModal').classList.remove('open');if(typeof openSubscribeModal==='function')openSubscribeModal('monthly')">
-      立 即 升 級　$48/月
-    </button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.6rem;">
+      <button class="btn-modal-submit" style="background:linear-gradient(135deg,#c9a84c,#a07828);border-color:var(--gold);color:#1a1000;font-weight:900;letter-spacing:0.15em;font-size:0.7rem;"
+        onclick="document.getElementById('qaQuotaModal').classList.remove('open');if(typeof openSubscribeModal==='function')openSubscribeModal('monthly')">
+        升 級 會 員
+      </button>
+      <button class="btn-modal-submit" style="background:transparent;border-color:rgba(201,168,76,0.5);color:var(--gold);font-weight:700;letter-spacing:0.1em;font-size:0.7rem;"
+        onclick="document.getElementById('qaQuotaModal').classList.remove('open');document.getElementById('fsqCard')?.scrollIntoView({behavior:'smooth'})">
+        $18 單次提問
+      </button>
+    </div>
     <button style="display:block;width:100%;background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--text-dim);font-family:'Noto Serif TC',serif;font-size:0.72rem;letter-spacing:0.2em;padding:0.55rem;border-radius:5px;cursor:pointer;"
       onclick="document.getElementById('qaQuotaModal').classList.remove('open')">
       關 閉
