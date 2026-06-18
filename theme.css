@@ -613,11 +613,3 @@ html.light-mode .form-group select option {
   background : #ffffff;
   color      : #2a1205;
 }
-
-/* ── 奇門遁甲九宮格 light mode ── */
-html.light-mode #palaceSvg rect:first-child {
-  fill : #ffffff !important;
-}
-html.light-mode #palaceSvg text {
-  fill : #2a1205 !important;
-}
