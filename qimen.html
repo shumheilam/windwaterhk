@@ -625,7 +625,7 @@
   </div>
   <div class="header-right">
     <div class="nav-auth" id="navAuthArea"></div>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切換淺色模式" aria-label="切換淺色模式">🌙</button>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme(); if(document.getElementById('resultSection').style.display!=='none'){ var c=window._lastChart; if(c) drawQimenGrid(c); }" title="切換淺色模式" aria-label="切換淺色模式">🌙</button>
   </div>
 </nav>
 
@@ -955,12 +955,23 @@ function drawQimenGrid(chart) {
   const svg = document.getElementById('palaceSvg');
   const W = 420, H = 420;
   const cellW = W / 3, cellH = H / 3;
-  const gold  = '#c9a84c';
-  const goldDim = 'rgba(201,168,76,0.32)';
+  const isLight = document.documentElement.classList.contains('light-mode');
+  const gold     = isLight ? '#8a6420' : '#c9a84c';
+  const goldDim  = isLight ? 'rgba(138,100,32,0.45)' : 'rgba(201,168,76,0.32)';
+  const bgFill   = isLight ? '#f5efe2' : '#0e0808';
+  const diPanFill = isLight ? 'rgba(100,70,20,0.8)' : 'rgba(200,160,80,0.7)';
+
+  const BAMEN_COLOR_LIGHT = {
+    '休門': '#1a6b1a', '生門': '#1a6b1a', '開門': '#1a6b1a',
+    '景門': '#8a6420',
+    '傷門': '#a81212', '杜門': '#a81212', '死門': '#a81212', '驚門': '#a81212',
+    '（無）': '#7a5040'
+  };
+
   const zhiFuGong = chart.zhifu.gong;
 
   let html = '';
-  html += `<rect width="${W}" height="${H}" fill="#0e0808"/>`;
+  html += `<rect width="${W}" height="${H}" fill="${bgFill}"/>`;
 
   for (let row = 0; row < 3; row++) {
     for (let col = 0; col < 3; col++) {
@@ -972,7 +983,8 @@ function drawQimenGrid(chart) {
       const diPanChar  = chart.dipan[p]        || '';
       const starName   = chart.tianpan_stars[p] || '';
       const menName    = chart.tianpan_men[p]   || '—';
-      const menColor   = BAMEN_COLOR[menName]   || goldDim;
+      const colorMap   = isLight ? BAMEN_COLOR_LIGHT : BAMEN_COLOR;
+      const menColor   = colorMap[menName] || goldDim;
 
       // Cell background
       if (isKey) {
@@ -983,29 +995,29 @@ function drawQimenGrid(chart) {
       }
 
       // Palace number (top-left corner)
-      html += `<text x="${x+9}" y="${y+17}"
-        font-family="'Noto Serif TC', serif" font-size="11" font-weight="900"
+      html += `<text x="${x+9}" y="${y+19}"
+        font-family="'Noto Serif TC', serif" font-size="13" font-weight="900"
         fill="${isKey ? gold : goldDim}">${p}</text>`;
 
       // 地盤天干 (row 1)
-      html += `<text x="${cx}" y="${cy - 24}" text-anchor="middle"
-        font-family="'Noto Serif TC', serif" font-size="13"
-        fill="rgba(200,160,80,0.7)">${diPanChar}</text>`;
+      html += `<text x="${cx}" y="${cy - 28}" text-anchor="middle"
+        font-family="'Noto Serif TC', serif" font-size="17"
+        fill="${diPanFill}">${diPanChar}</text>`;
 
       // 九星 (row 2, larger, gold)
-      html += `<text x="${cx}" y="${cy - 4}" text-anchor="middle"
-        font-family="'Noto Serif TC', serif" font-size="14" font-weight="700"
+      html += `<text x="${cx}" y="${cy - 3}" text-anchor="middle"
+        font-family="'Noto Serif TC', serif" font-size="18" font-weight="700"
         fill="${gold}">${starName}</text>`;
 
       // 八門 (row 3, colored)
-      html += `<text x="${cx}" y="${cy + 17}" text-anchor="middle"
-        font-family="'Noto Serif TC', serif" font-size="13"
+      html += `<text x="${cx}" y="${cy + 24}" text-anchor="middle"
+        font-family="'Noto Serif TC', serif" font-size="17"
         fill="${menColor}">${menName}</text>`;
 
       // 值符值使 badge
       if (isKey) {
-        html += `<text x="${cx}" y="${cy + 35}" text-anchor="middle"
-          font-family="'Noto Serif TC', serif" font-size="9"
+        html += `<text x="${cx}" y="${cy + 44}" text-anchor="middle"
+          font-family="'Noto Serif TC', serif" font-size="10"
           fill="${gold}" opacity="0.85">值符 · 值使</text>`;
       }
     }
@@ -1053,6 +1065,7 @@ function calculate() {
   }
 
   // Draw grid
+  window._lastChart = chart;
   drawQimenGrid(chart);
 
   // Fill summary card
