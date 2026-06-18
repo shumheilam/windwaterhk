@@ -2856,6 +2856,9 @@
               <text x="41" y="135" text-anchor="middle" fill="#d4883a" font-size="8" font-family="sans-serif" id="ss-metal-pct"></text>
             </svg>
           </div>
+          <!-- 學業職業方向建議 -->
+          <div id="careerCardWrap"></div>
+
           <!-- 付費部分 -->
           <div class="ss-paid-wrap">
             <div class="ss-paid-blur">
@@ -3591,6 +3594,9 @@ function renderResult(pillars, year, month, day, shichen, name) {
 
   // 十神分析
   setTimeout(() => renderShiShen(pillars), 180);
+
+  // 學業職業方向建議
+  setTimeout(() => renderCareerCard(pillars), 200);
 }
 
 // ── 十神分析 ──────────────────────────────────────────────
@@ -3838,6 +3844,81 @@ function renderShiShen(pillars) {
     const el2 = document.getElementById(id);
     if (el2) el2.textContent = Math.round((elCnt[el]/elTotal)*100)+'%';
   });
+}
+
+// ── 學業職業方向建議 ──────────────────────────────────────
+function renderCareerCard(pillars) {
+  const wrap = document.getElementById('careerCardWrap');
+  if (!wrap) return;
+
+  const ssData = calcShiShen(pillars);
+  const ysData = calcYongShen(pillars);
+  if (!ssData || !ysData) return;
+
+  const { cnt, total } = ssData;
+  const pct = s => Math.round((cnt[s] / total) * 100);
+
+  // 五組十神合計百分比
+  const groups = {
+    '印星': pct('正印') + pct('偏印'),
+    '比劫': pct('比肩') + pct('劫財'),
+    '食傷': pct('食神') + pct('傷官'),
+    '財星': pct('正財') + pct('偏財'),
+    '官殺': pct('正官') + pct('七殺'),
+  };
+
+  // 排序取前兩名
+  const ranked = Object.entries(groups).sort((a, b) => b[1] - a[1]);
+  const top1 = ranked[0][0], top1val = ranked[0][1];
+  const top2 = ranked[1][0], top2val = ranked[1][1];
+
+  // 十神特質文字
+  const GROUP_DESC = {
+    '印星': '性格偏向學術研究型，具備深度思考與學習力，適合教育、文職、研究類工作',
+    '比劫': '獨立自主、行動力強，適合自由職業、創業、體育競技或需要團隊協作嘅行業',
+    '食傷': '富有創意與表達才能，思維靈活，適合藝術創作、餐飲、寫作、演說、設計類工作',
+    '財星': '務實理性、具商業嗅覺，適合商科、財經、投資、銷售、市場類工作',
+    '官殺': '具備管理與競爭意識，適合管理、法律、行政、軍警或競爭性行業',
+  };
+
+  // 十神主導描述（合並前兩組）
+  let traitText = '';
+  if (top2val >= top1val * 0.7) {
+    // 兩組接近，並列描述
+    traitText = `${top1}與${top2}佔比較高，命格兼具多元特質：${GROUP_DESC[top1]}；同時${GROUP_DESC[top2].replace(/^.*?，/, '')}`;
+  } else {
+    traitText = `${top1}佔比最高（${top1val}%），${GROUP_DESC[top1]}`;
+  }
+
+  // 用神五行對應行業
+  const EL_INDUSTRY = {
+    '木': '教育・出版・木業・園藝・文創',
+    '火': '科技・能源・餐飲・娛樂・美容',
+    '土': '地產・建築・農業・顧問・行政',
+    '金': '金融・機械・五金・珠寶・法律',
+    '水': '物流・貿易・旅遊・飲料・傳媒',
+  };
+
+  const yongEls = ysData.yongEls || [ysData.yongEl];
+  const yongLabel = yongEls.join('・');
+  const industries = yongEls.map(el => EL_INDUSTRY[el]).filter(Boolean);
+  const industryText = industries.length
+    ? `用神${yongLabel}，建議發展方向：${industries.join(' / ')}`
+    : '';
+
+  wrap.innerHTML = `
+    <div style="margin:1rem 0;padding:1rem 1.2rem;background:linear-gradient(135deg,rgba(20,30,15,0.85),rgba(10,20,30,0.85));border:1px solid rgba(180,150,80,0.35);border-radius:10px;">
+      <p style="margin:0 0 0.7rem;font-size:0.95rem;letter-spacing:0.15em;color:var(--gold);font-family:serif;">📚 學 業 職 業 方 向 建 議</p>
+      <div style="margin-bottom:0.6rem;">
+        <span style="font-size:0.72rem;color:var(--gold);opacity:0.75;letter-spacing:0.08em;">十 神 特 質</span>
+        <p style="margin:0.3rem 0 0;font-size:0.82rem;color:var(--text);line-height:1.7;">${traitText}</p>
+      </div>
+      ${industryText ? `<div style="border-top:1px solid rgba(180,150,80,0.2);padding-top:0.6rem;margin-top:0.6rem;">
+        <span style="font-size:0.72rem;color:var(--gold);opacity:0.75;letter-spacing:0.08em;">用 神 方 向</span>
+        <p style="margin:0.3rem 0 0;font-size:0.82rem;color:var(--text);line-height:1.7;">${industryText}</p>
+      </div>` : ''}
+      <p style="margin:0.7rem 0 0;font-size:0.68rem;color:rgba(180,150,80,0.45);text-align:right;">純演算法 · 免費顯示</p>
+    </div>`;
 }
 
 // ── 逐年大運評分 (Mock) ────────────────────────────────────
