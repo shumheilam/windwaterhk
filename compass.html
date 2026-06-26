@@ -1178,6 +1178,55 @@
     color: #2a1205;
   }
 
+  /* ── Impulse Product Card（共用，$18/$28 系列均適用） ── */
+  .impulse-product-card {
+    background: rgba(20,8,2,0.55);
+    border: 1px solid rgba(201,168,76,0.35);
+    border-radius: 12px;
+    padding: 1.1rem 1.2rem;
+    margin: 0.75rem 0 0.5rem;
+  }
+  .fsq-room-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+    margin-bottom: 0.65rem;
+  }
+  .fsq-room-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.22);
+    border-radius: 6px;
+    padding: 0.45rem 0.6rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .fsq-room-label:has(input:checked) {
+    border-color: rgba(201,168,76,0.6);
+    background: rgba(201,168,76,0.1);
+  }
+  .fsq-room-label input { accent-color: var(--gold); }
+
+  /* Light mode overrides */
+  html.light-mode .impulse-product-card {
+    background: #fdf8f0;
+    border-color: rgba(138,100,32,0.25);
+  }
+  html.light-mode .fsq-room-label {
+    background: #fff;
+    border-color: rgba(138,100,32,0.2);
+    color: #5a3e1b;
+  }
+  html.light-mode .fsq-room-label:has(input:checked) {
+    border-color: rgba(138,100,32,0.55);
+    background: rgba(138,100,32,0.08);
+  }
+
   </style>
 </head>
 <body>
@@ -1745,52 +1794,24 @@
       <div class="qa-fine-print">Haiku AI · 約30秒 · 一次性，無需訂閱</div>
     </div>
 
-    <!-- ── 單一空間風水快測 $28 (即將推出) ── -->
-    <div style="margin-top:0.75rem;border:1px solid rgba(201,168,76,0.35);border-radius:10px;padding:1rem;background:rgba(201,168,76,0.04);">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
-        <span style="font-size:1rem;">🏠</span>
-        <div style="font-size:0.8rem;font-weight:700;color:var(--gold);letter-spacing:0.12em;">單 一 空 間 風 水 快 測</div>
-        <span style="font-size:0.6rem;color:rgba(201,168,76,0.6);letter-spacing:0.08em;margin-left:auto;">即 將 推 出</span>
+    <!-- ── 單一空間風水快測 $28 ── -->
+    <div class="impulse-product-card">
+      <div class="qa-title">🏠 單一空間風水快測</div>
+      <div class="qa-desc">選擇空間，AI 即時生成針對性風水建議，結果可截圖分享</div>
+      <div class="fsq-room-grid">
+        <label class="fsq-room-label"><input type="radio" name="fsq-room"> 🛏️ 睡房</label>
+        <label class="fsq-room-label"><input type="radio" name="fsq-room"> 📚 書房</label>
+        <label class="fsq-room-label"><input type="radio" name="fsq-room"> 🚪 大門</label>
+        <label class="fsq-room-label"><input type="radio" name="fsq-room"> 🛋️ 客廳</label>
+        <label class="fsq-room-label"><input type="radio" name="fsq-room"> 🍳 廚房</label>
+        <label class="fsq-room-label"><input type="radio" name="fsq-room"> 🚿 廁所</label>
+        <label class="fsq-room-label"><input type="radio" name="fsq-room"> 🧒 小孩房</label>
+        <label class="fsq-room-label"><input type="radio" name="fsq-room"> 🪔 神位</label>
+        <label class="fsq-room-label"><input type="radio" name="fsq-room"> 💼 辦公桌</label>
+        <label class="fsq-room-label"><input type="radio" name="fsq-room"> 🏪 舖位</label>
       </div>
-      <div style="font-size:0.62rem;color:var(--text-dim);letter-spacing:0.06em;line-height:1.75;margin-bottom:0.75rem;">選擇空間，AI 即時生成針對性風水建議，結果可截圖分享。</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-bottom:0.75rem;">
-        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
-          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 🛏️ 睡房
-        </label>
-        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
-          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 📚 書房
-        </label>
-        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
-          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 🚪 大門
-        </label>
-        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
-          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 🛋️ 客廳
-        </label>
-        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
-          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 🍳 廚房
-        </label>
-        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
-          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 🚿 廁所
-        </label>
-        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
-          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 🧒 小孩房
-        </label>
-        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
-          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 🪔 神位
-        </label>
-        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
-          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 💼 辦公桌
-        </label>
-        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--text-dim);letter-spacing:0.06em;background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);border-radius:5px;padding:0.45rem 0.6rem;cursor:not-allowed;opacity:0.6;">
-          <input type="radio" name="fsq-room" disabled style="accent-color:var(--gold);"> 🏪 舖位
-        </label>
-      </div>
-      <button disabled style="width:100%;background:linear-gradient(135deg,rgba(201,168,76,0.3),rgba(160,120,40,0.3));border:1px solid rgba(201,168,76,0.4);border-radius:6px;color:rgba(201,168,76,0.5);font-family:'Noto Serif TC',serif;font-size:0.75rem;font-weight:700;letter-spacing:0.2em;padding:0.6rem;cursor:not-allowed;margin-bottom:0.4rem;">
-        HKD$28　開始測算（即將推出）
-      </button>
-      <button disabled style="width:100%;background:transparent;border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:rgba(201,168,76,0.4);font-family:'Noto Serif TC',serif;font-size:0.68rem;letter-spacing:0.15em;padding:0.45rem;cursor:not-allowed;">
-        📤 分享／截圖保存（即將推出）
-      </button>
+      <button class="qa-btn" onclick="alert('即將推出，敬請期待')">HKD$28 開始測算</button>
+      <div class="qa-fine-print">Haiku AI · 約30秒 · 一次性，無需訂閱</div>
     </div>
 
     <!-- ── AI 個人化風水諮詢 (Paid Lock) ── -->
