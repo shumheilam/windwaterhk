@@ -8,7 +8,8 @@ const STATIC_ASSETS = [
   '/calendar.html',
   '/qimen.html',
   '/compass.html',
-  '/icon-bagua.png',
+  '/icon-bagua-192.png',
+  '/icon-bagua-512.png',
   '/manifest.json'
 ];
 

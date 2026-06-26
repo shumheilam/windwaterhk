@@ -1102,6 +1102,82 @@
     border-color: rgba(138,100,32,0.3);
   }
 
+  /* ── Quick-Ask $18 Card ───────────────────────────────── */
+  .quick-ask-card {
+    background: rgba(20,8,2,0.55);
+    border: 1px solid rgba(201,168,76,0.35);
+    border-radius: 12px;
+    padding: 1.1rem 1.2rem;
+    margin: 1.2rem 0 0.5rem;
+  }
+  .qa-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.35rem;
+  }
+  .qa-desc {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.7rem;
+  }
+  .qa-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.72rem;
+    color: #e8d8b0;
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+    resize: none;
+    font-family: inherit;
+    margin-bottom: 0.65rem;
+  }
+  .qa-input::placeholder { color: rgba(200,180,130,0.45); }
+  .qa-input:focus { outline: none; border-color: rgba(201,168,76,0.5); }
+  .qa-btn {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: #c0392b;
+    color: #f5e8a8;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+    font-family: inherit;
+  }
+  .qa-btn:hover { background: #a93226; }
+  .qa-fine-print {
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    opacity: 0.6;
+    letter-spacing: 0.05em;
+    text-align: center;
+  }
+
+  /* Light mode overrides */
+  html.light-mode .quick-ask-card {
+    background: #fdf8f0;
+    border-color: rgba(138,100,32,0.25);
+  }
+  html.light-mode .qa-title { color: #8a6420; }
+  html.light-mode .qa-desc  { color: #5a3e1b; }
+  html.light-mode .qa-input {
+    background: #fff;
+    border-color: rgba(138,100,32,0.3);
+    color: #2a1205;
+  }
+
   </style>
 </head>
 <body>
@@ -1660,22 +1736,13 @@
       </div>
     </div>
 
-    <!-- ── 風水急問 $18 (即將推出) ── -->
-    <div id="fsqCard" style="margin-top:1rem;border:1px solid rgba(201,168,76,0.35);border-radius:10px;padding:1rem;background:rgba(201,168,76,0.04);">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
-        <span style="font-size:1rem;">⚡</span>
-        <div style="font-size:0.8rem;font-weight:700;color:var(--gold);letter-spacing:0.12em;">風 水 急 問</div>
-        <span style="font-size:0.6rem;color:rgba(201,168,76,0.6);letter-spacing:0.08em;margin-left:auto;">即 將 推 出</span>
-      </div>
-      <div style="font-size:0.62rem;color:var(--text-dim);letter-spacing:0.06em;line-height:1.75;margin-bottom:0.75rem;">輸入任何風水問題，由 AI 即時解答一條。</div>
-      <textarea disabled placeholder="例：廁所門對著大門點化解？（即將推出）"
-        style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.25);border-radius:6px;color:var(--text-dim);font-family:'Noto Serif TC',serif;font-size:0.7rem;letter-spacing:0.05em;padding:0.6rem;resize:none;height:4rem;cursor:not-allowed;margin-bottom:0.5rem;"></textarea>
-      <button disabled style="width:100%;background:linear-gradient(135deg,rgba(201,168,76,0.3),rgba(160,120,40,0.3));border:1px solid rgba(201,168,76,0.4);border-radius:6px;color:rgba(201,168,76,0.5);font-family:'Noto Serif TC',serif;font-size:0.75rem;font-weight:700;letter-spacing:0.2em;padding:0.6rem;cursor:not-allowed;margin-bottom:0.4rem;">
-        HKD$18　即時解答（即將推出）
-      </button>
-      <button disabled style="width:100%;background:transparent;border:1px solid rgba(201,168,76,0.2);border-radius:6px;color:rgba(201,168,76,0.4);font-family:'Noto Serif TC',serif;font-size:0.68rem;letter-spacing:0.15em;padding:0.45rem;cursor:not-allowed;">
-        📤 分享／截圖保存（即將推出）
-      </button>
+    <!-- ── 風水急問 $18 ── -->
+    <div class="quick-ask-card">
+      <div class="qa-title">⚡ 風水急問</div>
+      <div class="qa-desc">有即時風水問題想問？一條問題，AI即時解答</div>
+      <textarea class="qa-input" rows="2" placeholder="例如：廁所門對著大門點化解？床位點擺先旺？"></textarea>
+      <button class="qa-btn" onclick="alert('即將推出，敬請期待')">HKD$18 即時解答</button>
+      <div class="qa-fine-print">Haiku AI · 約30秒 · 一次性，無需訂閱</div>
     </div>
 
     <!-- ── 單一空間風水快測 $28 (即將推出) ── -->

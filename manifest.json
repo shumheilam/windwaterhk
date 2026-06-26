@@ -10,22 +10,22 @@
   "lang": "zh-HK",
   "icons": [
     {
-      "src": "/icon-bagua.png",
+      "src": "/icon-bagua-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icon-bagua.png",
+      "src": "/icon-bagua-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icon-bagua.png",
-      "sizes": "1024x1024",
+      "src": "/icon-bagua-512.png",
+      "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
   "screenshots": [],
