@@ -10,6 +10,7 @@
 - 四柱命盤顯示（年月日時柱，五行顏色標示）
 - 五行分佈水平 Bar Chart（按比例，0不顯示bar）
 - 多用戶檔案系統（儲存、編輯、刪除，localStorage）
+- Profile object 包含：id, name, gender, year, month, day, shichen（gender Phase 4 大運計算需要）
 - AI 解盤 Mock 版（日主特質、五行分析、Freemium牆）
 - 深色中式設計風格
 
@@ -251,6 +252,8 @@
 
 **Phase 4（📋 待開發）**
 18. 接真實 Anthropic API（AI 解盤、解籤、風水諮詢、命盤報告）
+    - 大運計算需要性別參數（陽男陰女順排，陰男陽女逆排）
+    - gender 已儲存喺 profile localStorage，接 API 時直接讀取
 19. 接真實 Stripe 付費系統（$48/$98 兩個 tier + 單次付費）
 20. 睇相系統（面相+手相）
 21. Firebase 真實帳號系統

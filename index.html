@@ -2891,6 +2891,15 @@
           <label for="profileName">姓　名</label>
           <input type="text" id="profileName" placeholder="請輸入姓名（儲存檔案時必填）" autocomplete="off">
         </div>
+        <!-- Gender -->
+        <div class="form-group fg-full">
+          <label for="profileGender">性　別</label>
+          <select id="profileGender">
+            <option value="">請選擇</option>
+            <option value="female">女</option>
+            <option value="male">男</option>
+          </select>
+        </div>
         <!-- Year -->
         <div class="form-group">
           <label for="birthYear">出生年份（西曆）</label>
@@ -4074,6 +4083,11 @@ function renderCareerCard(pillars) {
 }
 
 // ── 逐年大運評分 (Mock) ────────────────────────────────────
+// TODO Phase 4: 真實大運計算需要
+// 性別參數（陽男陰女順排，
+// 陰男陽女逆排），
+// gender已儲存喺profile，
+// 接API時直接讀取即可
 const YEAR_STEMS_MAP = {
   2022:'壬',2023:'癸',2024:'甲',2025:'乙',2026:'丙',2027:'丁',
   2028:'戊',2029:'己',2030:'庚',2031:'辛',2032:'壬',2033:'癸'
@@ -4509,6 +4523,7 @@ function persistProfiles(arr) { localStorage.setItem(STORE_KEY, JSON.stringify(a
 
 function saveAndCalculate() {
   const name    = document.getElementById('profileName').value.trim();
+  const gender  = document.getElementById('profileGender').value;
   const year    = parseInt(document.getElementById('birthYear').value);
   const month   = parseInt(document.getElementById('birthMonth').value);
   const day     = parseInt(document.getElementById('birthDay').value);
@@ -4522,13 +4537,13 @@ function saveAndCalculate() {
   if (editingId) {
     const idx = profiles.findIndex(p => p.id === editingId);
     if (idx >= 0) {
-      profiles[idx] = { ...profiles[idx], name, year, month, day, shichen };
+      profiles[idx] = { ...profiles[idx], name, gender, year, month, day, shichen };
       activeId = editingId;
     }
     exitEditMode();
   } else {
     const newId = Date.now().toString(36);
-    profiles.unshift({ id: newId, name, year, month, day, shichen });
+    profiles.unshift({ id: newId, name, gender, year, month, day, shichen });
     activeId = newId;
   }
 
@@ -4547,11 +4562,12 @@ function loadProfile(id) {
   if (!p) return;
   activeId = id;
 
-  document.getElementById('profileName').value   = p.name;
-  document.getElementById('birthYear').value     = p.year;
-  document.getElementById('birthMonth').value    = p.month;
-  document.getElementById('birthDay').value      = p.day;
-  document.getElementById('birthShichen').value  = p.shichen;
+  document.getElementById('profileName').value    = p.name;
+  document.getElementById('profileGender').value  = p.gender || '';
+  document.getElementById('birthYear').value      = p.year;
+  document.getElementById('birthMonth').value     = p.month;
+  document.getElementById('birthDay').value       = p.day;
+  document.getElementById('birthShichen').value   = p.shichen;
 
   renderProfileList();
 
@@ -4564,11 +4580,12 @@ function editProfile(id) {
   if (!p) return;
   editingId = id;
 
-  document.getElementById('profileName').value   = p.name;
-  document.getElementById('birthYear').value     = p.year;
-  document.getElementById('birthMonth').value    = p.month;
-  document.getElementById('birthDay').value      = p.day;
-  document.getElementById('birthShichen').value  = p.shichen;
+  document.getElementById('profileName').value    = p.name;
+  document.getElementById('profileGender').value  = p.gender || '';
+  document.getElementById('birthYear').value      = p.year;
+  document.getElementById('birthMonth').value     = p.month;
+  document.getElementById('birthDay').value       = p.day;
+  document.getElementById('birthShichen').value   = p.shichen;
 
   document.getElementById('editBar').classList.remove('hidden');
   document.getElementById('editLabel').textContent = `正在編輯：${p.name}`;
@@ -4605,8 +4622,9 @@ function exitEditMode() {
 
 function clearForm() {
   ['profileName','birthYear','birthDay'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('birthMonth').value   = '';
-  document.getElementById('birthShichen').value = '';
+  document.getElementById('profileGender').value = '';
+  document.getElementById('birthMonth').value    = '';
+  document.getElementById('birthShichen').value  = '';
 }
 
 // ── Render profile list ─────────────────────────────────
