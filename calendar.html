@@ -390,6 +390,42 @@
 
     @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
+    /* ── 吉時參考 section ──────────────────────────────── */
+    .jishi-section {
+      border-top: 1px solid rgba(201,168,76,0.12);
+      margin-top: 0.8rem;
+      padding-top: 0.7rem;
+    }
+    .jishi-title {
+      font-size: 0.6rem; color: var(--gold); letter-spacing: 0.35em;
+      margin-bottom: 0.5rem; font-weight: 500;
+    }
+    .jishi-grid { display: flex; flex-wrap: wrap; gap: 0.38rem; }
+    .jishi-chip {
+      display: inline-flex; align-items: center; gap: 0.22rem;
+      padding: 0.18rem 0.55rem; border-radius: 20px;
+      font-size: 0.62rem; letter-spacing: 0.03em; border: 1px solid;
+    }
+    .jishi-chip.ji {
+      border-color: rgba(60,160,90,0.45); color: #4a9a5a;
+      background: rgba(60,160,90,0.07);
+    }
+    .jishi-chip.xiong {
+      border-color: rgba(180,50,50,0.32); color: var(--fire);
+      background: rgba(180,50,50,0.05); opacity: 0.6;
+    }
+    .jishi-toggle {
+      display: inline-block; margin-top: 0.48rem;
+      font-size: 0.6rem; color: var(--gold); cursor: pointer;
+      letter-spacing: 0.1em;
+      background: none; border: none;
+      border-bottom: 1px dashed rgba(201,168,76,0.38);
+      padding: 0; font-family: inherit;
+    }
+    .jishi-toggle:hover { opacity: 0.72; }
+    .jishi-all-grid { display: none; flex-wrap: wrap; gap: 0.38rem; margin-top: 0.48rem; }
+    .jishi-all-grid.open { display: flex; }
+
     @media (max-width: 700px) {
       nav { padding: 0.7rem 1rem; }
       .cal-layout { flex-direction: column; padding: 0 0.6rem 1.5rem; }
@@ -1246,6 +1282,71 @@ renderCalendar();
 // 擇 日 系 統
 // ══════════════════════════════════════════
 
+// ── 黃道黑道十二神 吉時計算 ────────────────────────────────────────────────────
+const SHICHEN_ZHI  = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const SHICHEN_TIME = [
+  '23:00-01:00','01:00-03:00','03:00-05:00','05:00-07:00',
+  '07:00-09:00','09:00-11:00','11:00-13:00','13:00-15:00',
+  '15:00-17:00','17:00-19:00','19:00-21:00','21:00-23:00'
+];
+const HUANGDAO_SHEN = ['青龍','明堂','天刑','朱雀','金匱','天德','白虎','玉堂','天牢','玄武','司命','勾陳'];
+const HUANGDAO_JI = {
+  '青龍':true,'明堂':true,'天刑':false,'朱雀':false,
+  '金匱':true,'天德':true,'白虎':false,'玉堂':true,
+  '天牢':false,'玄武':false,'司命':true,'勾陳':false
+};
+// 日支 → 子時起點神index（起青龍原則）
+const RIZHI_QILONG = {
+  '子':0,'午':0, '丑':1,'未':1, '寅':2,'申':2,
+  '卯':3,'酉':3, '辰':4,'戌':4, '巳':5,'亥':5
+};
+
+// 從公曆日期算日支（參考：2000-01-01 = 甲戌日，戌 = index 10）
+function getDayBranch(date) {
+  const REF = new Date(2000, 0, 1);
+  const days = Math.round((date - REF) / 86400000);
+  return SHICHEN_ZHI[((10 + days) % 12 + 12) % 12];
+}
+
+function calcJiShi(dayBranch) {
+  const startIdx = RIZHI_QILONG[dayBranch] ?? 0;
+  return SHICHEN_ZHI.map((zhi, i) => {
+    const shen = HUANGDAO_SHEN[(startIdx + i) % 12];
+    return { zhi, time: SHICHEN_TIME[i], shen, ji: HUANGDAO_JI[shen] };
+  });
+}
+
+// 渲染吉時 HTML（插入吉日卡片底部）
+function renderJiShiSection(date) {
+  const branch  = getDayBranch(date);
+  const shichens = calcJiShi(branch);
+  const jiOnly  = shichens.filter(s => s.ji);
+  const uid     = date.getTime(); // unique per card
+
+  const chipHtml = (s) =>
+    `<span class="jishi-chip ${s.ji ? 'ji' : 'xiong'}">` +
+    `${s.ji ? '✅' : '❌'} ${s.zhi}時 ${s.time} ${s.shen}</span>`;
+
+  return `<div class="jishi-section">
+    <div class="jishi-title">吉 時 參 考（黃道黑道十二神）</div>
+    <div class="jishi-small-note" style="font-size:0.55rem;color:var(--text-dim);letter-spacing:0.06em;margin-bottom:0.45rem;">日支：${branch}日 · 子時起${HUANGDAO_SHEN[RIZHI_QILONG[branch]]}</div>
+    <div class="jishi-grid">
+      ${jiOnly.map(chipHtml).join('')}
+    </div>
+    <button class="jishi-toggle" onclick="toggleJiShi('${uid}')">查 看 全 部 十 二 時 辰 ▾</button>
+    <div class="jishi-all-grid" id="jishi-all-${uid}">
+      ${shichens.map(chipHtml).join('')}
+    </div>
+  </div>`;
+}
+
+function toggleJiShi(uid) {
+  const el  = document.getElementById('jishi-all-' + uid);
+  const btn = el.previousElementSibling;
+  const open = el.classList.toggle('open');
+  btn.textContent = open ? '收 起 ▴' : '查 看 全 部 十 二 時 辰 ▾';
+}
+
 // Set default date range: today → today+60 days
 (function initZdDates() {
   const t = new Date();
@@ -1466,11 +1567,8 @@ function findAuspiciousDays() {
           <span class="aday-section-lbl">忌 事</span>
           <div class="aday-tags">${jiList.map(t=>`<span class="aday-tag-bad">忌 ${t}</span>`).join('')}</div>
         </div>
-        <div class="aday-row">
-          <span class="aday-section-lbl">吉 時</span>
-          <div class="aday-tags">${evData.hours.map(h=>`<span class="aday-tag-hour">⏰ ${h}</span>`).join('')}</div>
-        </div>
         <div class="aday-reason">✦ ${evData.reason}</div>
+        ${renderJiShiSection(d)}
       </div>
     </div>`;
   }

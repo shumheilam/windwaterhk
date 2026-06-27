@@ -613,3 +613,27 @@ html.light-mode .form-group select option {
   background : #ffffff;
   color      : #2a1205;
 }
+
+/* ── calendar.html 吉時參考 light mode ── */
+html.light-mode .jishi-section {
+  border-top-color : rgba(138,100,32,0.15) !important;
+}
+html.light-mode .jishi-title {
+  color : #8a6420 !important;
+}
+html.light-mode .jishi-chip.ji {
+  border-color : rgba(30,120,60,0.5) !important;
+  color        : #1a7040 !important;
+  background   : rgba(30,120,60,0.06) !important;
+  opacity      : 1 !important;
+}
+html.light-mode .jishi-chip.xiong {
+  border-color : rgba(160,30,30,0.4) !important;
+  color        : #a81818 !important;
+  background   : rgba(160,30,30,0.05) !important;
+  opacity      : 0.75 !important;
+}
+html.light-mode .jishi-toggle {
+  color             : #8a6420 !important;
+  border-bottom-color: rgba(138,100,32,0.38) !important;
+}
