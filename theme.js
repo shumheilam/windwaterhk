@@ -10,7 +10,9 @@
   const STORAGE_KEY = 'fengshui_theme';
 
   // 立即套用（<head> 內執行，html 元素已存在）
-  if (localStorage.getItem(STORAGE_KEY) === 'light') {
+  // 預設 light mode；只有用戶明確揀過 dark 才用深色
+  const _saved = localStorage.getItem(STORAGE_KEY);
+  if (_saved !== 'dark') {
     document.documentElement.classList.add('light-mode');
   }
 
