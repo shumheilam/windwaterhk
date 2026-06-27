@@ -1,6 +1,6 @@
 /**
  * theme.js — 深色 / 淺色模式切換
- * 風生水起 FengShui Oracle · Siriis Labs
+ * 風生水起 windwaterhk · Siriis Labs
  *
  * - 用 localStorage key "fengshui_theme" 儲存偏好 ('light' | 'dark')
  * - 喺 <html> 元素加 .light-mode class
