@@ -301,19 +301,38 @@ function fsoBuildDailyContent(date) {
 
 // ── Daily Horoscope Reminder ──
 function fsoCheckDailyHoroscope() {
+  alert('Step 1: function called');
+
   const s = fsoGetNotifSettings();
-  if (s.dailyHoroscope === false) return;
+  alert('Step 2: settings = ' + JSON.stringify(s));
+
+  if (s.dailyHoroscope === false) {
+    alert('BLOCKED: dailyHoroscope=false');
+    return;
+  }
+
+  alert('Step 3: passed dailyHoroscope check');
 
   const todayKey = fsoDayKey();
   const sent = JSON.parse(localStorage.getItem(FSO_NOTIF_DAILY_KEY) || '{}');
-  if (sent[todayKey]) return;
+  alert('Step 4: todayKey=' + todayKey + '\nsent=' + JSON.stringify(sent));
+
+  if (sent[todayKey]) {
+    alert('BLOCKED: already sent today');
+    return;
+  }
+
+  alert('Step 5: about to check user/premium');
 
   const now = new Date();
 
   let user = null;
   try { user = JSON.parse(localStorage.getItem('fs_auth_user')); } catch {}
 
+  alert('Step 6: user=' + JSON.stringify(user));
+
   if (!user || !user.isPremium) {
+    alert('Step 7: about to call fsoShowNotif (non-premium)');
     var nd = fsoGetNotifDayData(now);
     fsoShowNotif(
       '✨ 今日運勢 · ' + nd.lunarStr,
@@ -326,6 +345,7 @@ function fsoCheckDailyHoroscope() {
     return;
   }
 
+  alert('Step 7: about to call fsoShowNotif (premium)');
   const profiles = JSON.parse(localStorage.getItem('fengshui_profiles_v1') || '[]');
   const profileName = (profiles.length && profiles[0].name) ? profiles[0].name : (user.name || '您');
   const dc = fsoBuildDailyContent(new Date());
