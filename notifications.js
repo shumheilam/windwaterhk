@@ -300,10 +300,10 @@ function fsoCheckDailyHoroscope() {
   try { user = JSON.parse(localStorage.getItem('fs_auth_user')); } catch {}
 
   if (!user || !user.isPremium) {
-    // Non-premium: show upgrade prompt once per day if they enabled this toggle
+    var nd = fsoGetNotifDayData(now);
     fsoShowNotif(
-      '✨ 每日運程',
-      '升級至 $48 玄學娛樂層，解鎖每日個人化運程推播 👑',
+      '✨ 今日運勢 · ' + nd.lunarStr,
+      nd.jcLabel + ' · 宜' + nd.topYi + '\n升級$48解鎖個人化吉時+旺位 👑',
       '/',
       'daily-upgrade'
     );
