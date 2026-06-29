@@ -1,5 +1,18 @@
 /* ── FengShui Oracle — Web Push Notification System ── */
 
+// ── Debug Log ──
+function fsoDebugLog(msg) {
+  const panel = document.getElementById('fsoDebugPanel');
+  const log   = document.getElementById('fsoDebugLog');
+  if (panel && log) {
+    panel.style.display = 'block';
+    const line = document.createElement('div');
+    line.textContent = new Date().toLocaleTimeString() + ' ' + msg;
+    log.appendChild(line);
+  }
+  console.log('[FSO]', msg);
+}
+
 // ── Storage Keys ──
 const FSO_NOTIF_SETTINGS_KEY  = 'fs_notif_settings';
 const FSO_NOTIF_DEITY_KEY     = 'fs_notif_deity_sent';
@@ -507,6 +520,10 @@ function fsoRefreshNotifSettings() {
 
 // ── Initialise on page load ──
 document.addEventListener('DOMContentLoaded', function() {
+  if (location.search.includes('debug=1') || location.hostname === 'localhost') {
+    const p = document.getElementById('fsoDebugPanel');
+    if (p) p.style.display = 'block';
+  }
   fsoRegisterSW();
   // Show banner after 2s to not interrupt initial render
   setTimeout(fsoShowPermBanner, 2000);
