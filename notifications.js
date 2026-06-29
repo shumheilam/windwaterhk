@@ -91,9 +91,6 @@ function fsoRegisterSW() {
 
 // ── Send notification via SW or Notification API ──
 function fsoShowNotif(title, body, url, tag) {
-  // 臨時debug（確認PWA模式有冇call到）
-  alert('fsoShowNotif called: ' + title + '\nPermission: ' + Notification.permission + '\nSW controller: ' + !!(navigator.serviceWorker && navigator.serviceWorker.controller));
-
   if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
 
   const opts = {
@@ -292,34 +289,16 @@ function fsoBuildDailyContent(date) {
   return { lunarStr: lunarStr, jcLabel: jcLabel, topYi: topYi, jiShi: jiShi, wangPos: wangPos };
 }
 
-// ── Daily Horoscope Reminder ($48 member) ──
+// ── Daily Horoscope Reminder ──
 function fsoCheckDailyHoroscope() {
   const s = fsoGetNotifSettings();
-  if (s.dailyHoroscope === false) {
-    alert('[FSO] return: dailyHoroscope=false');
-    return;
-  }
+  if (s.dailyHoroscope === false) return;
 
   const todayKey = fsoDayKey();
   const sent = JSON.parse(localStorage.getItem(FSO_NOTIF_DAILY_KEY) || '{}');
-  if (sent[todayKey]) {
-    alert('[FSO] return: already sent today\nkey: ' + todayKey + '\nvalue: ' + sent[todayKey]);
-    return;
-  }
+  if (sent[todayKey]) return;
 
   const now = new Date();
-  const hour = now.getHours();
-
-  // Before 8am — schedule for 8am
-  if (hour < 8) {
-    alert('[FSO] return: before 8am, hour=' + hour);
-    const target = new Date();
-    target.setHours(8, 0, 0, 0);
-    setTimeout(fsoCheckDailyHoroscope, target - now);
-    return;
-  }
-
-  alert('[FSO] proceeding to send notification');
 
   let user = null;
   try { user = JSON.parse(localStorage.getItem('fs_auth_user')); } catch {}
