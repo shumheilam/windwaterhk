@@ -91,6 +91,7 @@ function fsoRegisterSW() {
 
 // ── Send notification via SW or Notification API ──
 function fsoShowNotif(title, body, url, tag) {
+  alert('fsoShowNotif ENTRY: ' + title);
   alert('fsoShowNotif: ' + title + '\npermission: ' + Notification.permission + '\nSW controller: ' + !!(navigator.serviceWorker && navigator.serviceWorker.controller));
 
   if (typeof Notification === 'undefined' || Notification.permission !== 'granted') {
