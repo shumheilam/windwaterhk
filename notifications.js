@@ -91,13 +91,7 @@ function fsoRegisterSW() {
 
 // ── Send notification via SW or Notification API ──
 function fsoShowNotif(title, body, url, tag) {
-  alert('fsoShowNotif ENTRY: ' + title);
-  alert('fsoShowNotif: ' + title + '\npermission: ' + Notification.permission + '\nSW controller: ' + !!(navigator.serviceWorker && navigator.serviceWorker.controller));
-
-  if (typeof Notification === 'undefined' || Notification.permission !== 'granted') {
-    alert('BLOCKED: permission not granted');
-    return;
-  }
+  if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
 
   const opts = {
     body: body,
@@ -109,21 +103,16 @@ function fsoShowNotif(title, body, url, tag) {
   };
 
   if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    alert('Branch 1: postMessage to SW');
     navigator.serviceWorker.controller.postMessage({
       type: 'SHOW_NOTIFICATION', title: title, body: body, url: url || '/', tag: opts.tag
     });
   } else if ('serviceWorker' in navigator) {
-    alert('Branch 2: SW ready then showNotification');
     navigator.serviceWorker.ready.then(function(reg) {
-      alert('Branch 2a: reg.showNotification');
       reg.showNotification(title, opts);
     }).catch(function() {
-      alert('Branch 2b: fallback new Notification');
       new Notification(title, opts);
     });
   } else {
-    alert('Branch 3: new Notification direct');
     new Notification(title, opts);
   }
 }
@@ -302,49 +291,20 @@ function fsoBuildDailyContent(date) {
 
 // ── Daily Horoscope Reminder ──
 function fsoCheckDailyHoroscope() {
-  alert('Step 1: function called');
-
   const s = fsoGetNotifSettings();
-  alert('Step 2: settings = ' + JSON.stringify(s));
-
-  if (s.dailyHoroscope === false) {
-    alert('BLOCKED: dailyHoroscope=false');
-    return;
-  }
-
-  alert('Step 3: passed dailyHoroscope check');
+  if (s.dailyHoroscope === false) return;
 
   const todayKey = fsoDayKey();
   const sent = JSON.parse(localStorage.getItem(FSO_NOTIF_DAILY_KEY) || '{}');
-  alert('Step 4: todayKey=' + todayKey + '\nsent=' + JSON.stringify(sent));
-
-  if (sent[todayKey]) {
-    alert('BLOCKED: already sent today');
-    return;
-  }
-
-  alert('Step 5: about to check user/premium');
+  if (sent[todayKey]) return;
 
   const now = new Date();
 
   let user = null;
   try { user = JSON.parse(localStorage.getItem('fs_auth_user')); } catch {}
 
-  alert('Step 6: user=' + JSON.stringify(user));
-
-  alert('Step 7b: Notification defined=' + (typeof Notification !== 'undefined') + '\npermission=' + (typeof Notification !== 'undefined' ? Notification.permission : 'N/A') + '\nSW in navigator=' + ('serviceWorker' in navigator));
-
   if (!user || !user.isPremium) {
-    alert('Step 7: about to call fsoShowNotif (non-premium)');
-    var nd;
-    try {
-      alert('Step 7c: calculating nd...');
-      nd = fsoGetNotifDayData(now);
-      alert('Step 7d: nd=' + JSON.stringify(nd));
-    } catch(e) {
-      alert('ERROR in nd calculation: ' + e.message + '\n' + e.stack);
-      return;
-    }
+    var nd = fsoBuildDailyContent(now);
     fsoShowNotif(
       '✨ 今日運勢 · ' + nd.lunarStr,
       nd.jcLabel + ' · 宜' + nd.topYi + '\n升級$48解鎖個人化吉時+旺位 👑',
@@ -356,10 +316,9 @@ function fsoCheckDailyHoroscope() {
     return;
   }
 
-  alert('Step 7: about to call fsoShowNotif (premium)');
   const profiles = JSON.parse(localStorage.getItem('fengshui_profiles_v1') || '[]');
   const profileName = (profiles.length && profiles[0].name) ? profiles[0].name : (user.name || '您');
-  const dc = fsoBuildDailyContent(new Date());
+  const dc = fsoBuildDailyContent(now);
   const jiShiStr = dc.jiShi.length ? dc.jiShi.join('、') : '—';
   fsoShowNotif(
     '✨ 今日運勢 · ' + dc.lunarStr,
