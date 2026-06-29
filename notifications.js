@@ -295,22 +295,31 @@ function fsoBuildDailyContent(date) {
 // ── Daily Horoscope Reminder ($48 member) ──
 function fsoCheckDailyHoroscope() {
   const s = fsoGetNotifSettings();
-  if (s.dailyHoroscope === false) return;
+  if (s.dailyHoroscope === false) {
+    alert('[FSO] return: dailyHoroscope=false');
+    return;
+  }
 
   const todayKey = fsoDayKey();
   const sent = JSON.parse(localStorage.getItem(FSO_NOTIF_DAILY_KEY) || '{}');
-  if (sent[todayKey]) return;
+  if (sent[todayKey]) {
+    alert('[FSO] return: already sent today\nkey: ' + todayKey + '\nvalue: ' + sent[todayKey]);
+    return;
+  }
 
   const now = new Date();
   const hour = now.getHours();
 
   // Before 8am — schedule for 8am
   if (hour < 8) {
+    alert('[FSO] return: before 8am, hour=' + hour);
     const target = new Date();
     target.setHours(8, 0, 0, 0);
     setTimeout(fsoCheckDailyHoroscope, target - now);
     return;
   }
+
+  alert('[FSO] proceeding to send notification');
 
   let user = null;
   try { user = JSON.parse(localStorage.getItem('fs_auth_user')); } catch {}
