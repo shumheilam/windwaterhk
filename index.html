@@ -5945,6 +5945,24 @@ if ('serviceWorker' in navigator) {
 })();
 </script>
 
+<script>
+// ── 頁面載入時恢復每日通知 button 狀態 ──
+document.addEventListener('DOMContentLoaded', function() {
+  const btn    = document.getElementById('daNotifBtn');
+  const status = document.getElementById('daNotifStatus');
+  if (!btn || !status) return;
+  const s = (function() {
+    try { return JSON.parse(localStorage.getItem('fs_notif_settings') || '{}'); } catch(e) { return {}; }
+  })();
+  if (s.dailyHoroscope === true
+    && typeof Notification !== 'undefined'
+    && Notification.permission === 'granted') {
+    if (typeof showNotifEnabled === 'function') showNotifEnabled(btn, status);
+    if (typeof fsoRunNotifChecks === 'function') fsoRunNotifChecks();
+  }
+});
+</script>
+
 <div id="fsoDebugPanel" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#000;color:#0f0;font-size:11px;padding:8px;max-height:40vh;overflow-y:auto;z-index:99999;font-family:monospace">
   <div style="color:#ff0;font-weight:bold">FSO Debug Log</div>
   <div id="fsoDebugLog"></div>

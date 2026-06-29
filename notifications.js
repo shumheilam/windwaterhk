@@ -91,6 +91,9 @@ function fsoRegisterSW() {
 
 // ── Send notification via SW or Notification API ──
 function fsoShowNotif(title, body, url, tag) {
+  // 臨時debug（確認PWA模式有冇call到）
+  alert('fsoShowNotif called: ' + title + '\nPermission: ' + Notification.permission + '\nSW controller: ' + !!(navigator.serviceWorker && navigator.serviceWorker.controller));
+
   if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
 
   const opts = {
