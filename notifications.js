@@ -331,6 +331,8 @@ function fsoCheckDailyHoroscope() {
 
   alert('Step 6: user=' + JSON.stringify(user));
 
+  alert('Step 7b: Notification defined=' + (typeof Notification !== 'undefined') + '\npermission=' + (typeof Notification !== 'undefined' ? Notification.permission : 'N/A') + '\nSW in navigator=' + ('serviceWorker' in navigator));
+
   if (!user || !user.isPremium) {
     alert('Step 7: about to call fsoShowNotif (non-premium)');
     var nd = fsoGetNotifDayData(now);
